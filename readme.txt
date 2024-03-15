@@ -8,7 +8,7 @@ Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Transform your WordPress login pages and elevate user experience with Brand Master. Customize the WordPress login page and introduce a sophisticated frontend dashboard for users.
+Customize your WordPress login page and provide a sophisticated frontend dashboard for your users with Brand Master.
 
 == Description ==
 
