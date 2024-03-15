@@ -1,0 +1,651 @@
+# Copyright (C) 2024 codersantosh
+# This file is distributed under the GPL-2.0+.
+msgid ""
+msgstr ""
+"Project-Id-Version: Brand Master - Customize Login and User Frontend Dashboard 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/brand-master\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2024-03-15T16:11:10+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.6.0\n"
+"X-Domain: brand-master\n"
+
+#: src/admin/pages/dashboard/pages/elements.js:105
+msgid "Site title and tagline"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:121
+msgid "Site title"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:139
+msgid "Site tagline"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:159
+msgid "Login user info"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:163
+msgid "Avatar display options"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:167
+msgid "Hide"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:171
+msgid "Top"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:175
+msgid "Right"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:179
+msgid "Bottom"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:183
+msgid "Left"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:200
+msgid "User name and description"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:216
+msgid "User name"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:234
+msgid "User description"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:254
+#: includes/functions.php:93
+msgid "Logout"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:258
+msgid "Logout label"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:295
+msgid "Menus & pages"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:299
+msgid "Menu heading"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:314
+msgid "Add menus & pages"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:365
+msgid "Menu slug"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:382
+msgid "Select page"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:451
+msgid "Add logout on menu"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:469
+msgid "Redirect non-logged-in visitor from menu pages"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:484
+#: src/admin/pages/login/pages/utilities.js:282
+msgid "Enable redirection"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:487
+#: src/admin/pages/login/pages/utilities.js:175
+msgid "Redirect url"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:494
+msgid "Social links"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:498
+msgid "Social heading"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:513
+msgid "Add social menus"
+msgstr ""
+
+#. %s: placeholder for idx
+#: src/admin/pages/dashboard/pages/elements.js:531
+msgid "Item %d"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:534
+msgid "Remove item"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:537
+msgid "Menu label"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:554
+msgid "Menu link"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:572
+msgid "Open in new tab"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:595
+msgid "Select icon"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:599
+msgid "Icons"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:61
+msgid "Elements settings"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:635
+msgid "Add item"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:64
+msgid "Site identity"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:642
+msgid "Select"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:646
+msgid "Vertical"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:650
+msgid "Horizontal"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:68
+msgid "Logo display options"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:693
+msgid "What are Dashboard Elements?"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:698
+msgid "Dashboard Elements refer to the customizable components that can be used in the dashboard sidebar and header. These elements allow you to personalize and tailor your dashboard according to your preferences. The content displayed in the dashboard is sourced from the page content, providing a dynamic and user-friendly experience."
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:705
+msgid "How to customize Elements?"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:710
+msgid "Customizing elements is a breeze! Simply navigate to the options available for each element. To showcase your customized elements, head over to the header and sidebar content settings. There, you can effortlessly enable, disable, or rearrange these elements, ensuring a tailored and seamless display that suits your preferences."
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:739
+#: src/admin/pages/dashboard/pages/no-login.js:121
+msgid "Frontend Dashboard settings"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/no-login.js:41
+msgid "Select page for non-logged-in visitor"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/no-login.js:84
+msgid "When does the content of the \"Select Page For Non-Logged-in Visitor\" appear?"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/no-login.js:92
+msgid "If a user navigates directly to the frontend dashboard without logging in, the content of the chosen page on the \"Select Page For Non-Logged-In Visitor\" section will be displayed for them."
+msgstr ""
+
+#: src/admin/pages/dashboard/routes.js:83
+msgid "Non-logged-in visitor"
+msgstr ""
+
+#: src/admin/pages/dashboard/routes.js:87
+msgid "Sidebar content"
+msgstr ""
+
+#: src/admin/pages/dashboard/routes.js:91
+msgid "Header content"
+msgstr ""
+
+#: src/admin/pages/dashboard/routes.js:95
+msgid "Elements"
+msgstr ""
+
+#: src/admin/pages/login/pages/advanced.js:102
+msgid "Tailor your login page's appearance with custom CSS. Write standard code to adjust colors, fonts, and layout, creating a personalized and visually appealing design."
+msgstr ""
+
+#: src/admin/pages/login/pages/advanced.js:109
+msgid "Custom JS:"
+msgstr ""
+
+#: src/admin/pages/login/pages/advanced.js:114
+msgid "Enhance login page functionality with custom JavaScript. Implement custom behaviors and interactive elements to elevate the user experience, aligning the page with your specific requirements."
+msgstr ""
+
+#: src/admin/pages/login/pages/advanced.js:143
+#: src/admin/pages/login/pages/logo.js:233
+#: src/admin/pages/login/pages/slug.js:208
+#: src/admin/pages/login/pages/title.js:115
+msgid "WordPress login page settings"
+msgstr ""
+
+#: src/admin/pages/login/pages/advanced.js:51
+msgid "Custom CSS"
+msgstr ""
+
+#: src/admin/pages/login/pages/advanced.js:59
+msgid "Custom JavaScript"
+msgstr ""
+
+#: src/admin/pages/login/pages/advanced.js:97
+msgid "Custom CSS:"
+msgstr ""
+
+#: src/admin/pages/login/pages/logo.js:114
+msgid "Image source"
+msgstr ""
+
+#: src/admin/pages/login/pages/logo.js:117
+msgid "Add logo"
+msgstr ""
+
+#: src/admin/pages/login/pages/logo.js:120
+msgid "Remove logo"
+msgstr ""
+
+#: src/admin/pages/login/pages/logo.js:123
+msgid "Select logo from images"
+msgstr ""
+
+#: src/admin/pages/login/pages/logo.js:125
+msgid "Select logo"
+msgstr ""
+
+#: src/admin/pages/login/pages/logo.js:136
+msgid "Logo text"
+msgstr ""
+
+#: src/admin/pages/login/pages/logo.js:151
+msgid "Logo link"
+msgstr ""
+
+#: src/admin/pages/login/pages/logo.js:196
+msgid "How can I customize the appearance of my WordPress login page's logo?"
+msgstr ""
+
+#: src/admin/pages/login/pages/logo.js:204
+msgid "The logo settings feature allows you to modify the logo image, logo text, and the link associated with the logo displayed on your WordPress login page."
+msgstr ""
+
+#: src/admin/pages/login/pages/logo.js:66
+msgid "Add own logo on login page"
+msgstr ""
+
+#: src/admin/pages/login/pages/logo.js:84
+#: src/admin/pages/login/routes.js:93
+msgid "Logo"
+msgstr ""
+
+#: src/admin/pages/login/pages/slug.js:104
+msgid "Redirection url: "
+msgstr ""
+
+#: src/admin/pages/login/pages/slug.js:111
+msgid "404 template"
+msgstr ""
+
+#: src/admin/pages/login/pages/slug.js:156
+msgid "How can I enhance the security of my WordPress website?"
+msgstr ""
+
+#: src/admin/pages/login/pages/slug.js:164
+msgid "Utilize security and URL settings to modify the page URL slug of your WordPress login page, providing an additional layer of protection against unauthorized access."
+msgstr ""
+
+#: src/admin/pages/login/pages/slug.js:171
+msgid "Why is it important to change the login URL and restrict access to certain pages?"
+msgstr ""
+
+#: src/admin/pages/login/pages/slug.js:179
+msgid "Changing the login URL and limiting access to sensitive areas such as wp-login.php and wp-admin directory helps safeguard your website against unauthorized access attempts, enhancing overall security."
+msgstr ""
+
+#: src/admin/pages/login/pages/slug.js:43
+msgid "Enhance the security of your website by modifying the login URL and restricting access to the wp-login.php page and wp-admin directory for not logged in users."
+msgstr ""
+
+#: src/admin/pages/login/pages/slug.js:63
+msgid "Login page slug"
+msgstr ""
+
+#: src/admin/pages/login/pages/slug.js:66
+msgid "Secure your website by altering the login URL and restricting access to the wp-login.php page and the wp-admin directory to authorized users only, enhancing protection against unauthorized access."
+msgstr ""
+
+#: src/admin/pages/login/pages/slug.js:71
+msgid "Login url: "
+msgstr ""
+
+#: src/admin/pages/login/pages/slug.js:96
+msgid "Redirection slug"
+msgstr ""
+
+#: src/admin/pages/login/pages/slug.js:99
+msgid "Redirect the URL for unauthorized attempts to access the wp-login.php page and the wp-admin directory, ensuring redirection occurs when users are not logged in. Use `404` for loading 404 template."
+msgstr ""
+
+#: src/admin/pages/login/pages/title.js:41
+msgid "Login page title"
+msgstr ""
+
+#: src/admin/pages/login/pages/title.js:79
+msgid "How can I change the page title of my WordPress login page?"
+msgstr ""
+
+#: src/admin/pages/login/pages/title.js:87
+msgid "Title settings empower you to customize the page title displayed on your WordPress login page, allowing you to tailor it according to your preferences or branding requirements."
+msgstr ""
+
+#: src/admin/pages/login/pages/utilities.js:107
+msgid "Hide for"
+msgstr ""
+
+#: src/admin/pages/login/pages/utilities.js:115
+msgid "All users"
+msgstr ""
+
+#: src/admin/pages/login/pages/utilities.js:119
+msgid "Selected roles"
+msgstr ""
+
+#: src/admin/pages/login/pages/utilities.js:135
+msgid "Hide admin bar"
+msgstr ""
+
+#: src/admin/pages/login/pages/utilities.js:166
+msgid "Admin dashboard access"
+msgstr ""
+
+#: src/admin/pages/login/pages/utilities.js:172
+msgid "Disable admin end access"
+msgstr ""
+
+#: src/admin/pages/login/pages/utilities.js:182
+msgid "Restrict access to specific roles only"
+msgstr ""
+
+#: src/admin/pages/login/pages/utilities.js:186
+msgid "By default, administrators have unrestricted access to the dashboard, whereas subscribers have denied access."
+msgstr ""
+
+#: src/admin/pages/login/pages/utilities.js:217
+msgid "Redirecting after login"
+msgstr ""
+
+#: src/admin/pages/login/pages/utilities.js:236
+msgid "Redirecting after logout"
+msgstr ""
+
+#: src/admin/pages/login/pages/utilities.js:257
+msgid "Redirecting after lost password (password recovery)"
+msgstr ""
+
+#: src/admin/pages/login/pages/utilities.js:278
+msgid "Redirecting after registration"
+msgstr ""
+
+#: src/admin/pages/login/pages/utilities.js:285
+msgid "Redirection URL"
+msgstr ""
+
+#: src/admin/pages/login/pages/utilities.js:316
+msgid "What role do utilities settings play in WordPress website customization?"
+msgstr ""
+
+#: src/admin/pages/login/pages/utilities.js:324
+msgid "Utilities settings are instrumental in shaping your brand identity and customizing essential aspects and behaviors of both the frontend and login page of your WordPress website."
+msgstr ""
+
+#: src/admin/pages/login/pages/utilities.js:331
+msgid "What is the purpose of the utilities settings?"
+msgstr ""
+
+#: src/admin/pages/login/pages/utilities.js:339
+msgid "The utilities settings serve to enhance user experience and security. They offer functionalities such as hiding the admin bar for non-administrative users, customizing redirection after login, logout, password recovery, and registration, and restricting access to the wp-admin directory to bolster security measures."
+msgstr ""
+
+#: src/admin/pages/login/pages/utilities.js:367
+msgid "Settings"
+msgstr ""
+
+#: src/admin/pages/login/pages/utilities.js:91
+msgid "Hide admin bar on frontend"
+msgstr ""
+
+#: src/admin/pages/login/routes.js:101
+msgid "Utilities"
+msgstr ""
+
+#: src/admin/pages/login/routes.js:105
+#: src/admin/pages/settings/routes.js:67
+msgid "Advanced"
+msgstr ""
+
+#: src/admin/pages/login/routes.js:89
+msgid "Security and URL"
+msgstr ""
+
+#: src/admin/pages/login/routes.js:97
+msgid "Title"
+msgstr ""
+
+#. Plugin Name of the plugin
+msgid "Brand Master - Customize Login and User Frontend Dashboard"
+msgstr ""
+
+#. Plugin URI of the plugin
+msgid "https://github.com/codersantosh/brand-master"
+msgstr ""
+
+#. Description of the plugin
+msgid "Brand Master enhances WordPress site customization by allowing you to personalize login pages and introduce a sleek frontend dashboard for users. Elevate your brand with complete control over the user experience."
+msgstr ""
+
+#. Author of the plugin
+msgid "codersantosh"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "https://github.com/codersantosh"
+msgstr ""
+
+#. translators: %s: Property name.
+#: includes/api/class-api-settings.php:163
+msgid "The %s property has an invalid stored value, and cannot be updated to null."
+msgstr ""
+
+#: includes/api/class-api.php:114
+#: includes/api/class-api.php:126
+msgid "Cheatin&#8217; huh?"
+msgstr ""
+
+#: includes/class-patterns.php:76
+msgid "Dashboard"
+msgstr ""
+
+#: includes/functions.php:96
+msgid "Navigations"
+msgstr ""
+
+#: includes/functions.php:105
+msgid "Social"
+msgstr ""
+
+#: includes/functions.php:270
+#: includes/functions.php:278
+msgid "Brand Master"
+msgstr ""
+
+#: includes/functions.php:277
+msgid "Brand Master Page"
+msgstr ""
+
+#. translators: %s is the plugin name
+#: includes/functions.php:287
+msgid "Congratulations on choosing the %s for customizing your WordPress login and user frontend dashboard. We recommend taking a few minutes to read the following information on how the plugin works. Please read it carefully to fully understand capabilities of the plugin and how to use them effectively."
+msgstr ""
+
+#. translators: %s is the plugin name
+#: includes/functions.php:299
+msgid "Congratulations! You have successfully installed %s and it is ready for customizing the WordPress login and user frontend dashboard."
+msgstr ""
+
+#. translators: %s is the plugin name
+#: includes/functions.php:307
+msgid "If you have any questions or need assistance, please do not hesitate to contact us for support. The %s plugin caters to WordPress site owners, developers and designers seeking to enhance and personalize the login experience and user frontend dashboard."
+msgstr ""
+
+#: includes/functions.php:316
+msgid "Get started"
+msgstr ""
+
+#: includes/functions.php:322
+msgid "Docmentation"
+msgstr ""
+
+#: includes/functions.php:328
+msgid "Get support"
+msgstr ""
+
+#: includes/functions.php:342
+msgid "Visit site"
+msgstr ""
+
+#: includes/functions.php:348
+#: includes/functions.php:360
+msgid "Get Support"
+msgstr ""
+
+#: includes/functions.php:355
+msgid "Contact Information"
+msgstr ""
+
+#: includes/functions.php:359
+msgid "Support"
+msgstr ""
+
+#: includes/functions.php:366
+msgid "Email"
+msgstr ""
+
+#: includes/functions.php:367
+msgid "codersantosh@gmail.com"
+msgstr ""
+
+#: includes/functions.php:373
+msgid "Location"
+msgstr ""
+
+#: includes/functions.php:374
+msgid "Kathmandu, Nepal"
+msgstr ""
+
+#: includes/functions.php:398
+msgid "Activate Brand Master"
+msgstr ""
+
+#: includes/functions.php:402
+msgid "Login settings"
+msgstr ""
+
+#: includes/functions.php:406
+msgid "Dashboard settings"
+msgstr ""
+
+#: includes/functions.php:412
+msgid "Knowledge base"
+msgstr ""
+
+#: includes/functions.php:413
+msgid "The utilization of this plugin can be facilitated by perusing comprehensive and well-documented articles."
+msgstr ""
+
+#: includes/functions.php:417
+msgid "Visit knowledge base"
+msgstr ""
+
+#: includes/functions.php:423
+msgid "Community"
+msgstr ""
+
+#. translators: %s is the plugin name
+#: includes/functions.php:426
+msgid "Our objective is to enhance the customer experience, we invite you to join our community where you can receive immediate support."
+msgstr ""
+
+#: includes/functions.php:432
+msgid "Visit community page"
+msgstr ""
+
+#: includes/functions.php:437
+msgid "24x7 support"
+msgstr ""
+
+#. translators: %s is the plugin name
+#: includes/functions.php:440
+msgid "Our support team is available 24/7 to assist you in the event that you encounter any problems while utilizing this plugin."
+msgstr ""
+
+#: includes/functions.php:446
+msgid "Create a support thread"
+msgstr ""
+
+#: includes/functions.php:452
+msgid "Video guide"
+msgstr ""
+
+#. translators: %s is the plugin name
+#: includes/functions.php:455
+msgid "The plugin is accompanied by comprehensive video tutorials that provide practical demonstrations for most customization."
+msgstr ""
+
+#: includes/functions.php:461
+msgid "View video guide"
+msgstr ""
+
+#: includes/functions.php:468
+msgid "Quick links to settings"
+msgstr ""
+
+#: includes/functions.php:498
+msgid "Changelog"
+msgstr ""
+
+#: public/templates/dashboard.php:62
+msgid "Page not found."
+msgstr ""
+
+#: public/templates/dashboard.php:69
+msgid "Page not selected."
+msgstr ""

@@ -1,0 +1,40 @@
+{
+	"name": "brand-master",
+	"version": "1.0.0",
+	"description": "Customize login page and add frontend dashboard.",
+	"author": "codersantosh",
+	"license": "GPL-2.0-or-later",
+	"scripts": {
+		"build:admin": "wp-scripts build src/admin.js --output-path=build/admin",
+		"build:public": "wp-scripts build src/dashboard.js --output-path=build/public",
+		"build": "npm-run-all build:admin build:public",
+		"start:admin": "wp-scripts start src/admin.js --output-path=build/admin",
+		"start:public": "wp-scripts start src/dashboard.js --output-path=build/public",
+		"start": "npm-run-all --parallel start:admin start:public",
+		"copy": "node .bin/copy.js",
+		"replace": "node .bin/replace-texts.js",
+		"makejsstring": "node .bin/make-string.js",
+		"makepot": "wp i18n make-pot . languages/brand-master.pot --skip-js --exclude=src,vendor,node_modules --merge=languages/js.pot",
+		"deploy": "npm-run-all build replace makepot copy"
+	},
+	"browserslist": [
+		"last 3 versions",
+		"> 1%"
+	],
+	"dependencies": {
+		"atrc": "^1.0.30",
+		"classnames": "^2.5.1",
+		"react-icons": "^5.0.1"
+	},
+	"devDependencies": {
+		"@wordpress/babel-plugin-makepot": "^5.34.0",
+		"@wordpress/babel-preset-default": "^7.34.0",
+		"@wordpress/i18n": "^4.50.0",
+		"@wordpress/scripts": "27.1.0",
+		"autoprefixer": "^10.4.17",
+		"babel-cli": "^6.26.0",
+		"ncp": "^2.0.0",
+		"npm-run-all": "^4.1.5",
+		"replace-in-file": "^7.1.0"
+	}
+}

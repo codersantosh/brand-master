@@ -1,0 +1,485 @@
+@import '../prefix-vars.scss';
+
+/*Theme variables*/
+$themePrefix: '--bm';
+
+:root {
+	#{$themePrefix}-white: #fff;
+	#{$themePrefix}-black: #000;
+
+	#{$themePrefix}-base-color: #2e312f;
+	#{$themePrefix}-body-color: #9da29f;
+	#{$themePrefix}-border-color: #d3d9de;
+
+	#{$themePrefix}-body-bg: #f5f7fa;
+	#{$themePrefix}-primary: #48b44f;
+	#{$themePrefix}-secondary: #e8f3eb;
+
+	#{$themePrefix}-sidebar-w: 250px;
+	#{$themePrefix}-h-100vh: 100vh;
+
+	#{$varPrefix}-fnt-fam:
+		-apple-system,
+		BlinkMacSystemFont,
+		avenir next,
+		avenir,
+		segoe ui,
+		helvetica neue,
+		helvetica,
+		Cantarell,
+		Ubuntu,
+		roboto,
+		noto,
+		arial,
+		sans-serif;
+}
+
+a {
+	text-decoration: none !important;
+}
+
+#{$appPrefix} {
+	&-dashboard {
+		#{$varPrefix}-min-h: 100%;
+		#{$varPrefix}-max-w: 100%;
+		max-width: var(#{$varPrefix}-max-w) !important;
+		min-height: var(#{$varPrefix}-min-h);
+		#{$varPrefix}-box-szg: border-box;
+
+		&-no-cont {
+			#{$varPrefix}-p: 20px;
+		}
+
+		&-sidebar {
+			#{$varPrefix}-bg-cl: var(#{$themePrefix}-white);
+			#{$varPrefix}-p: 20px;
+			#{$varPrefix}-w: var(#{$themePrefix}-sidebar-w);
+			#{$varPrefix}-pos: sticky;
+			#{$varPrefix}-t: 0;
+			#{$varPrefix}-h: var(#{$themePrefix}-h-100vh);
+			#{$varPrefix}-bdr-w: 0 1px 0 0;
+			#{$varPrefix}-bdr-sty: solid;
+			#{$varPrefix}-bdr-cl: var(#{$themePrefix}-border-color);
+
+			> #{$appPrefix} {
+				&-logout {
+					#{$varPrefix}-p: 15px 0 0 0;
+					#{$varPrefix}-m: 40px 0 0 0;
+					#{$varPrefix}-opa: 0.5;
+
+					#{$varPrefix}-bdr-w: 1px 0 0 0;
+					#{$varPrefix}-bdr-sty: solid;
+					#{$varPrefix}-bdr-cl: var(#{$themePrefix}-border-color);
+					#{$varPrefix}-cl: var(#{$themePrefix}-base-color);
+
+					opacity: var(#{$varPrefix}-opa);
+					color: var(#{$varPrefix}-cl);
+
+					&:hover {
+						#{$varPrefix}-opa: 1;
+					}
+				}
+
+				&-menu {
+					&:not(#{$appPrefix}-menu-li) {
+						&#{$appPrefix} {
+						}
+					}
+				}
+			}
+		}
+
+		&-main {
+			#{$varPrefix}-bg-cl: var(#{$themePrefix}-body-bg);
+			&:not(#{$appPrefix}-no-sidebar) {
+				#{$varPrefix}-w: calc(100% - var(#{$themePrefix}-sidebar-w));
+			}
+		}
+
+		&-header {
+			#{$varPrefix}-bg-cl: var(#{$themePrefix}-white);
+			#{$varPrefix}-p: 20px;
+			#{$varPrefix}-gap: 0 20px;
+			#{$varPrefix}-bdr-w: 0 0 1px 0;
+			#{$varPrefix}-bdr-sty: solid;
+			#{$varPrefix}-bdr-cl: var(#{$themePrefix}-border-color);
+
+			#{$appPrefix} {
+				&-itm-lbl {
+					display: none;
+				}
+
+				&-menu {
+					#{$varPrefix}-m: 0;
+
+					&-ul {
+						#{$varPrefix}-gap: 5px;
+					}
+
+					&-li {
+						a {
+							#{$varPrefix}-p: 8px 15px;
+						}
+					}
+				}
+			}
+		}
+
+		&-cont {
+			#{$varPrefix}-p: 20px;
+			#{$varPrefix}-cl: var(#{$themePrefix}-base-color);
+
+			.edd {
+				&_form {
+					fieldset {
+						#{$varPrefix}-p: 100px 30px 30px 30px;
+						#{$varPrefix}-bg-cl: var(#{$themePrefix}-white);
+						border: 0;
+						padding: var(#{$varPrefix}-p);
+						background: var(#{$varPrefix}-bg-cl);
+
+						+ fieldset {
+							#{$varPrefix}-m: 30px 0 0 0;
+							margin: var(#{$varPrefix}-m);
+						}
+
+						legend {
+							#{$varPrefix}-m: 0 0 -70px 0;
+							#{$varPrefix}-p: 40px 0 20px 0;
+							#{$varPrefix}-w: 100%;
+							#{$varPrefix}-bdr-w: 0 0 1px 0;
+							#{$varPrefix}-bdr-sty: solid;
+							#{$varPrefix}-bdr-cl: var(#{$themePrefix}-border-color);
+
+							margin: var(#{$varPrefix}-m);
+							padding: var(#{$varPrefix}-p);
+							width: var(#{$varPrefix}-w);
+							border-color: var(#{$varPrefix}-bdr-cl);
+							border-width: var(#{$varPrefix}-bdr-w);
+							border-style: var(#{$varPrefix}-bdr-sty);
+						}
+
+						p[id^='edd_profile_'] {
+							// #{$varPrefix}-p: 30px;
+							// padding: var(#{$varPrefix}-p);
+							label {
+								#{$varPrefix}-m: 0 0 10px 0;
+								font-size: 14px;
+								margin: var(#{$varPrefix}-m);
+							}
+
+							select,
+							input:not([type='submit']) {
+								#{$varPrefix}-p: 0 10px;
+								#{$varPrefix}-h: 40px;
+								#{$varPrefix}-w: 100%;
+								#{$varPrefix}-bdr-w: 1px;
+								#{$varPrefix}-bdr-sty: solid;
+								#{$varPrefix}-bdr-cl: var(#{$themePrefix}-border-color);
+								width: var(#{$varPrefix}-w);
+								height: var(#{$varPrefix}-h);
+								padding: var(#{$varPrefix}-p);
+								border-color: var(#{$varPrefix}-bdr-cl);
+								border-width: var(#{$varPrefix}-bdr-w);
+								border-style: var(#{$varPrefix}-bdr-sty);
+							}
+
+							input {
+								&:is([type='submit']) {
+									#{$varPrefix}-bg-cl: var(#{$themePrefix}-primary);
+									#{$varPrefix}-bdr-cl: var(#{$themePrefix}-primary);
+
+									background: var(#{$varPrefix}-bg-cl);
+									border-color: var(#{$varPrefix}-bdr-cl);
+									color: var(#{$themePrefix}-white);
+								}
+							}
+						}
+
+						&#edd_profile_submit_fieldset {
+							#{$varPrefix}-p: 30px;
+						}
+					}
+				}
+
+				&-table {
+					#{$varPrefix}-bdr-w: 1px;
+					#{$varPrefix}-bdr-sty: solid;
+					#{$varPrefix}-bdr-cl: var(#{$themePrefix}-border-color);
+					border-color: var(#{$varPrefix}-bdr-cl) !important;
+					border-width: var(#{$varPrefix}-bdr-w) !important;
+					border-style: var(#{$varPrefix}-bdr-sty) !important;
+
+					th,
+					td {
+						#{$varPrefix}-p: 10px;
+						#{$varPrefix}-fnt-sz: 14px;
+						padding: var(#{$varPrefix}-p) !important;
+						font-size: var(#{$varPrefix}-fnt-sz);
+					}
+
+					thead {
+						th {
+							#{$varPrefix}-bg-cl: var(#{$themePrefix}-white);
+							background: var(#{$varPrefix}-bg-cl) !important;
+						}
+					}
+				}
+			}
+		}
+
+		//Override default wordpress login css
+		.login {
+			color: #3c434a;
+			font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+				Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+			input {
+				&[type='password'] {
+					font-family: Consolas, Monaco, monospace;
+				}
+			}
+			form {
+				.login-remember {
+					font-weight: 400;
+					float: left;
+					margin-bottom: 0;
+				}
+			}
+		}
+	}
+
+	&-logo {
+		img {
+			max-width: 100%;
+			height: auto;
+		}
+
+		.custom-logo-link {
+			width: 40px;
+			display: inline-block;
+		}
+	}
+
+	&-menu {
+		#{$varPrefix}-m: 40px 0 0 0;
+
+		&-ul {
+			&-vertical {
+				#{$varPrefix}-gap: 5px 0;
+			}
+		}
+
+		&-li {
+			a {
+				#{$varPrefix}-cl: var(#{$themePrefix}-base-color);
+				#{$varPrefix}-gap: 5px 10px;
+				#{$varPrefix}-fnt-sz: 14px;
+				#{$varPrefix}-p: 10px;
+
+				color: var(#{$varPrefix}-cl);
+				font-size: var(#{$varPrefix}-fnt-sz);
+				padding: var(#{$varPrefix}-p);
+
+				.at-svg {
+					#{$varPrefix}-w: 18px;
+					#{$varPrefix}-h: 18px;
+
+					width: var(#{$varPrefix}-w);
+					height: var(#{$varPrefix}-h);
+				}
+			}
+
+			&:hover {
+				a {
+					#{$varPrefix}-bg-cl: var(#{$themePrefix}-secondary);
+					#{$varPrefix}-cl: var(#{$themePrefix}-primary);
+
+					background: var(#{$varPrefix}-bg-cl);
+					color: var(#{$varPrefix}-cl);
+				}
+			}
+
+			&#{$appPrefix} {
+				&-menu-active {
+					a {
+						#{$varPrefix}-cl: var(#{$themePrefix}-primary);
+						#{$varPrefix}-bg-cl: var(#{$themePrefix}-secondary);
+
+						background: var(#{$varPrefix}-bg-cl);
+						color: var(#{$varPrefix}-cl);
+					}
+				}
+			}
+		}
+	}
+
+	&-itm {
+		&-lbl {
+			#{$varPrefix}-m: 0 0 15px 0;
+			#{$varPrefix}-txt-tf: uppercase;
+			#{$varPrefix}-fnt-sz: 10px;
+			#{$varPrefix}-fnt-wt: 600;
+			#{$varPrefix}-ltr-sp: 1px;
+			#{$varPrefix}-fnt-fam: Arial, Helvetica, sans-serif;
+
+			color: var(#{$themePrefix}-body-color);
+			font-size: var(#{$varPrefix}-fnt-sz);
+			font-weight: var(#{$varPrefix}-fnt-wt);
+			font-family: var(#{$varPrefix}-fnt-fam);
+			letter-spacing: var(#{$varPrefix}-ltr-sp);
+			text-transform: var(#{$varPrefix}-txt-tf);
+		}
+	}
+
+	&-social {
+		&-ul {
+			&#{$appPrefix} {
+				&-social-vertical {
+					#{$varPrefix}-gap: 10px;
+				}
+			}
+
+			&:not(#{$appPrefix}-social-vertical) {
+				#{$varPrefix}-gap: 5px 10px;
+			}
+		}
+
+		&-li {
+			a {
+				#{$varPrefix}-cl: var(#{$themePrefix}-base-color);
+				#{$varPrefix}-gap: 5px 10px;
+				#{$varPrefix}-fnt-sz: 14px;
+				font-size: var(#{$varPrefix}-fnt-sz);
+				color: var(#{$varPrefix}-cl);
+			}
+		}
+	}
+
+	//To Do Element
+	&-dropdown {
+		#{$varPrefix}-pos: relative;
+
+		&-sub {
+			#{$varPrefix}-bg-cl: var(#{$themePrefix}-white);
+			#{$varPrefix}-bdr-w: 1px;
+			#{$varPrefix}-bdr-sty: solid;
+			#{$varPrefix}-bdr-cl: var(#{$themePrefix}-border-color);
+			#{$varPrefix}-p: 15px;
+			#{$varPrefix}-pos: absolute;
+			#{$varPrefix}-b: 0;
+			#{$varPrefix}-t: 100%;
+			#{$varPrefix}-r: 0;
+			#{$varPrefix}-w: 200px;
+		}
+	}
+
+	&-logout {
+		#{$varPrefix}-p: initial;
+		#{$varPrefix}-m: 0;
+		#{$varPrefix}-bdr-w: 0;
+		#{$varPrefix}-gap: initial;
+		#{$varPrefix}-gap: 5px 10px;
+		#{$varPrefix}-fnt-sz: 14px;
+		font-size: var(#{$varPrefix}-fnt-sz);
+	}
+
+	&-title {
+		color: var(#{$themePrefix}-base-color);
+	}
+
+	&-page-title {
+		color: var(#{$themePrefix}-base-color);
+	}
+
+	&-site {
+		&-identity {
+			#{$varPrefix}-gap: 10px;
+		}
+
+		&-title {
+			#{$varPrefix}-fnt-sz: 14px;
+			#{$varPrefix}-fnt-wt: 600;
+		}
+
+		&-tagline {
+			#{$varPrefix}-fnt-sz: 14px;
+			#{$varPrefix}-fnt-wt: 400;
+		}
+	}
+
+	&-user {
+		&-info {
+			#{$varPrefix}-cl: var(#{$themePrefix}-base-color);
+			#{$varPrefix}-gap: 10px;
+		}
+
+		&-name {
+			#{$varPrefix}-fnt-sz: 14px;
+			#{$varPrefix}-fnt-wt: 600;
+		}
+
+		&-desc {
+			#{$varPrefix}-fnt-sz: 14px;
+			#{$varPrefix}-fnt-wt: 400;
+		}
+	}
+
+	&-b {
+		#{$varPrefix}-m: auto 0 0 0;
+	}
+
+	&-l {
+		#{$varPrefix}-m: 0 0 0 auto;
+	}
+}
+
+body {
+	&.admin-bar {
+		#{$appPrefix} {
+			&-dashboard {
+				#{$varPrefix}-min-h: calc(
+					var(#{$themePrefix}-h-100vh) - var(--wp-admin--admin-bar--height)
+				);
+
+				&-sidebar {
+					#{$varPrefix}-t: var(--wp-admin--admin-bar--height);
+					#{$varPrefix}-h: calc(
+						var(#{$themePrefix}-h-100vh) - var(--wp-admin--admin-bar--height)
+					);
+				}
+			}
+		}
+	}
+}
+
+[data-bm-theme='dark'] {
+	color-scheme: dark;
+
+	#{$themePrefix}-base-color: #d7d7d7;
+
+	#{$themePrefix}-body-color: #959595;
+	#{$themePrefix}-body-bg: #121212;
+
+	#{$themePrefix}-secondary: #000;
+	#{$themePrefix}-secondary--hover: #292c2e;
+
+	#{$themePrefix}-border-color: #575757;
+
+	body {
+		#{$varPrefix}-cl: var(#{$themePrefix}-base-color);
+		color: var(#{$varPrefix}-cl);
+	}
+
+	#{$appPrefix} {
+		&-dashboard {
+			&-sidebar {
+				#{$varPrefix}-bg-cl: var(#{$themePrefix}-body-bg);
+			}
+
+			&-header {
+				#{$varPrefix}-bg-cl: var(#{$themePrefix}-body-bg);
+				#{$varPrefix}-cl: var(#{$themePrefix}-base-color);
+			}
+		}
+	}
+}

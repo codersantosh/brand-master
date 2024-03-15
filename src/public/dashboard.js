@@ -1,0 +1,2 @@
+/*CSS*/
+import './dashboard.scss';
