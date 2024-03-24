@@ -6,3 +6,4 @@ deploy/
 assets/blocks
 /vendor/
 git-source
+build

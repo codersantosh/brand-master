@@ -43,7 +43,6 @@ class Brand_Master_Login {
 		return $instance;
 	}
 
-
 	/**
 	 * Initialize the class and set up actions.
 	 *
@@ -109,8 +108,12 @@ class Brand_Master_Login {
 	 */
 	public function get_login_slug() {
 		$login_settings = brand_master_include()->get_settings()['login'];
-		if ( $login_settings['url']['on'] && $login_settings['url']['on'] && $login_settings['url']['slug'] ) {
-			return sanitize_key( $login_settings['url']['slug'] );
+
+		if ( isset( $login_settings['url']['on'] ) && $login_settings['url']['on'] ) {
+			if ( $login_settings['url']['slug'] ) {
+				return sanitize_key( $login_settings['url']['slug'] );
+			}
+			return 'login';
 		}
 		return '';
 	}
@@ -291,8 +294,11 @@ class Brand_Master_Login {
 	 */
 	public function get_redirect_slug() {
 		$login_settings = brand_master_include()->get_settings()['login'];
-		if ( $login_settings['url']['on'] && $login_settings['url']['on'] && $login_settings['url']['redirect_slug'] ) {
-			return sanitize_key( $login_settings['url']['redirect_slug'] );
+		if ( isset( $login_settings['url']['on'] ) && $login_settings['url']['on'] ) {
+			if ( $login_settings['url']['redirect_slug'] ) {
+				return sanitize_key( $login_settings['url']['redirect_slug'] );
+			}
+			return '404';
 		}
 		return '';
 	}
@@ -368,12 +374,6 @@ class Brand_Master_Login {
 
 			/* Login page, no user has this page access */
 			if ( 'wp-login.php' === $pagenow ) {
-				if ( '404' === $this->get_redirect_slug() ) {
-					// Load 404 template.
-					$template = get_404_template();
-					require_once $template;
-					exit;
-				}
 				wp_safe_redirect( esc_url( $this->get_redirect_url() ) );
 				exit;
 			}
@@ -394,12 +394,6 @@ class Brand_Master_Login {
 				$request_uri = preg_replace( '/(^\/+|\/+$)/', '', $request_uri );
 
 				if ( strpos( $request_uri, '/wp-admin' ) !== false ) {
-					if ( '404' === $this->get_redirect_slug() ) {
-						// Load 404 template.
-						$template = get_404_template();
-						require_once $template;
-						exit;
-					}
 					wp_safe_redirect( esc_url( $this->get_redirect_url() ) );
 					exit;
 				}

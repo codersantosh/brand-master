@@ -69,14 +69,8 @@ const MainContent = () => {
 									)}
 									<br />
 									<b>{__('Login url: ', 'brand-master')}</b>
-									{slug ? (
-										<>
-											{brandMasterLocalize.home_url}
-											<code>{slug}</code>
-										</>
-									) : (
-										brandMasterLocalize.home_url + 'wp-login.php'
-									)}
+									{brandMasterLocalize.home_url}
+									<code>{slug || 'login'}</code>
 								</>
 							}
 							value={slug}
@@ -102,14 +96,8 @@ const MainContent = () => {
 									)}
 									<br />
 									<b>{__('Redirection url: ', 'brand-master')}</b>
-									{redirect_slug && '404' !== redirect_slug ? (
-										<>
-											{brandMasterLocalize.home_url}
-											<code>{redirect_slug}</code>
-										</>
-									) : (
-										__('404 template', 'brand-master')
-									)}
+									{brandMasterLocalize.home_url}
+									<code>{redirect_slug || 404}</code>
 								</>
 							}
 							value={redirect_slug}
