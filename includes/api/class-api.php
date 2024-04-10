@@ -1,4 +1,9 @@
 <?php // phpcs:ignore Class file names should be based on the class name with "class-" prepended.
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * The parent class of all api class of this plugin.
  *
@@ -26,7 +31,7 @@ if ( ! class_exists( 'Brand_Master_Api' ) ) {
 	 * @package Brand_Master
 	 * @since 1.0.0
 	 */
-	class Brand_Master_Api extends WP_Rest_Controller {
+	class Brand_Master_Api extends WP_REST_Controller {
 
 		/**
 		 * Rest route namespace.

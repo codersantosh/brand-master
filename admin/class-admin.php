@@ -1,4 +1,9 @@
 <?php // phpcs:ignore Class file names should be based on the class name with "class-" prepended.
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * The admin-specific functionality of the plugin.
  *
@@ -594,7 +599,6 @@ class Brand_Master_Admin {
 			'type'       => 'object',
 			'properties' => $setting_properties,
 		);
-
 	}
 
 	/**
@@ -634,7 +638,7 @@ if ( ! function_exists( 'brand_master_admin' ) ) {
 	 *
 	 * @return Brand_Master_Admin
 	 */
-	function brand_master_admin() {
+	function brand_master_admin() {//phpcs:ignore
 		return Brand_Master_Admin::get_instance();
 	}
 }

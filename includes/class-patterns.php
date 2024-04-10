@@ -107,7 +107,7 @@ class Brand_Master_Patterns {
 	 */
 	private function register_block_pattern( $pattern ) {
 		register_block_pattern(
-			sanitize_title( 'bm-' . $pattern['slug'] ),
+			sanitize_title( 'brand-master-' . $pattern['slug'] ),
 			array(
 				'title'      => $pattern['title']['rendered'],
 				'content'    => $pattern['pattern_content'],
@@ -125,7 +125,7 @@ if ( ! function_exists( 'brand_master_patterns' ) ) {
 	 *
 	 * @return Brand_Master_Patterns
 	 */
-	function brand_master_patterns() {
+	function brand_master_patterns() {//phpcs:ignore
 		return Brand_Master_Patterns::get_instance();
 	}
 }

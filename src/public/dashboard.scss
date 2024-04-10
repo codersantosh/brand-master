@@ -425,11 +425,11 @@ a {
 	}
 
 	&-b {
-		#{$varPrefix}-m: auto 0 0 0;
+		margin: auto 0 0 0;
 	}
 
 	&-l {
-		#{$varPrefix}-m: 0 0 0 auto;
+		margin: 0 0 0 auto;
 	}
 }
 

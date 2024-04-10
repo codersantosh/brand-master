@@ -3,6 +3,395 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "X-Generator: babel-plugin-makepot\n"
 
+#: src/admin/pages/dashboard/pages/elements.js:105
+msgid "Site title and tagline"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:121
+msgid "Site title"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:139
+msgid "Site tagline"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:159
+#: src/admin/pages/dashboard/pages/header.js:196
+#: src/admin/pages/dashboard/pages/sidebar.js:173
+msgid "Login user info"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:163
+msgid "Avatar display options"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:167
+msgid "Hide"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:171
+msgid "Top"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:175
+msgid "Right"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:179
+msgid "Bottom"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:183
+msgid "Left"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:200
+msgid "User name and description"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:216
+msgid "User name"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:234
+msgid "User description"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:254
+#: src/admin/pages/dashboard/pages/header.js:200
+#: src/admin/pages/dashboard/pages/sidebar.js:177
+msgid "Logout"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:258
+msgid "Logout label"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:295
+msgid "Menus & pages"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:299
+msgid "Menu heading"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:314
+msgid "Add menus & pages"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:365
+msgid "Menu slug"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:382
+msgid "Select page"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:451
+msgid "Add logout on menu"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:469
+msgid "Redirect non-logged-in visitor from menu pages"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:484
+#: src/admin/pages/login/pages/utilities.js:282
+msgid "Enable redirection"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:487
+#: src/admin/pages/login/pages/utilities.js:175
+msgid "Redirect url"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:494
+msgid "Social links"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:498
+msgid "Social heading"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:513
+msgid "Add social menus"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:531
+#. %s: placeholder for idx
+msgid "Item %d"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:534
+msgid "Remove item"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:537
+msgid "Menu label"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:554
+msgid "Menu link"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:572
+msgid "Open in new tab"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:595
+msgid "Select icon"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:599
+msgid "Icons"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:61
+msgid "Elements settings"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:635
+msgid "Add item"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:64
+#: src/admin/pages/dashboard/pages/header.js:184
+#: src/admin/pages/dashboard/pages/sidebar.js:161
+msgid "Site identity"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:642
+#: src/admin/pages/dashboard/pages/header.js:176
+#: src/admin/pages/dashboard/pages/sidebar.js:157
+msgid "Select"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:646
+msgid "Vertical"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:650
+msgid "Horizontal"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:68
+msgid "Logo display options"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:693
+msgid "What are Dashboard Elements?"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:698
+msgid ""
+"Dashboard Elements refer to the customizable components that can be used in "
+"the dashboard sidebar and header. These elements allow you to personalize "
+"and tailor your dashboard according to your preferences. The content "
+"displayed in the dashboard is sourced from the page content, providing a "
+"dynamic and user-friendly experience."
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:705
+msgid "How to customize Elements?"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:710
+msgid ""
+"Customizing elements is a breeze! Simply navigate to the options available "
+"for each element. To showcase your customized elements, head over to the "
+"header and sidebar content settings. There, you can effortlessly enable, "
+"disable, or rearrange these elements, ensuring a tailored and seamless "
+"display that suits your preferences."
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/elements.js:739
+#: src/admin/pages/dashboard/pages/header.js:288
+#: src/admin/pages/dashboard/pages/no-login.js:121
+#: src/admin/pages/dashboard/pages/sidebar.js:265
+msgid "Frontend Dashboard settings"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/header.js:172
+#: src/admin/pages/dashboard/pages/sidebar.js:153
+msgid "Select separation element"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/header.js:180
+msgid "Page title"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/header.js:188
+#: src/admin/pages/dashboard/pages/sidebar.js:165
+msgid "Menu"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/header.js:192
+#: src/admin/pages/dashboard/pages/sidebar.js:169
+msgid "Social"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/header.js:242
+msgid "What is header content?"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/header.js:247
+msgid ""
+"Header content is prominently displayed at the top of the Frontend "
+"dashboard, serving as a focal point for your dashboard's visual "
+"presentation. You have the flexibility to incorporate all available "
+"elements into the header content, giving you the ability to enable, "
+"disable, and seamlessly sort these elements according to your preferences. "
+"This feature empowers you to create a personalized and visually engaging "
+"dashboard header tailored to your specific needs."
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/header.js:254
+#: src/admin/pages/dashboard/pages/sidebar.js:231
+msgid "What is the separation element?"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/header.js:259
+msgid ""
+"The separation element serves as the focal point from which other elements "
+"diverge, creating a distinct visual separation to the right and left. "
+"Rather than acting as a center element, it functions as the origin of the "
+"layout, determining the arrangement of elements for an organized and "
+"visually appealing Frontend dashboard."
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/header.js:43
+msgid "Enable, disable and arrange header content"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/no-login.js:41
+msgid "Select page for non-logged-in visitor"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/no-login.js:84
+msgid ""
+"When does the content of the \"Select Page For Non-Logged-in Visitor\" "
+"appear?"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/no-login.js:92
+msgid ""
+"If a user navigates directly to the frontend dashboard without logging in, "
+"the content of the chosen page on the \"Select Page For Non-Logged-In "
+"Visitor\" section will be displayed for them."
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/sidebar.js:219
+msgid "What is sidebar content?"
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/sidebar.js:224
+msgid ""
+"Sidebar content is prominently displayed at the side of the Frontend "
+"dashboard, serving as a focal point for your dashboard's visual "
+"presentation. You have the flexibility to incorporate all available "
+"elements into the sidebar content, giving you the ability to enable, "
+"disable, and seamlessly sort these elements according to your preferences. "
+"This feature empowers you to create a personalized and visually engaging "
+"dashboard sidebar tailored to your specific needs."
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/sidebar.js:236
+msgid ""
+"The separation element serves as the focal point from which other elements "
+"diverge, creating a distinct visual separation to the top and bottom. "
+"Rather than acting as a center element, it functions as the origin of the "
+"layout, determining the arrangement of elements for an organized and "
+"visually appealing Frontend dashboard."
+msgstr ""
+
+#: src/admin/pages/dashboard/pages/sidebar.js:43
+msgid "Enable, disable and arrange sidebar content"
+msgstr ""
+
+#: src/admin/pages/login/pages/advanced.js:102
+msgid ""
+"Tailor your login page's appearance with custom CSS. Write standard code to "
+"adjust colors, fonts, and layout, creating a personalized and visually "
+"appealing design."
+msgstr ""
+
+#: src/admin/pages/login/pages/advanced.js:109
+msgid "Custom JS:"
+msgstr ""
+
+#: src/admin/pages/login/pages/advanced.js:114
+msgid ""
+"Enhance login page functionality with custom JavaScript. Implement custom "
+"behaviors and interactive elements to elevate the user experience, aligning "
+"the page with your specific requirements."
+msgstr ""
+
+#: src/admin/pages/login/pages/advanced.js:143
+#: src/admin/pages/login/pages/logo.js:233
+#: src/admin/pages/login/pages/slug.js:196
+#: src/admin/pages/login/pages/title.js:115
+msgid "WordPress login page settings"
+msgstr ""
+
+#: src/admin/pages/login/pages/advanced.js:51
+msgid "Custom CSS"
+msgstr ""
+
+#: src/admin/pages/login/pages/advanced.js:59
+msgid "Custom JavaScript"
+msgstr ""
+
+#: src/admin/pages/login/pages/advanced.js:97
+msgid "Custom CSS:"
+msgstr ""
+
+#: src/admin/pages/login/pages/logo.js:114
+msgid "Image source"
+msgstr ""
+
+#: src/admin/pages/login/pages/logo.js:117
+msgid "Add logo"
+msgstr ""
+
+#: src/admin/pages/login/pages/logo.js:120
+msgid "Remove logo"
+msgstr ""
+
+#: src/admin/pages/login/pages/logo.js:123
+msgid "Select logo from images"
+msgstr ""
+
+#: src/admin/pages/login/pages/logo.js:125
+msgid "Select logo"
+msgstr ""
+
+#: src/admin/pages/login/pages/logo.js:136
+msgid "Logo text"
+msgstr ""
+
+#: src/admin/pages/login/pages/logo.js:151
+msgid "Logo link"
+msgstr ""
+
+#: src/admin/pages/login/pages/logo.js:196
+msgid "How can I customize the appearance of my WordPress login page's logo?"
+msgstr ""
+
+#: src/admin/pages/login/pages/logo.js:204
+msgid ""
+"The logo settings feature allows you to modify the logo image, logo text, "
+"and the link associated with the logo displayed on your WordPress login "
+"page."
+msgstr ""
+
+#: src/admin/pages/login/pages/logo.js:66
+msgid "Add own logo on login page"
+msgstr ""
+
+#: src/admin/pages/login/pages/logo.js:84
+msgid "Logo"
+msgstr ""
+
 #: src/admin/pages/login/pages/slug.js:144
 msgid "How can I enhance the security of my WordPress website?"
 msgstr ""
@@ -25,10 +414,6 @@ msgid ""
 "Changing the login URL and limiting access to sensitive areas such as "
 "wp-login.php and wp-admin directory helps safeguard your website against "
 "unauthorized access attempts, enhancing overall security."
-msgstr ""
-
-#: src/admin/pages/login/pages/slug.js:196
-msgid "WordPress login page settings"
 msgstr ""
 
 #: src/admin/pages/login/pages/slug.js:43
@@ -66,4 +451,131 @@ msgstr ""
 
 #: src/admin/pages/login/pages/slug.js:98
 msgid "Redirection url: "
+msgstr ""
+
+#: src/admin/pages/login/pages/title.js:41
+msgid "Login page title"
+msgstr ""
+
+#: src/admin/pages/login/pages/title.js:79
+msgid "How can I change the page title of my WordPress login page?"
+msgstr ""
+
+#: src/admin/pages/login/pages/title.js:87
+msgid ""
+"Title settings empower you to customize the page title displayed on your "
+"WordPress login page, allowing you to tailor it according to your "
+"preferences or branding requirements."
+msgstr ""
+
+#: src/admin/pages/login/pages/utilities.js:107
+msgid "Hide for"
+msgstr ""
+
+#: src/admin/pages/login/pages/utilities.js:115
+msgid "All users"
+msgstr ""
+
+#: src/admin/pages/login/pages/utilities.js:119
+msgid "Selected roles"
+msgstr ""
+
+#: src/admin/pages/login/pages/utilities.js:135
+msgid "Hide admin bar"
+msgstr ""
+
+#: src/admin/pages/login/pages/utilities.js:166
+msgid "Admin dashboard access"
+msgstr ""
+
+#: src/admin/pages/login/pages/utilities.js:172
+msgid "Disable admin end access"
+msgstr ""
+
+#: src/admin/pages/login/pages/utilities.js:182
+msgid "Restrict access to specific roles only"
+msgstr ""
+
+#: src/admin/pages/login/pages/utilities.js:186
+msgid ""
+"By default, administrators have unrestricted access to the dashboard, "
+"whereas subscribers have denied access."
+msgstr ""
+
+#: src/admin/pages/login/pages/utilities.js:217
+msgid "Redirecting after login"
+msgstr ""
+
+#: src/admin/pages/login/pages/utilities.js:236
+msgid "Redirecting after logout"
+msgstr ""
+
+#: src/admin/pages/login/pages/utilities.js:257
+msgid "Redirecting after lost password (password recovery)"
+msgstr ""
+
+#: src/admin/pages/login/pages/utilities.js:278
+msgid "Redirecting after registration"
+msgstr ""
+
+#: src/admin/pages/login/pages/utilities.js:285
+msgid "Redirection URL"
+msgstr ""
+
+#: src/admin/pages/login/pages/utilities.js:316
+msgid "What role do utilities settings play in WordPress website customization?"
+msgstr ""
+
+#: src/admin/pages/login/pages/utilities.js:324
+msgid ""
+"Utilities settings are instrumental in shaping your brand identity and "
+"customizing essential aspects and behaviors of both the frontend and login "
+"page of your WordPress website."
+msgstr ""
+
+#: src/admin/pages/login/pages/utilities.js:331
+msgid "What is the purpose of the utilities settings?"
+msgstr ""
+
+#: src/admin/pages/login/pages/utilities.js:339
+msgid ""
+"The utilities settings serve to enhance user experience and security. They "
+"offer functionalities such as hiding the admin bar for non-administrative "
+"users, customizing redirection after login, logout, password recovery, and "
+"registration, and restricting access to the wp-admin directory to bolster "
+"security measures."
+msgstr ""
+
+#: src/admin/pages/login/pages/utilities.js:367
+#: src/admin/pages/settings/pages/advanced.js:125
+msgid "Settings"
+msgstr ""
+
+#: src/admin/pages/login/pages/utilities.js:91
+msgid "Hide admin bar on frontend"
+msgstr ""
+
+#: src/admin/pages/settings/pages/advanced.js:42
+msgid "Remove all plugin settings when deactivating."
+msgstr ""
+
+#: src/admin/pages/settings/pages/advanced.js:77
+msgid "What does \"Remove all plugin settings when deactivating\" do?"
+msgstr ""
+
+#: src/admin/pages/settings/pages/advanced.js:85
+msgid ""
+"Enabling this option will erase all settings associated with the plugin "
+"from the WordPress options table. However, please note that the selected "
+"page will not be deleted from Pages."
+msgstr ""
+
+#: src/admin/pages/settings/pages/advanced.js:92
+msgid "Do I need to activate this option?"
+msgstr ""
+
+#: src/admin/pages/settings/pages/advanced.js:97
+msgid ""
+"If you anticipate using the `Login feature` in the future, no need to "
+"activate it."
 msgstr ""

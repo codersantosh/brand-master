@@ -1,4 +1,9 @@
 <?php // phpcs:ignore Class file names should be based on the class name with "class-" prepended.
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Site identity.
  *
@@ -44,7 +49,6 @@ class Brand_Master_Site_Identity {
 	 * @return string Logo
 	 */
 	public function get_logo() {
-        /* phpcs:ignore */
 		return '<div class="bm-logo">' . get_custom_logo() . '</div>';
 	}
 
@@ -104,11 +108,10 @@ class Brand_Master_Site_Identity {
 	 * @return void
 	 */
 	public function get( $section ) {
-        /* phpcs:ignore */
-		echo '<div class="bm-site-identity ' . $this->get_classes($section) . '">';
+		echo '<div class="bm-site-identity ' . esc_attr( $this->get_classes( $section ) ) . '">';
 		if ( $this->has_top_logo() ) {
             /* phpcs:ignore */
-			echo $this->get_logo();
+            echo brand_master_esc_preserve_html( $this->get_logo() );//escaping function.
 		}
 
 		if ( $this->settings['sort'] ) {
@@ -139,12 +142,11 @@ class Brand_Master_Site_Identity {
 		}
 
 		if ( $this->has_bottom_logo() ) {
-            /* phpcs:ignore */
-			echo $this->get_logo();
+           /* phpcs:ignore */
+            echo brand_master_esc_preserve_html( $this->get_logo() );//escaping function.
 		}
 		echo '</div>';
 	}
-
 }
 
 if ( ! function_exists( 'brand_master_site_identity' ) ) {
@@ -155,7 +157,7 @@ if ( ! function_exists( 'brand_master_site_identity' ) ) {
 	 * @param string $section section name.
 	 * @return void
 	 */
-	function brand_master_site_identity( $section ) {
+	function brand_master_site_identity( $section ) {//phpcs:ignore
 		$bm_identity = new Brand_Master_Site_Identity();
 		$bm_identity->get( $section );
 	}

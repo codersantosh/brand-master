@@ -1,4 +1,9 @@
 <?php // phpcs:ignore Class file names should be based on the class name with "class-" prepended.
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * User Info.
  *
@@ -62,7 +67,6 @@ class Brand_Master_User_Info {
 	public function __construct() {
 		$dashboard_settings = brand_master_include()->get_settings()['dashboard'];
 		$this->settings     = $dashboard_settings['userInfo'];
-
 		$bm_current_user         = wp_get_current_user();
 		$this->user_id           = $bm_current_user->ID;
 		$this->user_email        = $bm_current_user->user_email;
@@ -79,7 +83,6 @@ class Brand_Master_User_Info {
 		$avatar_args['class'] = 'bm-logo';
 		$avatar_size          = 40;
 		return get_avatar( $this->user_email, $avatar_size, '', '', $avatar_args );
-
 	}
 
 	/**
@@ -109,9 +112,10 @@ class Brand_Master_User_Info {
 	}
 
 	/**
-	 * Get classes of site identiy wrap.
+	 * Get classes of the wrap.
 	 *
 	 * @access public
+	 * @param string $section section name.
 	 * @return string classnames
 	 */
 	public function get_classes( $section ) {
@@ -139,11 +143,10 @@ class Brand_Master_User_Info {
 	 * @return void
 	 */
 	public function get( $section ) {
-        /* phpcs:ignore */
-		echo '<div class="bm-user-info' . $this->get_classes($section) . '">';
+		echo '<div class="bm-user-info' . esc_attr( $this->get_classes( $section ) ) . '">';
 		if ( $this->has_top_logo() ) {
-            /* phpcs:ignore */
-			echo $this->get_logo();
+           /* phpcs:ignore */
+			echo brand_master_esc_preserve_html( $this->get_logo() );// escaping function.
 		}
 
 		if ( $this->settings['sort'] ) {
@@ -159,8 +162,7 @@ class Brand_Master_User_Info {
 
 					case 'desc':
 						if ( $this->settings[ $element ] ) {
-							/* phpcs:ignore */
-							echo '<p class="at-txt bm-user-desc">' . wp_kses_post(get_user_meta($this->user_id, 'description', true)) . '</p>';
+							echo '<p class="at-txt bm-user-desc">' . wp_kses_post( get_user_meta( $this->user_id, 'description', true ) ) . '</p>';
 						}
 						break;
 
@@ -176,11 +178,10 @@ class Brand_Master_User_Info {
 
 		if ( $this->has_bottom_logo() ) {
             /* phpcs:ignore */
-			echo $this->get_logo();
+			echo brand_master_esc_preserve_html( $this->get_logo() );// escaping function.
 		}
 		echo '</div>';
 	}
-
 }
 
 if ( ! function_exists( 'brand_master_user_info' ) ) {
@@ -192,7 +193,7 @@ if ( ! function_exists( 'brand_master_user_info' ) ) {
 	 * @param string $section section name.
 	 * @return void
 	 */
-	function brand_master_user_info( $section ) {
+	function brand_master_user_info( $section ) {//phpcs:ignore
 		$bm_identity = new Brand_Master_User_Info();
 		$bm_identity->get( $section );
 	}

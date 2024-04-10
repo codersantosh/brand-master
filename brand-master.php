@@ -77,7 +77,5 @@ function brand_master_run() {
 
 	$plugin = new Brand_Master();
 	$plugin->run();
-
 }
 brand_master_run();
-

@@ -1,4 +1,9 @@
 <?php // phpcs:ignore Class file names should be based on the class name with "class-" prepended.
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * The frontend dashboard functionality of the plugin.
  *
@@ -186,7 +191,7 @@ class Brand_Master_Dashboard {
 
 						case 'pageTitle':
 							if ( $sorting_content[ $element ] ) {
-								the_title( '<h3 class="bm-page-title' . brand_master_dashboard()->get_separation_class( $section, 'pageTitle' ) . '">', '</h3>' );
+								the_title( '<h3 class="bm-page-title' . esc_attr( brand_master_dashboard()->get_separation_class( $section, 'pageTitle' ) ) . '">', '</h3>' );
 							}
 							break;
 
@@ -209,7 +214,7 @@ class Brand_Master_Dashboard {
 	public function get_current_menu() {
 
 		/* phpcs:ignore */
-		$current_slug = ! empty( $_GET['action'] ) ? sanitize_text_field( $_GET['action'] ) : '';
+		$current_slug       = isset( $_GET['action'] ) && ! empty( $_GET['action'] ) ? sanitize_text_field( $_GET['action'] ) : '';
 		$dashboard_settings = brand_master_include()->get_settings()['dashboard'];
 		$menu_settings      = $dashboard_settings['menu'];
 		$menu_items         = $menu_settings['items'];
@@ -232,7 +237,6 @@ class Brand_Master_Dashboard {
 		}
 
 		return false;
-
 	}
 
 	/**
@@ -254,7 +258,6 @@ class Brand_Master_Dashboard {
 
 		/* Menu pages redirect */
 		add_action( 'template_redirect', array( $this, 'redirect_to_dashboard' ) );
-
 	}
 
 	/**
@@ -293,7 +296,7 @@ class Brand_Master_Dashboard {
 				wp_reset_postdata();
 			} else {
 				/* phpcs:ignore */
-				echo $this->add_dashboard_login();
+				echo brand_master_esc_preserve_html( $this->add_dashboard_login() );//escpaing function
 			}
 			echo '</div>';
 		}
@@ -319,7 +322,7 @@ class Brand_Master_Dashboard {
 		echo '</div>';
 		echo '</div>';
 
-		return apply_filters( 'add_dashboard_login', ob_get_clean() );
+		return apply_filters( 'brand_master_add_dashboard_login', ob_get_clean() );
 	}
 
 	/**
@@ -374,7 +377,6 @@ class Brand_Master_Dashboard {
 			),
 			'before'
 		);
-
 	}
 
 	/**
@@ -423,7 +425,7 @@ if ( ! function_exists( 'brand_master_dashboard' ) ) {
 	 *
 	 * @return Brand_Master_Dashboard
 	 */
-	function brand_master_dashboard() {
+	function brand_master_dashboard() {//phpcs:ignore
 		return Brand_Master_Dashboard::get_instance();
 	}
 }

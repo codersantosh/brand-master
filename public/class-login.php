@@ -1,4 +1,9 @@
 <?php // phpcs:ignore Class file names should be based on the class name with "class-" prepended.
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * The login-specific functionality of the plugin.
  *
@@ -146,7 +151,6 @@ class Brand_Master_Login {
 		}
 
 		return apply_filters( 'brand_master_get_login_url', $login_url );
-
 	}
 
 	/**
@@ -330,7 +334,6 @@ class Brand_Master_Login {
 		}
 
 		return apply_filters( 'brand_master_get_redirect_url', $redirect_url );
-
 	}
 
 
@@ -356,11 +359,10 @@ class Brand_Master_Login {
 		}
 
 		return apply_filters( 'brand_master_has_wp_admin_access', $has_access );
-
 	}
 
 	/**
-	 * Redirect login page or wp-admin dir to redirection url or load 404 page
+	 * Redirect login page or wp-admin dir to redirection url.
 	 * Adjust wp-admin page again
 	 *
 	 * @since 1.0.0
@@ -399,7 +401,6 @@ class Brand_Master_Login {
 				}
 			}
 		}
-
 	}
 
 	/**
@@ -658,7 +659,7 @@ if ( ! function_exists( 'brand_master_login' ) ) {
 	 *
 	 * @return Brand_Master_Login
 	 */
-	function brand_master_login() {
+	function brand_master_login() {//phpcs:ignore
 		return Brand_Master_Login::get_instance();
 	}
 }

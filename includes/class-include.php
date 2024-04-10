@@ -115,7 +115,7 @@ if ( ! function_exists( 'brand_master_include' ) ) {
 	 *
 	 * @return Brand_Master_Include
 	 */
-	function brand_master_include() {
+	function brand_master_include() {//phpcs:ignore
 		return Brand_Master_Include::get_instance();
 	}
 }

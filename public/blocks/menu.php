@@ -1,4 +1,9 @@
 <?php // phpcs:ignore
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 if ( ! function_exists( 'brand_master_menu' ) ) {
 	/**
 	 * Display menu block.
@@ -12,12 +17,12 @@ if ( ! function_exists( 'brand_master_menu' ) ) {
 	 */
 	function brand_master_menu( $section ) {
 		/* phpcs:ignore */
-		$dashboard_action = ! empty( $_GET['action'] ) ? esc_attr( $_GET['action'] ) : '';
+		$dashboard_action = isset($_GET['action'] ) && ! empty( $_GET['action'] ) ? sanitize_text_field( $_GET['action'] ) : '';
 
 		$dashboard_settings = brand_master_include()->get_settings()['dashboard'];
 		$menu_settings      = $dashboard_settings['menu'];
 		?>
-		<div class="at-m bm-menu<?php /* phpcs:ignore */ echo brand_master_dashboard()->get_separation_class( $section,'menu' ); ?>">
+		<div class="at-m bm-menu <?php echo esc_attr( brand_master_dashboard()->get_separation_class( $section, 'menu' ) ); ?>">
 			<?php
 			if ( $menu_settings['heading'] ) {
 				?>
@@ -31,7 +36,7 @@ if ( ! function_exists( 'brand_master_menu' ) ) {
 					$menu_classes .= ' bm-menu-ul-vertical at-flx-col';
 				}
 				?>
-				<ul class="at-ls at-flx at-gap bm-menu-ul <?php /* known value no need to escape. */ /* phpcs:ignore */ echo $menu_classes; ?>">
+				<ul class="at-ls at-flx at-gap bm-menu-ul <?php echo esc_attr( $menu_classes ); ?>">
 					<?php
 					if ( $menu_items ) {
 						foreach ( $menu_items as $item ) {
@@ -44,8 +49,8 @@ if ( ! function_exists( 'brand_master_menu' ) ) {
 								<a href="<?php echo esc_url( add_query_arg( 'action', $item['slug'], get_permalink() ) ); ?>" class="at-flx at-al-itm-ctr at-gap">
 									<?php
 									if ( isset( $item['icon']['svg'] ) && brand_master_is_valid_svg( $item['icon']['svg'] ) ) {
-										/* phpcs:ignore */
-										echo $item['icon']['svg'];
+										/* phpcs:ignore*/
+                                        echo brand_master_esc_svg( $item['icon']['svg'] );//escaping function.
 									}
 									echo esc_html( $item['label'] );
 									?>

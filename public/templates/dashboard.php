@@ -1,4 +1,9 @@
 <?php
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Dashboard template
  *
@@ -26,7 +31,7 @@ $sorting_content_elements = $sorting_content['sort'];
 		$bm_no_sidebar = ' bm-no-sidebar at-flx-grw-1';
 	}
 	?>
-	<div class="at-bg-cl at-w at-m bm-dashboard-main<?php /* phpcs:ignore */ echo $bm_no_sidebar; ?>">
+	<div class="at-bg-cl at-w at-m bm-dashboard-main<?php echo esc_attr( $bm_no_sidebar ); ?>">
 		<?php
 		$sorting_content          = $dashboard_settings['headingContent'];
 		$sorting_content_elements = $sorting_content['sort'];

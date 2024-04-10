@@ -7,6 +7,11 @@
  * @author     codersantosh <codersantosh@gmail.com>
  */
 
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 if ( ! function_exists( 'brand_master_default_options' ) ) :
 	/**
 	 * Get the Plugin Default Options.
@@ -134,7 +139,6 @@ if ( ! function_exists( 'brand_master_default_options' ) ) :
 				'url' => '',
 			),
 			'deleteAll'              => false,
-
 		);
 
 		return apply_filters( 'brand_master_default_options', $default_options );
@@ -342,7 +346,6 @@ if ( ! function_exists( 'brand_master_get_white_label' ) ) :
 								'text'    => esc_html__( 'Visit site', 'brand-master' ),
 								'url'     => 'https://github.com/codersantosh/brand-master',
 								'variant' => 'primary',
-
 							),
 							array(
 								'text'    => esc_html__( 'Get Support', 'brand-master' ),
@@ -469,15 +472,14 @@ if ( ! function_exists( 'brand_master_get_white_label' ) ) :
 						'columns' => array(
 							array(
 								'icon'    => '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="at-svg" viewBox="0 0 16 16"><path d="M1 2.828c.885-.37 2.154-.769 3.388-.893 1.33-.134 2.458.063 3.112.752v9.746c-.935-.53-2.12-.603-3.213-.493-1.18.12-2.37.461-3.287.811zm7.5-.141c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893v9.923c-.918-.35-2.107-.692-3.287-.81-1.094-.111-2.278-.039-3.213.492zM8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 0 0 0 2.5v11a.5.5 0 0 0 .707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 0 0 .78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783"/></svg>',
-								'title'   => esc_html__( 'Login settings' ),
+								'title'   => esc_html__( 'Login settings', 'brand-master' ),
 								'link'    => '#/login',
 								'variant' => 'light',
 								'target'  => '_self',
-
 							),
 							array(
 								'icon'    => '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="at-svg" viewBox="0 0 16 16"><path d="M1 2.828c.885-.37 2.154-.769 3.388-.893 1.33-.134 2.458.063 3.112.752v9.746c-.935-.53-2.12-.603-3.213-.493-1.18.12-2.37.461-3.287.811zm7.5-.141c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893v9.923c-.918-.35-2.107-.692-3.287-.81-1.094-.111-2.278-.039-3.213.492zM8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 0 0 0 2.5v11a.5.5 0 0 0 .707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 0 0 .78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783"/></svg>',
-								'title'   => esc_html__( 'Dashboard settings' ),
+								'title'   => esc_html__( 'Dashboard settings', 'brand-master' ),
 								'link'    => '#/dashboard',
 								'variant' => 'light',
 								'target'  => '_self',
@@ -485,7 +487,7 @@ if ( ! function_exists( 'brand_master_get_white_label' ) ) :
 							),
 							array(
 								'icon'    => '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="at-svg" viewBox="0 0 16 16"><path d="M1 2.828c.885-.37 2.154-.769 3.388-.893 1.33-.134 2.458.063 3.112.752v9.746c-.935-.53-2.12-.603-3.213-.493-1.18.12-2.37.461-3.287.811zm7.5-.141c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893v9.923c-.918-.35-2.107-.692-3.287-.81-1.094-.111-2.278-.039-3.213.492zM8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 0 0 0 2.5v11a.5.5 0 0 0 .707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 0 0 .78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783"/></svg>',
-								'title'   => esc_html__( 'Utilities settings' ),
+								'title'   => esc_html__( 'Utilities settings', 'brand-master' ),
 								'link'    => '#/settings',
 								'variant' => 'light',
 								'target'  => '_self',
@@ -528,5 +530,162 @@ if ( ! function_exists( 'brand_master_is_valid_svg' ) ) :
 		} else {
 			return false;
 		}
+	}
+endif;
+
+if ( ! function_exists( 'brand_master_esc_preserve_html' ) ) :
+	/**
+	 * Escape for all non-trusted HTML with preserving HTML
+	 *
+	 * @since 1.0.0
+	 * @param string $html HTML.
+	 * @return string escaped HTML
+	 * @author     codersantosh <codersantosh@gmail.com>
+	 */
+	function brand_master_esc_preserve_html( $html ) {
+
+		/* array of allowed html */
+		$allowed_html          = wp_kses_allowed_html( 'post' );
+		$allowed_html['form']  = array(
+			'action'         => true,
+			'accept'         => true,
+			'accept-charset' => true,
+			'enctype'        => true,
+			'method'         => true,
+			'name'           => true,
+			'target'         => true,
+			'id'             => true,
+			'style'          => true,
+			'dir'            => true,
+			'lang'           => true,
+			'title'          => true,
+			'onsubmit'       => true,
+		);
+		$allowed_html['label'] = array(
+			'for'   => true,
+			'class' => true,
+			'style' => true,
+		);
+		$allowed_html['input'] = array(
+			'type'         => true,
+			'name'         => true,
+			'id'           => true,
+			'autocomplete' => true,
+			'class'        => true,
+			'value'        => true,
+			'size'         => true,
+			'spellcheck'   => true,
+			'maxlength'    => true,
+			'required'     => true,
+			'disabled'     => true,
+			'readonly'     => true,
+			'checked'      => true,
+			'placeholder'  => true,
+			'style'        => true,
+			'autofocus'    => true,
+			'title'        => true,
+		);
+		return wp_kses( $html, $allowed_html );
+	}
+endif;
+
+if ( ! function_exists( 'brand_master_esc_svg' ) ) :
+
+	/**
+	 * Escape for SVG HTML
+	 *
+	 * @since 1.0.0
+	 * @param string $svg_html HTML.
+	 * @return string escaped HTML
+	 * @author codersantosh <codersantosh@gmail.com>
+	 */
+	function brand_master_esc_svg( $svg_html ) {
+
+		$allowed_html = array(
+			'svg'            => array(
+				'xmlns'       => array(),
+				'fill'        => array(),
+				'viewbox'     => array(),
+				'role'        => array(),
+				'aria-hidden' => array(),
+				'focusable'   => array(),
+				'height'      => array(),
+				'width'       => array(),
+				'xmlns:xlink' => array(),
+				'id'          => array(),
+				'class'       => array(),
+				'style'       => array(),
+				'transform'   => array(),
+				'opacity'     => array(),
+			),
+			'path'           => array(
+				'd'               => array(),
+				'fill'            => array(),
+				'stroke'          => array(),
+				'stroke-width'    => array(),
+				'stroke-linecap'  => array(),
+				'stroke-linejoin' => array(),
+				'id'              => array(),
+				'class'           => array(),
+				'style'           => array(),
+				'transform'       => array(),
+				'opacity'         => array(),
+			),
+			'lineargradient' => array(
+				'gradientunits'     => array(),
+				'gradienttransform' => array(),
+				'spreadmethod'      => array(),
+				'x1'                => array(),
+				'y1'                => array(),
+				'x2'                => array(),
+				'y2'                => array(),
+				'id'                => array(),
+				'class'             => array(),
+				'style'             => array(),
+				'transform'         => array(),
+				'opacity'           => array(),
+			),
+			'stop'           => array(
+				'offset'       => array(),
+				'stop-color'   => array(),
+				'stop-opacity' => array(),
+				'id'           => array(),
+				'class'        => array(),
+				'style'        => array(),
+				'transform'    => array(),
+				'opacity'      => array(),
+			),
+			'g'              => array(
+				'id'        => array(),
+				'class'     => array(),
+				'style'     => array(),
+				'transform' => array(),
+				'opacity'   => array(),
+			),
+			'text'           => array(
+				'x'           => array(),
+				'y'           => array(),
+				'dy'          => array(),
+				'text-anchor' => array(),
+				'font-family' => array(),
+				'font-size'   => array(),
+				'font-weight' => array(),
+				'fill'        => array(),
+				'id'          => array(),
+				'class'       => array(),
+				'style'       => array(),
+				'transform'   => array(),
+				'opacity'     => array(),
+			),
+			'tspan'          => array(
+				'id'        => array(),
+				'class'     => array(),
+				'style'     => array(),
+				'transform' => array(),
+				'opacity'   => array(),
+			),
+		);
+
+		return wp_kses( $svg_html, $allowed_html );
 	}
 endif;

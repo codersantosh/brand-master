@@ -110,7 +110,6 @@ class Brand_Master {
 		require_once BRAND_MASTER_PATH . 'public/index.php';
 
 		$this->loader = new Brand_Master_Loader();
-
 	}
 
 	/**
@@ -127,7 +126,6 @@ class Brand_Master {
 		$plugin_i18n = new Brand_Master_I18n();
 
 		$this->loader->add_action( 'plugins_loaded', $plugin_i18n, 'load_plugin_textdomain' );
-
 	}
 
 	/**
@@ -143,7 +141,6 @@ class Brand_Master {
 
 		/* Register scripts and styles */
 		$this->loader->add_action( 'init', $plugin_include, 'register_scripts_and_styles' );
-
 	}
 
 	/**
@@ -163,7 +160,6 @@ class Brand_Master {
 		/*Register Settings*/
 		$this->loader->add_action( 'rest_api_init', $plugin_admin, 'register_settings', 1 );
 		$this->loader->add_action( 'admin_init', $plugin_admin, 'register_settings', 1 );
-
 	}
 
 	/**

@@ -54,7 +54,6 @@ class Brand_Master_Loader {
 
 		$this->actions = array();
 		$this->filters = array();
-
 	}
 
 	/**
@@ -110,7 +109,6 @@ class Brand_Master_Loader {
 		);
 
 		return $hooks;
-
 	}
 
 	/**

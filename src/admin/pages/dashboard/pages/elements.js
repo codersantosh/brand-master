@@ -745,6 +745,7 @@ const Settings = () => {
 						allowContainer: true,
 						type: 'fluid',
 						tag: 'section',
+						className: 'at-p',
 					}}
 					renderContent={<MainContent />}
 					renderSidebar={!bmdElDocs1 ? <Documentation /> : null}

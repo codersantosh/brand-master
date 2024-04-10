@@ -13,6 +13,7 @@ Brand Master is a powerful plugin designed to provide complete control over the 
   - [Table of contents](#table-of-contents)
   - [Getting Started](#getting-started)
   - [Installation](#installation)
+  - [Available shortcodes](#available-shortcodes)
   - [Inbuilt Patterns for Quick Setup](#inbuilt-patterns-for-quick-setup)
   - [Usage](#usage)
   - [Features](#features)
@@ -33,6 +34,11 @@ There are two ways to install the plugin:
 2. Extract the plugin folder and place it in the "/wp-content/plugins/" directory.
 
 After installation, activate the plugin through the 'Plugins' menu in WordPress.
+
+## Available shortcodes
+
+- [brand_master_dashboard /] for frontend dashboard.
+- [brand_master_login /] for frontend login.
 
 ## Inbuilt Patterns for Quick Setup
 

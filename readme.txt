@@ -14,6 +14,10 @@ Customize your WordPress login page and provide a sophisticated frontend dashboa
 
 Brand Master is a powerful plugin designed to provide you complete control over the appearance and behaviour of your WordPress login pages, along with a seamless experience for users through a customized frontend dashboard. Elevate your brand by creating a unique and user-friendly login and frontend dashboard environment.
 
+== Available shortcodes == 
+
+- [brand_master_dashboard /]
+- [brand_master_login /]
 
 == Inbuilt Patterns for Quick Setup ==
 
