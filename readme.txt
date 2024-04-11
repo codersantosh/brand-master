@@ -2,7 +2,7 @@
 Contributors: codersantosh
 Tags: login customization, frontend dashboard, white label, branding
 Requires at least: 5.0
-Tested up to: 6.4.3
+Tested up to: 6.5
 Requires PHP: 7.0
 Stable tag: 1.0.0
 License: GPLv2 or later
@@ -80,9 +80,19 @@ No, Brand Master does not alter the WordPress backend dashboard. It facilitates 
 
 == Screenshots ==
 
-1. Login Page Customization
-2. Frontend Dashboard
-3. Branding Options
+1. Dashboard - Getting started
+2. Dashboard - Login Settings => Security and URL
+3. Dashboard - Login Settings => Logo
+4. Dashboard - Login Settings => Page Title
+5. Dashboard - Login Settings => Utilities
+6. Dashboard - Login Settings => Advanced
+7. Dashboard - Frontend Dashboard Settings => Non-logged-in visitor page
+8. Dashboard - Frontend Dashboard => Sidebar content
+9. Dashboard - Frontend Dashboard => Header content
+10. Dashboard - Frontend Dashboard => Elements
+11. Dashboard - Settings => Advanced
+12. Frontend - User Dashboard
+13. Frontend - Login page with own logo
 
 == Changelog ==
 
