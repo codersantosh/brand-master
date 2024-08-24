@@ -121,14 +121,14 @@ class Brand_Master_Site_Identity {
 				switch ( $element ) {
 					case 'title':
 						if ( $this->settings[ $element ] ) {
-							echo '<h1 class="at-txt bm-site-title">' . esc_html( get_bloginfo( 'name' ) ) . '</h1>';
+							echo '<h1 class="at-txt bm-site-title at-m">' . esc_html( get_bloginfo( 'name' ) ) . '</h1>';
 						}
 						break;
 
 					case 'tagline':
 						if ( $this->settings[ $element ] ) {
 							$site_description = get_bloginfo( 'description', 'display' );
-							echo '<p class="at-txt bm-site-tagline">' . esc_html( $site_description ) . '</p>';
+							echo '<p class="at-txt bm-site-tagline at-m">' . esc_html( $site_description ) . '</p>';
 						}
 						break;
 

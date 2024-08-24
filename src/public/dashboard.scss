@@ -287,6 +287,9 @@ a {
 					width: var(#{$varPrefix}-w);
 					height: var(#{$varPrefix}-h);
 				}
+				&:focus {
+					outline: 0;
+				}
 			}
 
 			&:hover {
@@ -322,12 +325,13 @@ a {
 			#{$varPrefix}-ltr-sp: 1px;
 			#{$varPrefix}-fnt-fam: Arial, Helvetica, sans-serif;
 
-			color: var(#{$themePrefix}-body-color);
-			font-size: var(#{$varPrefix}-fnt-sz);
-			font-weight: var(#{$varPrefix}-fnt-wt);
-			font-family: var(#{$varPrefix}-fnt-fam);
-			letter-spacing: var(#{$varPrefix}-ltr-sp);
-			text-transform: var(#{$varPrefix}-txt-tf);
+			color: var(#{$themePrefix}-body-color) !important;
+			font-size: var(#{$varPrefix}-fnt-sz) !important;
+			font-weight: var(#{$varPrefix}-fnt-wt) !important;
+			font-family: var(#{$varPrefix}-fnt-fam) !important;
+			letter-spacing: var(#{$varPrefix}-ltr-sp) !important;
+			text-transform: var(#{$varPrefix}-txt-tf) !important;
+			margin: var(#{$varPrefix}-m) !important;
 		}
 	}
 
@@ -380,7 +384,8 @@ a {
 		#{$varPrefix}-gap: initial;
 		#{$varPrefix}-gap: 5px 10px;
 		#{$varPrefix}-fnt-sz: 14px;
-		font-size: var(#{$varPrefix}-fnt-sz);
+		font-size: var(#{$varPrefix}-fnt-sz) !important;
+		margin: var(#{$varPrefix}-m) !important;
 	}
 
 	&-title {
@@ -389,6 +394,8 @@ a {
 
 	&-page-title {
 		color: var(#{$themePrefix}-base-color);
+		#{$varPrefix}-m: 0;
+		margin: var(#{$varPrefix}-m) !important;
 	}
 
 	&-site {
@@ -399,11 +406,19 @@ a {
 		&-title {
 			#{$varPrefix}-fnt-sz: 14px;
 			#{$varPrefix}-fnt-wt: 600;
+			#{$varPrefix}-m: 0;
+			font-size: var(#{$varPrefix}-fnt-sz) !important;
+			font-weight: var(#{$varPrefix}-fnt-wt) !important;
+			margin: var(#{$varPrefix}-m) !important;
 		}
 
 		&-tagline {
+			#{$varPrefix}-m: 0;
 			#{$varPrefix}-fnt-sz: 14px;
 			#{$varPrefix}-fnt-wt: 400;
+			font-size: var(#{$varPrefix}-fnt-sz) !important;
+			font-weight: var(#{$varPrefix}-fnt-wt) !important;
+			margin: var(#{$varPrefix}-m) !important;
 		}
 	}
 
@@ -416,11 +431,19 @@ a {
 		&-name {
 			#{$varPrefix}-fnt-sz: 14px;
 			#{$varPrefix}-fnt-wt: 600;
+			#{$varPrefix}-m: 0;
+			font-size: var(#{$varPrefix}-fnt-sz) !important;
+			font-weight: var(#{$varPrefix}-fnt-wt) !important;
+			margin: var(#{$varPrefix}-m) !important;
 		}
 
 		&-desc {
 			#{$varPrefix}-fnt-sz: 14px;
 			#{$varPrefix}-fnt-wt: 400;
+			#{$varPrefix}-m: 0;
+			font-size: var(#{$varPrefix}-fnt-sz) !important;
+			font-weight: var(#{$varPrefix}-fnt-wt) !important;
+			margin: var(#{$varPrefix}-m) !important;
 		}
 	}
 

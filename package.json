@@ -11,6 +11,7 @@
 		"start:admin": "wp-scripts start src/admin.js --output-path=build/admin",
 		"start:public": "wp-scripts start src/dashboard.js --output-path=build/public",
 		"start": "npm-run-all --parallel start:admin start:public",
+		"packages-update": "wp-scripts packages-update",
 		"copy": "node .bin/copy.js",
 		"replace": "node .bin/replace-texts.js",
 		"makejsstring": "node .bin/make-string.js",
@@ -27,10 +28,10 @@
 		"react-icons": "^5.0.1"
 	},
 	"devDependencies": {
-		"@wordpress/babel-plugin-makepot": "^5.34.0",
-		"@wordpress/babel-preset-default": "^7.34.0",
-		"@wordpress/i18n": "^4.50.0",
-		"@wordpress/scripts": "27.1.0",
+		"@wordpress/babel-plugin-makepot": "^6.6.0",
+		"@wordpress/babel-preset-default": "^8.6.0",
+		"@wordpress/i18n": "^5.6.0",
+		"@wordpress/scripts": "^28.6.0",
 		"autoprefixer": "^10.4.17",
 		"babel-cli": "^6.26.0",
 		"ncp": "^2.0.0",

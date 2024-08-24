@@ -16,8 +16,7 @@ if ( ! function_exists( 'brand_master_menu' ) ) {
 	 * @return void
 	 */
 	function brand_master_menu( $section ) {
-		/* phpcs:ignore */
-		$dashboard_action = isset($_GET['action'] ) && ! empty( $_GET['action'] ) ? sanitize_text_field( $_GET['action'] ) : '';
+		$current_menu = brand_master_dashboard()->get_current_menu();
 
 		$dashboard_settings = brand_master_include()->get_settings()['dashboard'];
 		$menu_settings      = $dashboard_settings['menu'];
@@ -39,9 +38,9 @@ if ( ! function_exists( 'brand_master_menu' ) ) {
 				<ul class="at-ls at-flx at-gap bm-menu-ul <?php echo esc_attr( $menu_classes ); ?>">
 					<?php
 					if ( $menu_items ) {
-						foreach ( $menu_items as $item ) {
+						foreach ( $menu_items as $key => $item ) {
 							$class = 'bm-menu-li';
-							if ( $dashboard_action === $item['slug'] || ! $dashboard_action ) {
+							if ( $current_menu['slug'] === $item['slug'] ) {
 								$class .= ' bm-menu-active';
 							}
 							?>

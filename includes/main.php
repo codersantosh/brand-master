@@ -160,6 +160,8 @@ class Brand_Master {
 		/*Register Settings*/
 		$this->loader->add_action( 'rest_api_init', $plugin_admin, 'register_settings', 1 );
 		$this->loader->add_action( 'admin_init', $plugin_admin, 'register_settings', 1 );
+
+		$this->loader->add_filter( 'plugin_action_links_brand-master/brand-master.php', $plugin_admin, 'add_plugin_links', 10, 4 );
 	}
 
 	/**

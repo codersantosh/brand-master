@@ -191,7 +191,7 @@ class Brand_Master_Dashboard {
 
 						case 'pageTitle':
 							if ( $sorting_content[ $element ] ) {
-								the_title( '<h3 class="bm-page-title' . esc_attr( brand_master_dashboard()->get_separation_class( $section, 'pageTitle' ) ) . '">', '</h3>' );
+								the_title( '<h3 class="bm-page-title at-m' . esc_attr( brand_master_dashboard()->get_separation_class( $section, 'pageTitle' ) ) . '">', '</h3>' );
 							}
 							break;
 

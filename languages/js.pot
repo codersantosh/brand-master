@@ -3,6 +3,44 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "X-Generator: babel-plugin-makepot\n"
 
+#: src/admin/components/atoms/save-settings.js:24
+msgid "Saved"
+msgstr ""
+
+#: src/admin/components/atoms/save-settings.js:25
+msgid "Save settings"
+msgstr ""
+
+#: src/admin/components/atoms/save-settings.js:26
+msgid "Saving"
+msgstr ""
+
+#: src/admin/components/molecules/docs-title.js:15
+msgid "Documentation"
+msgstr ""
+
+#: src/admin/components/organisms/admin-header.js:24
+msgid "Getting started"
+msgstr ""
+
+#: src/admin/components/organisms/admin-header.js:29
+msgid "Login"
+msgstr ""
+
+#: src/admin/components/organisms/admin-header.js:33
+msgid "Dashboard"
+msgstr ""
+
+#: src/admin/components/organisms/admin-header.js:37
+#: src/admin/pages/login/pages/utilities.js:367
+#: src/admin/pages/settings/pages/advanced.js:125
+msgid "Settings"
+msgstr ""
+
+#: src/admin/components/organisms/admin-header.js:55
+msgid "Show all hidden informations, notices and documentations "
+msgstr ""
+
 #: src/admin/pages/dashboard/pages/elements.js:105
 msgid "Site title and tagline"
 msgstr ""
@@ -308,6 +346,22 @@ msgstr ""
 msgid "Enable, disable and arrange sidebar content"
 msgstr ""
 
+#: src/admin/pages/dashboard/routes.js:83
+msgid "Non-logged-in visitor"
+msgstr ""
+
+#: src/admin/pages/dashboard/routes.js:87
+msgid "Sidebar content"
+msgstr ""
+
+#: src/admin/pages/dashboard/routes.js:91
+msgid "Header content"
+msgstr ""
+
+#: src/admin/pages/dashboard/routes.js:95
+msgid "Elements"
+msgstr ""
+
 #: src/admin/pages/login/pages/advanced.js:102
 msgid ""
 "Tailor your login page's appearance with custom CSS. Write standard code to "
@@ -389,6 +443,7 @@ msgid "Add own logo on login page"
 msgstr ""
 
 #: src/admin/pages/login/pages/logo.js:84
+#: src/admin/pages/login/routes.js:93
 msgid "Logo"
 msgstr ""
 
@@ -546,13 +601,25 @@ msgid ""
 "security measures."
 msgstr ""
 
-#: src/admin/pages/login/pages/utilities.js:367
-#: src/admin/pages/settings/pages/advanced.js:125
-msgid "Settings"
-msgstr ""
-
 #: src/admin/pages/login/pages/utilities.js:91
 msgid "Hide admin bar on frontend"
+msgstr ""
+
+#: src/admin/pages/login/routes.js:101
+msgid "Utilities"
+msgstr ""
+
+#: src/admin/pages/login/routes.js:105
+#: src/admin/pages/settings/routes.js:67
+msgid "Advanced"
+msgstr ""
+
+#: src/admin/pages/login/routes.js:89
+msgid "Security and URL"
+msgstr ""
+
+#: src/admin/pages/login/routes.js:97
+msgid "Title"
 msgstr ""
 
 #: src/admin/pages/settings/pages/advanced.js:42

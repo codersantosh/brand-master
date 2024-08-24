@@ -156,13 +156,13 @@ class Brand_Master_User_Info {
 				switch ( $element ) {
 					case 'name':
 						if ( $this->settings[ $element ] ) {
-							echo '<h4 class="at-txt bm-user-name">' . esc_html( $this->user_display_name ) . '</h4>';
+							echo '<h4 class="at-txt bm-user-name at-m">' . esc_html( $this->user_display_name ) . '</h4>';
 						}
 						break;
 
 					case 'desc':
 						if ( $this->settings[ $element ] ) {
-							echo '<p class="at-txt bm-user-desc">' . wp_kses_post( get_user_meta( $this->user_id, 'description', true ) ) . '</p>';
+							echo '<p class="at-txt bm-user-desc at-m">' . wp_kses_post( get_user_meta( $this->user_id, 'description', true ) ) . '</p>';
 						}
 						break;
 
