@@ -124,11 +124,11 @@ Thank you for contributing to this project!
 
 - **Santosh Kunwar** - [codersantosh](https://twitter.com/codersantosh)
 
-See also the list of [contributors](https://github.com/codersantosh/brand-master/graphs/contributors) who participated in this project.
+See also the list of [contributors](https://patternswp.com//brand-master/graphs/contributors) who participated in this project.
 
 ## Resources
 
-- [WP React Plugin Boilerplate](https://github.com/codersantosh/wp-react-plugin-boilerplate)
+- [WP React Plugin Boilerplate](https://patternswp.com//wp-react-plugin-boilerplate)
 - [Atrc (atrc) - Atomic React Components](https://www.npmjs.com/package/atrc)
 
 ## License & Attribution

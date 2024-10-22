@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * The login-specific functionality of the plugin.
  *
- * @link       https://github.com/codersantosh
+ * @link       https://patternswp.com
  * @since      1.0.0
  *
  * @package    Brand_Master
@@ -204,7 +204,7 @@ class Brand_Master_Login {
 	 *  must have login slug,
 	 *  must of REQUEST_URI
 	 *  if login url has params
-	 *      request uri should have atlest have one param of login
+	 *      request uri should have atleast one param of login
 	 *  else
 	 *      the the last words of login url should equal to the  request_uri
 	 *
