@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * The parent class of all api class of this plugin.
  *
- * @link       https://github.com/codersantosh
+ * @link       https://patternswp.com
  * @since      1.0.0
  *
  * @package    Brand_Master

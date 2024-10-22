@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * User Info.
  *
- * @link       https://github.com/codersantosh
+ * @link       https://patternswp.com
  * @since      1.0.0
  *
  * @package    Brand_Master
@@ -65,8 +65,8 @@ class Brand_Master_User_Info {
 	 * @since    1.0.0
 	 */
 	public function __construct() {
-		$dashboard_settings = brand_master_include()->get_settings()['dashboard'];
-		$this->settings     = $dashboard_settings['userInfo'];
+		$dashboard_settings      = brand_master_include()->get_settings()['dashboard'];
+		$this->settings          = $dashboard_settings['userInfo'];
 		$bm_current_user         = wp_get_current_user();
 		$this->user_id           = $bm_current_user->ID;
 		$this->user_email        = $bm_current_user->user_email;

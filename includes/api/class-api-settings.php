@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class used to manage a plugin's settings via the REST API.
  *
- * @link       https://github.com/codersantosh
+ * @link       https://patternswp.com
  * @since      1.0.0
  *
  * @package    Brand_Master
@@ -255,7 +255,7 @@ if ( ! class_exists( 'Brand_Master_Api_Settings' ) ) {
  *
  * @return Brand_Master_Api_Settings
  */
-function brand_master_api_settings() {
+function brand_master_api_settings() { //phpcs:ignore
 	return Brand_Master_Api_Settings::get_instance();
 }
 brand_master_api_settings()->run();

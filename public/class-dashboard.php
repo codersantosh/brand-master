@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * The frontend dashboard functionality of the plugin.
  *
- * @link       https://github.com/codersantosh
+ * @link       https://patternswp.com
  * @since      1.0.0
  *
  * @package    Brand_Master
@@ -283,7 +283,11 @@ class Brand_Master_Dashboard {
 			echo '<div class="bm-dashboard">';
 			if ( $dashboard_settings['noLoginContent'] ) {
 				// Perform WP Query.
-				$page_query = new WP_Query( array( 'page_id' => absint( $dashboard_settings['noLoginContent'] ) ) );
+				$args       = array(
+					'p'         => absint( $dashboard_settings['noLoginContent'] ),
+					'post_type' => 'page',
+				);
+				$page_query = new WP_Query( $args );
 
 				// Check if there are results.
 				if ( $page_query->have_posts() ) {

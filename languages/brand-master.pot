@@ -584,7 +584,7 @@ msgid "Brand Master - Customize Login and User Frontend Dashboard"
 msgstr ""
 
 #. Plugin URI of the plugin
-msgid "https://github.com/codersantosh/brand-master"
+msgid "https://patternswp.com//brand-master"
 msgstr ""
 
 #. Description of the plugin
@@ -596,7 +596,7 @@ msgid "patternswp"
 msgstr ""
 
 #. Author URI of the plugin
-msgid "https://github.com/codersantosh"
+msgid "https://patternswp.com/"
 msgstr ""
 
 #. translators: %s: Property name.
