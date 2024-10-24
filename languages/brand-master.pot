@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-10-22T07:28:28+00:00\n"
+"POT-Creation-Date: 2024-10-24T10:24:13+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.6.0\n"
 "X-Domain: brand-master\n"
@@ -667,95 +667,87 @@ msgid "Support"
 msgstr ""
 
 #: includes/functions.php:370
-msgid "Email"
-msgstr ""
-
-#: includes/functions.php:371
-msgid "codersantosh@gmail.com"
-msgstr ""
-
-#: includes/functions.php:377
 msgid "Location"
 msgstr ""
 
-#: includes/functions.php:378
+#: includes/functions.php:371
 msgid "Kathmandu, Nepal"
 msgstr ""
 
-#: includes/functions.php:402
+#: includes/functions.php:395
 msgid "Activate Brand Master"
 msgstr ""
 
-#: includes/functions.php:406
-#: includes/functions.php:476
+#: includes/functions.php:399
+#: includes/functions.php:469
 msgid "Login settings"
 msgstr ""
 
-#: includes/functions.php:410
-#: includes/functions.php:483
+#: includes/functions.php:403
+#: includes/functions.php:476
 msgid "Dashboard settings"
 msgstr ""
 
-#: includes/functions.php:416
+#: includes/functions.php:409
 msgid "Knowledge base"
 msgstr ""
 
-#: includes/functions.php:417
+#: includes/functions.php:410
 msgid "The utilization of this plugin can be facilitated by perusing comprehensive and well-documented articles."
 msgstr ""
 
-#: includes/functions.php:421
+#: includes/functions.php:414
 msgid "Visit knowledge base"
 msgstr ""
 
-#: includes/functions.php:427
+#: includes/functions.php:420
 msgid "Community"
 msgstr ""
 
 #. translators: %s is the plugin name
-#: includes/functions.php:430
+#: includes/functions.php:423
 msgid "Our objective is to enhance the customer experience, we invite you to join our community where you can receive immediate support."
 msgstr ""
 
-#: includes/functions.php:436
+#: includes/functions.php:429
 msgid "Visit community page"
 msgstr ""
 
-#: includes/functions.php:441
+#: includes/functions.php:434
 msgid "24x7 support"
 msgstr ""
 
 #. translators: %s is the plugin name
-#: includes/functions.php:444
+#: includes/functions.php:437
 msgid "Our support team is available 24/7 to assist you in the event that you encounter any problems while utilizing this plugin."
 msgstr ""
 
-#: includes/functions.php:450
+#: includes/functions.php:443
 msgid "Create a support thread"
 msgstr ""
 
-#: includes/functions.php:456
+#: includes/functions.php:449
 msgid "Video guide"
 msgstr ""
 
 #. translators: %s is the plugin name
-#: includes/functions.php:459
+#: includes/functions.php:452
 msgid "The plugin is accompanied by comprehensive video tutorials that provide practical demonstrations for most customization."
 msgstr ""
 
-#: includes/functions.php:465
+#: includes/functions.php:458
 msgid "View video guide"
 msgstr ""
 
-#: includes/functions.php:472
+#: includes/functions.php:465
 msgid "Quick links to settings"
 msgstr ""
 
-#: includes/functions.php:491
+#: includes/functions.php:484
 msgid "Utilities settings"
 msgstr ""
 
-#: includes/functions.php:501
+#: includes/functions.php:494
 msgid "Changelog"
 msgstr ""
 
