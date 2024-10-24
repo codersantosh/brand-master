@@ -2,7 +2,7 @@
 	"name": "brand-master",
 	"version": "1.0.0",
 	"description": "Customize login page and add frontend dashboard.",
-	"author": "codersantosh",
+	"author": "PatternsWP",
 	"license": "GPL-2.0-or-later",
 	"scripts": {
 		"build:admin": "wp-scripts build src/admin.js --output-path=build/admin",
