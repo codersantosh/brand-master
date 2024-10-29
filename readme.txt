@@ -98,6 +98,7 @@ No, Brand Master does not alter the WordPress backend dashboard. It facilitates 
 
 = 1.0.4 =
 * Added: Tested with the latest WordPress
+* Updated: Plugin Dashboard Menu Design
 
 = 1.0.3 =
 * Updated: Plugin URL
