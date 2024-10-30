@@ -4,7 +4,7 @@ Tags: login customization, frontend dashboard, white label, branding
 Requires at least: 5.0
 Tested up to: 6.7
 Requires PHP: 7.0
-Stable tag: 1.0.3
+Stable tag: 1.0.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -98,7 +98,10 @@ No, Brand Master does not alter the WordPress backend dashboard. It facilitates 
 
 = 1.0.4 =
 * Added: Tested with the latest WordPress
-* Updated: Plugin Dashboard Menu Design
+* Added: RTL support
+* Updated: [Atomic CSS](https://github.com/codersantosh/atomic-css)
+* Updated: npm packages
+* Fixed: Admin Notices Hidden by Sticky Header on Plugin Settings Page #14
 
 = 1.0.3 =
 * Updated: Plugin URL

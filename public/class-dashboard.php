@@ -337,6 +337,7 @@ class Brand_Master_Dashboard {
 	public function enqueue_public_resources() {
 		/* Atomic CSS */
 		wp_enqueue_style( 'atomic' );
+		wp_style_add_data( 'atomic', 'rtl', 'replace' );
 	}
 
 	/**
@@ -349,6 +350,7 @@ class Brand_Master_Dashboard {
 		$version = BRAND_MASTER_VERSION;
 
 		wp_enqueue_style( BRAND_MASTER_PLUGIN_NAME, BRAND_MASTER_URL . 'build/public/dashboard.css', array( 'atomic' ), $version );
+		wp_style_add_data( BRAND_MASTER_PLUGIN_NAME, 'rtl', 'replace' );
 
 		/*Scripts dependency files*/
 		$deps_file = BRAND_MASTER_PATH . 'build/public/dashboard.asset.php';
