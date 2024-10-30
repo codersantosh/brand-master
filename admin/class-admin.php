@@ -81,6 +81,40 @@ class Brand_Master_Admin {
 	}
 
 	/**
+	 * Check if current menu page.
+	 *
+	 * @access public
+	 *
+	 * @since    1.0.0
+	 * @return boolean ture if current menu page else false.
+	 */
+	public function is_menu_page() {
+		$screen              = get_current_screen();
+		$admin_scripts_bases = array( 'toplevel_page_' . BRAND_MASTER_PLUGIN_NAME );
+		if ( ! ( isset( $screen->base ) && in_array( $screen->base, $admin_scripts_bases, true ) ) ) {
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * Add class "at-has-hdr-stky".
+	 *
+	 * @access public
+	 * @since    1.0.0
+	 * @param string $classes  a space-separated string of class names.
+	 * @return string $classes with added class if confition meet.
+	 */
+	public function add_has_sticky_header( $classes ) {
+
+		if ( ! $this->is_menu_page() ) {
+			return $classes;
+		}
+
+		return $classes . ' at-has-hdr-stky ';
+	}
+
+	/**
 	 * Add Root Div For React.
 	 *
 	 * @access public
@@ -101,9 +135,7 @@ class Brand_Master_Admin {
 	 */
 	public function enqueue_resources() {
 
-		$screen              = get_current_screen();
-		$admin_scripts_bases = array( 'toplevel_page_' . BRAND_MASTER_PLUGIN_NAME );
-		if ( ! ( isset( $screen->base ) && in_array( $screen->base, $admin_scripts_bases, true ) ) ) {
+		if ( ! $this->is_menu_page() ) {
 			return;
 		}
 
@@ -118,6 +150,7 @@ class Brand_Master_Admin {
 
 		/* Atomic CSS */
 		wp_enqueue_style( 'atomic' );
+		wp_style_add_data( 'atomic', 'rtl', 'replace' );
 
 		/*Scripts dependency files*/
 		$deps_file = BRAND_MASTER_PATH . 'build/admin/admin.asset.php';
@@ -137,6 +170,7 @@ class Brand_Master_Admin {
 
 		wp_enqueue_style( 'google-fonts-open-sans', BRAND_MASTER_URL . 'assets/library/fonts/open-sans.css', '', $version );
 		wp_enqueue_style( BRAND_MASTER_PLUGIN_NAME, BRAND_MASTER_URL . 'build/admin/admin.css', array( 'wp-components' ), $version );
+		wp_style_add_data( BRAND_MASTER_PLUGIN_NAME, 'rtl', 'replace' );
 
 		global $wp_roles;
 		/* Localize */

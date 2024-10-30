@@ -155,6 +155,7 @@ class Brand_Master {
 		$plugin_admin = brand_master_admin();
 
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'add_admin_menu' );
+		$this->loader->add_filter( 'admin_body_class', $plugin_admin, 'add_has_sticky_header' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_resources' );
 
 		/*Register Settings*/
