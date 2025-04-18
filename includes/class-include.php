@@ -63,10 +63,6 @@ class Brand_Master_Include {
 
 		// Only run these methods if they haven't been ran previously.
 		if ( null === $instance ) {
-			/* Query only once */
-			self::$settings    = brand_master_get_options();
-			self::$white_label = brand_master_get_white_label();
-
 			$instance = new self();
 		}
 
@@ -81,6 +77,9 @@ class Brand_Master_Include {
 	 * @return array|null
 	 */
 	public function get_settings() {
+		if ( null === self::$settings ) {
+			self::$settings = brand_master_get_options();
+		}
 		return self::$settings;
 	}
 
@@ -91,6 +90,9 @@ class Brand_Master_Include {
 	 * @return array|null
 	 */
 	public function get_white_label() {
+		if ( null === self::$white_label ) {
+			self::$white_label = brand_master_get_white_label();
+		}
 		return self::$white_label;
 	}
 

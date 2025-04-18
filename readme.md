@@ -125,7 +125,7 @@ Thank you for contributing to this project!
 - **PatternsWP** - [patternswp](https://patternswp.com/)
 - **Santosh Kunwar** - [codersantosh](https://twitter.com/codersantosh)
 
-See also the list of [contributors](https://patternswp.com//brand-master/graphs/contributors) who participated in this project.
+See also the list of [contributors](https://github.com/codersantosh/brand-master/graphs/contributors) who participated in this project.
 
 ## Resources
 

@@ -9,7 +9,7 @@
  * Plugin Name:       Brand Master - Customize Login and User Frontend Dashboard
  * Plugin URI:        https://patternswp.com/wp-plugins/brand-master
  * Description:       Brand Master enhances WordPress site customization by allowing you to personalize login pages and introduce a sleek frontend dashboard for users. Elevate your brand with complete control over the user experience.
- * Version:           1.0.4
+ * Version:           1.0.5
  * Author:            patternswp
  * Author URI:        https://patternswp.com
  * License:           GPL-2.0+
@@ -32,7 +32,7 @@ if ( ! defined( 'WPINC' ) ) {
  */
 define( 'BRAND_MASTER_PATH', plugin_dir_path( __FILE__ ) );
 define( 'BRAND_MASTER_URL', plugin_dir_url( __FILE__ ) );
-define( 'BRAND_MASTER_VERSION', '1.0.4' );
+define( 'BRAND_MASTER_VERSION', '1.0.5' );
 define( 'BRAND_MASTER_PLUGIN_NAME', 'brand-master' );
 define( 'BRAND_MASTER_OPTION_NAME', 'brand_master_options' );
 
