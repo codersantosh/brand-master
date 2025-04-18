@@ -56,17 +56,11 @@ class Brand_Master_Login {
 	 */
 	public function run() {
 
-		$login_settings = brand_master_include()->get_settings()['login'];
+		/*Update logo url*/
+		add_filter( 'login_headerurl', array( $this, 'update_login_headerurl' ), 99 );
 
-		if ( isset( $login_settings['logo']['on'] ) && $login_settings['logo']['on'] ) {
-
-			/*Update logo url*/
-			add_filter( 'login_headerurl', array( $this, 'update_login_headerurl' ), 99 );
-
-			/*Update logo text*/
-			add_filter( 'login_headertext', array( $this, 'update_login_headertext' ), 99 );
-
-		}
+		/*Update logo text*/
+		add_filter( 'login_headertext', array( $this, 'update_login_headertext' ), 99 );
 
 		/* Update login url */
 		add_filter( 'login_url', array( $this, 'update_login_url' ), 9999, 3 );
@@ -435,7 +429,8 @@ class Brand_Master_Login {
 	public function update_login_headerurl( $login_header_url ) {
 
 		$login_settings = brand_master_include()->get_settings()['login'];
-		if ( $login_settings['logo']['url'] ) {
+
+		if ( isset( $login_settings['logo'] ) && $login_settings['logo']['on'] && $login_settings['logo']['url'] ) {
 			$login_header_url = esc_url( $login_settings['logo']['url'] );
 		}
 
@@ -455,7 +450,7 @@ class Brand_Master_Login {
 	public function update_login_headertext( $login_header_text ) {
 
 		$login_settings = brand_master_include()->get_settings()['login'];
-		if ( $login_settings['logo']['url'] ) {
+		if ( isset( $login_settings['logo'] ) && $login_settings['logo']['on'] && $login_settings['logo']['text'] ) {
 			$login_header_text = esc_html( $login_settings['logo']['text'] );
 		}
 
