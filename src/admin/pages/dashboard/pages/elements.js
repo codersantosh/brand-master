@@ -1,5 +1,5 @@
 /* WordPress */
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { useContext } from '@wordpress/element';
 
 /* Library */
