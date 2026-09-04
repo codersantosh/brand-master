@@ -188,7 +188,7 @@ class Brand_Master_Login {
 	 *
 	 * @return string updated login URL.
 	 */
-	public function update_login_url( $login_url, $redirect, $force_reauth ) {
+	public function update_login_url( $login_url, $redirect, $force_reauth ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- login_url filter signature.
 		return $this->get_updated_login_url( $login_url );
 	}
 
@@ -229,10 +229,15 @@ class Brand_Master_Login {
 					if ( isset( $args_uri[1] ) ) {
 						parse_str( $args_uri[1], $params_uri );
 
-						$params_uri = array_keys( $params_uri );
+						$params_uri_values = $params_uri;
+						$params_uri        = array_keys( $params_uri );
 
-						if ( array_intersect( $params_login, $params_uri ) ) {
-							$is_load_page = true;
+							/* Require the matched login param to be present with an empty value, so unrelated URLs merely reusing the param name do not trigger the login page. */
+						foreach ( $params_login as $param_login ) {
+							if ( in_array( $param_login, $params_uri, true ) && ( ! isset( $params_uri_values[ $param_login ] ) || '' === $params_uri_values[ $param_login ] ) ) {
+								$is_load_page = true;
+								break;
+							}
 						}
 					}
 				} else {
@@ -277,7 +282,11 @@ class Brand_Master_Login {
 	 * @param int|null    $blog_id Site ID, or null for the current site.
 	 * @return string updated sire url for wp-login.php.
 	 */
-	public function update_site_url( $url, $path, $scheme, $blog_id ) {
+	public function update_site_url( $url, $path, $scheme, $blog_id ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- site_url filter signature.
+		/* Only rewrite direct wp-login.php URLs. Avoids touching every site_url() output that merely contains the string. */
+		if ( 0 !== strpos( (string) $path, 'wp-login.php' ) ) {
+			return $url;
+		}
 		return $this->get_updated_login_url( $url );
 	}
 
@@ -370,7 +379,7 @@ class Brand_Master_Login {
 
 			/* Login page, no user has this page access */
 			if ( 'wp-login.php' === $pagenow ) {
-				wp_safe_redirect( esc_url( $this->get_redirect_url() ) );
+				wp_safe_redirect( brand_master_validate_redirect( $this->get_redirect_url() ) );
 				exit;
 			}
 
@@ -390,7 +399,7 @@ class Brand_Master_Login {
 				$request_uri = preg_replace( '/(^\/+|\/+$)/', '', $request_uri );
 
 				if ( strpos( $request_uri, '/wp-admin' ) !== false ) {
-					wp_safe_redirect( esc_url( $this->get_redirect_url() ) );
+					wp_safe_redirect( brand_master_validate_redirect( $this->get_redirect_url() ) );
 					exit;
 				}
 			}
@@ -568,7 +577,8 @@ class Brand_Master_Login {
 			$current_user = wp_get_current_user();
 
 			if ( $disallowed_roles && array_intersect( $disallowed_roles, $current_user->roles ) ) {
-				wp_safe_redirect( esc_url( $redirect_dashboard['url'] ) );
+				$allowed = brand_master_validate_redirect( $redirect_dashboard['url'] );
+				wp_safe_redirect( $allowed );
 				exit;
 			}
 		}
@@ -582,11 +592,11 @@ class Brand_Master_Login {
 	 * @param WP_User|WP_Error $user                  WP_User object if login was successful, WP_Error object otherwise.
 	 * @return string redirect to url.
 	 */
-	public function login_redirect( $redirect_to, $requested_redirect_to, $user ) {
+	public function login_redirect( $redirect_to, $requested_redirect_to, $user ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- login_redirect filter signature.
 
 		$redirect_login = brand_master_include()->get_settings()['redirectLogin'];
 		if ( isset( $redirect_login['on'] ) && $redirect_login['on'] && $redirect_login['url'] ) {
-			$redirect_to = esc_url( $redirect_login['url'] );
+			$redirect_to = brand_master_validate_redirect( $redirect_login['url'], $redirect_to );
 		}
 		return $redirect_to;
 	}
@@ -599,12 +609,12 @@ class Brand_Master_Login {
 	 * @param WP_User|WP_Error $user                  WP_User object if login was successful, WP_Error object otherwise.
 	 * @return string redirect to url.
 	 */
-	public function logout_redirect( $redirect_to, $requested_redirect_to, $user ) {
+	public function logout_redirect( $redirect_to, $requested_redirect_to, $user ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- logout_redirect filter signature.
 
 		$redirect_logout = brand_master_include()->get_settings()['redirectLogout'];
 
 		if ( isset( $redirect_logout['on'] ) && $redirect_logout['on'] && $redirect_logout['url'] ) {
-			$redirect_to = esc_url( $redirect_logout['url'] );
+			$redirect_to = brand_master_validate_redirect( $redirect_logout['url'], $redirect_to );
 		}
 
 		return $redirect_to;
@@ -622,7 +632,7 @@ class Brand_Master_Login {
 		$redirect_lost_password = brand_master_include()->get_settings()['redirectLostPassword'];
 
 		if ( isset( $redirect_lost_password['on'] ) && $redirect_lost_password['on'] && $redirect_lost_password['url'] ) {
-			$redirect_to = esc_url( $redirect_lost_password['url'] );
+			$redirect_to = brand_master_validate_redirect( $redirect_lost_password['url'], $redirect_to );
 		}
 
 		return $redirect_to;
@@ -639,7 +649,7 @@ class Brand_Master_Login {
 		$redirect_registration = brand_master_include()->get_settings()['redirectRegistration'];
 
 		if ( isset( $redirect_registration['on'] ) && $redirect_registration['on'] && $redirect_registration['url'] ) {
-			$redirect_to = esc_url( $redirect_registration['url'] );
+			$redirect_to = brand_master_validate_redirect( $redirect_registration['url'], $redirect_to );
 		}
 
 		return $redirect_to;

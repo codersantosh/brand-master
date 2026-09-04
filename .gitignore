@@ -1,9 +1,11 @@
 .sass-cache
-node_modules/
+node_modules
 brand-master
 brand-master.zip
 assets/blocks
-/vendor/
+vendor/
 git-source
 build
 deploy
+.phpunit.result.cache
+composer.lock

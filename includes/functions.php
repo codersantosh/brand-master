@@ -22,6 +22,19 @@ if ( ! function_exists( 'brand_master_default_options' ) ) :
 	 * if you are using object on react, dont use empty array here.
 	 * @return array Default Options
 	 * @author     codersantosh <codersantosh@gmail.com>
+	 *
+	 * IMPORTANT: Do NOT wrap default labels/headings in __() here.
+	 * These defaults are stored in the database when the plugin is first
+	 * installed or when an admin saves settings. If they were translated at
+	 * this point, the saved value would be locale-dependent: saving while
+	 * the site is in Spanish would store the Spanish translation in the
+	 * database, which would persist even after switching back to English.
+	 *
+	 * Instead, store plain English defaults. The render-time helper
+	 * brand_master_translate_default_label() (in this file) translates
+	 * known defaults via a switch statement with literal strings, which
+	 * keeps them discoverable for wp i18n make-pot and community
+	 * translators.
 	 */
 	function brand_master_default_options() {
 		$default_options = array(
@@ -96,10 +109,10 @@ if ( ! function_exists( 'brand_master_default_options' ) ) :
 					),
 				),
 				'logout'         => array(
-					'label' => __( 'Logout', 'brand-master' ),
+					'label' => 'Logout',
 				),
 				'menu'           => array(
-					'heading'  => __( 'Navigations', 'brand-master' ),
+					'heading'  => 'Navigations',
 					'items'    => array(),
 					'logout'   => true,
 					'redirect' => array(
@@ -108,7 +121,7 @@ if ( ! function_exists( 'brand_master_default_options' ) ) :
 					),
 				),
 				'social'         => array(
-					'heading' => __( 'Social', 'brand-master' ),
+					'heading' => 'Social',
 					'items'   => array(),
 					'layout'  => 'vertical',
 				),
@@ -249,7 +262,7 @@ if ( ! function_exists( 'brand_master_parse_changelog' ) ) {
 		$changelog = '';
 
 		if ( preg_match( $regexp, $content, $matches ) ) {
-			$changes = explode( '\r\n', trim( $matches[1] ) );
+			$changes = preg_split( '/\r\n|\r|\n/', trim( $matches[1] ) );
 
 			foreach ( $changes as $index => $line ) {
 				$changelog .= wp_kses_post( preg_replace( '~(=\s*Version\s*(\d+(?:\.\d+)+)\s*=|$)~Uis', '', $line ) );
@@ -523,6 +536,62 @@ if ( ! function_exists( 'brand_master_is_valid_svg' ) ) :
 			return true;
 		} else {
 			return false;
+		}
+	}
+endif;
+
+if ( ! function_exists( 'brand_master_validate_redirect' ) ) :
+	/**
+	 * Validate a redirect URL for safe use with wp_safe_redirect().
+	 *
+	 * Only allows internal URLs (wp_validate_redirect policy); anything else
+	 * falls back to the given fallback. Avoids esc_url() entity-encoding issues
+	 * in the Location header.
+	 *
+	 * @since 1.0.6
+	 *
+	 * @param string $url      Candidate redirect URL.
+	 * @param string $fallback Fallback URL when the candidate is not allowed.
+	 * @return string Validated redirect URL.
+	 */
+	function brand_master_validate_redirect( $url, $fallback = '' ) {
+		$fallback = $fallback ? $fallback : home_url( '/' );
+		if ( ! $url ) {
+			return $fallback;
+		}
+		return wp_validate_redirect( esc_url_raw( $url ), $fallback );
+	}
+endif;
+
+if ( ! function_exists( 'brand_master_translate_default_label' ) ) :
+	/**
+	 * Translate a label originating from plugin defaults.
+	 *
+	 * Defaults are stored as plain English keys (historically they were baked
+	 * in via __() at load time). Admin-overridden labels are returned unchanged;
+	 * only the built-in defaults are passed through the translator at render time.
+	 *
+	 * @since 1.0.6
+	 *
+	 * @param string $label    The stored label.
+	 * @param string $fallback The plugin default we expect (translate this).
+	 * @return string Translated label if it matches the default, the raw label otherwise.
+	 */
+	function brand_master_translate_default_label( $label, $fallback ) {
+		if ( $label !== $fallback ) {
+			return $label;
+		}
+
+		/* Translate the built-in defaults via literal strings (extractable by make-pot). */
+		switch ( $fallback ) {
+			case 'Logout':
+				return __( 'Logout', 'brand-master' );
+			case 'Navigations':
+				return __( 'Navigations', 'brand-master' );
+			case 'Social':
+				return __( 'Social', 'brand-master' );
+			default:
+				return $label;
 		}
 	}
 endif;

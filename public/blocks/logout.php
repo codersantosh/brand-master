@@ -31,7 +31,7 @@ if ( ! function_exists( 'brand_master_logout' ) ) {
 				echo brand_master_esc_svg( $item['icon']['svg'] );//escaping function.
 			}
 			if ( $item['label'] ) {
-				echo esc_html( $item['label'] );
+				echo esc_html( brand_master_translate_default_label( $item['label'], 'Logout' ) );
 			}
 			?>
 		</a>

@@ -1,0 +1,7 @@
+== Changelog ==
+= 1.0.6 =
+First line
+
+Second line
+= 1.0.5 =
+Old line

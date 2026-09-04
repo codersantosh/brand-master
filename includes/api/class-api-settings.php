@@ -122,26 +122,60 @@ if ( ! class_exists( 'Brand_Master_Api_Settings' ) ) {
 
 			$sanitized_value = rest_sanitize_value_from_schema( $value, $schema );
 
-			/* further sanitized if there is sanitize_callback because rest_sanitize_value_from_schema doesnot support sanitize_callback */
-			if ( isset( $sanitized_value['dashboard']['menu']['items'] ) ) {
-				$sanitized_items = array();
-				foreach ( $sanitized_value['dashboard']['menu']['items'] as $key => $val ) {
-					if ( isset( $val['slug'] ) && $val['slug'] ) {
-						$sanitized_value['dashboard']['menu']['items'][ $key ]['slug'] = sanitize_key( $val['slug'] );
-					}
-				}
-			}
-
-			if ( isset( $sanitized_value['login']['slug'] ) ) {
-				$sanitized_value['login']['slug'] = sanitize_key( $sanitized_value['login']['slug'] );
-			}
-
-			if ( isset( $sanitized_value['login']['redirect_slug'] ) ) {
-				$sanitized_value['login']['redirect_slug'] = sanitize_key( $sanitized_value['login']['redirect_slug'] );
-			}
+			/*
+			 * Deep-sanitize saved strings. rest_sanitize_value_from_schema() handles types and
+			 * format:uri fields, but plain strings pass through untouched, so everything else
+			 * is normalized here by key.
+			 */
+			$sanitized_value = $this->deep_sanitize( $sanitized_value );
 
 			return $sanitized_value;
 		}
+
+		/**
+		 * Recursively sanitize option values by key.
+		 *
+		 * @since 1.0.6
+		 *
+		 * @param mixed $value Option value (array or scalar).
+		 * @return mixed Sanitized value.
+		 */
+		protected function deep_sanitize( $value ) {
+			if ( ! is_array( $value ) ) {
+				return $value;
+			}
+
+			foreach ( $value as $key => $val ) {
+				if ( is_array( $val ) ) {
+					$value[ $key ] = $this->deep_sanitize( $val );
+					continue;
+				}
+				if ( ! is_string( $val ) ) {
+					continue;
+				}
+				if ( in_array( $key, array( 'slug', 'redirect_slug' ), true ) ) {
+					$value[ $key ] = sanitize_key( $val );
+				} elseif ( 'css' === $key || 'js' === $key ) {
+					/*
+					 * Raw code fields: only users with unfiltered_html (typically single-site
+					 * admins) may store them verbatim. This is a defense-in-depth trust boundary,
+					 * not an unauthenticated XSS surface (saving requires manage_options + nonce).
+					 */
+					if ( ! current_user_can( 'unfiltered_html' ) ) {
+						$value[ $key ] = '';
+					}
+				} elseif ( 'svg' === $key ) {
+					$value[ $key ] = brand_master_esc_svg( $val );
+				} elseif ( 'url' === $key ) {
+					$value[ $key ] = esc_url_raw( $val );
+				} else {
+					$value[ $key ] = sanitize_text_field( $val );
+				}
+			}
+
+			return $value;
+		}
+
 
 		/**
 		 * Updates settings.
@@ -161,14 +195,76 @@ if ( ! class_exists( 'Brand_Master_Api_Settings' ) ) {
 					'rest_invalid_stored_value',
 					/* translators: %s: Property name. */
 					sprintf( __( 'The %s property has an invalid stored value, and cannot be updated to null.', 'brand-master' ), BRAND_MASTER_OPTION_NAME ),
-					array( 'status' => 500 )
+					array( 'status' => 400 )
 				);
 			}
 
+			/* Validate login slugs against reserved words and existing content before saving. */
+			$slug_error = $this->validate_slugs( $params );
+			if ( is_wp_error( $slug_error ) ) {
+				return $slug_error;
+			}
 			$sanitized_options = $this->prepare_value( $params, $schema );
 			brand_master_update_options( $sanitized_options );
 
 			return $this->get_item( $request );
+		}
+
+
+		/**
+		 * Validate login/redirect slugs against reserved words and existing content.
+		 *
+		 * @since 1.0.6
+		 *
+		 * @param array $params Request params.
+		 * @return true|WP_Error True if valid, WP_Error otherwise.
+		 */
+		protected function validate_slugs( $params ) {
+			/* Compare using the same normalization (sanitize_key) applied to user input. */
+			$reserved = array_map( 'sanitize_key', array( 'wp-admin', 'wp-login.php', 'wp-json', 'wp-content', 'wp-includes', 'admin', 'feed', 'cgi-bin' ) );
+
+			$slugs         = array();
+			$saved_options = brand_master_get_options();
+
+			$saved_login_slug = isset( $saved_options['login']['url']['slug'] ) ? sanitize_key( $saved_options['login']['url']['slug'] ) : '';
+			$new_login_slug   = isset( $params['login']['url']['slug'] ) ? sanitize_key( $params['login']['url']['slug'] ) : '';
+			if ( $new_login_slug && $new_login_slug !== $saved_login_slug ) {
+				$slugs['login'] = $new_login_slug;
+			}
+			$saved_redirect_slug = isset( $saved_options['login']['url']['redirect_slug'] ) ? sanitize_key( $saved_options['login']['url']['redirect_slug'] ) : '';
+			$new_redirect_slug   = isset( $params['login']['url']['redirect_slug'] ) ? sanitize_key( $params['login']['url']['redirect_slug'] ) : '';
+			if ( $new_redirect_slug && $new_redirect_slug !== $saved_redirect_slug ) {
+				$slugs['redirect'] = $new_redirect_slug;
+			}
+
+			foreach ( $slugs as $context => $slug ) {
+				if ( in_array( $slug, $reserved, true ) ) {
+					return new WP_Error(
+						'brand_master_reserved_slug',
+						sprintf( /* translators: %s: slug. */ esc_html__( 'The slug %s is reserved and cannot be used.', 'brand-master' ), '<code>' . esc_html( $slug ) . '</code>' ),
+						array( 'status' => 400 )
+					);
+				}
+				/* Existing published page with the same path? */
+				$page = get_page_by_path( $slug );
+				if ( $page instanceof WP_Post && 'publish' === $page->post_status ) {
+					return new WP_Error(
+						'brand_master_slug_in_use',
+						sprintf( /* translators: %s: slug. */ esc_html__( 'The slug %s is already in use by an existing page.', 'brand-master' ), '<code>' . esc_html( $slug ) . '</code>' ),
+						array( 'status' => 400 )
+					);
+				}
+			}
+
+			if ( isset( $slugs['login'], $slugs['redirect'] ) && $slugs['login'] === $slugs['redirect'] ) {
+				return new WP_Error(
+					'brand_master_slug_conflict',
+					esc_html__( 'Login slug and redirect slug cannot be the same.', 'brand-master' ),
+					array( 'status' => 400 )
+				);
+			}
+
+			return true;
 		}
 
 		/**
@@ -217,7 +313,7 @@ if ( ! class_exists( 'Brand_Master_Api_Settings' ) ) {
 			 *
 			 * @param array $schema Item schema data.
 			 */
-			$schema = apply_filters( "rest_{$this->type}_item_schema", $schema );
+			$schema = apply_filters( "rest_{$this->type}_item_schema", $schema ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WP core convention for REST item schemas.
 
 			$this->schema = $schema;
 

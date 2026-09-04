@@ -35,6 +35,22 @@ const MainContent = () => {
 		dbUpdateSetting(key, val);
 	};
 
+	const handleDeleteAllToggle = () => {
+		if (!deleteAll) {
+			// Confirm before enabling destructive option.
+			const confirmed = window.confirm(
+				__(
+					'Are you sure? Enabling this will permanently erase all plugin settings when the plugin is deactivated. This action cannot be undone.',
+					'brand-master'
+				)
+			);
+			if (!confirmed) {
+				return;
+			}
+		}
+		updateSettingKey('deleteAll', !deleteAll);
+	};
+
 	return (
 		<AtrcContent>
 			<AtrcPanelRow>
@@ -44,7 +60,7 @@ const MainContent = () => {
 						'brand-master'
 					)}
 					checked={deleteAll}
-					onChange={() => updateSettingKey('deleteAll', !deleteAll)}
+					onChange={handleDeleteAllToggle}
 				/>
 			</AtrcPanelRow>
 		</AtrcContent>

@@ -139,6 +139,18 @@ class Brand_Master_Admin {
 			return;
 		}
 
+		if ( ! file_exists( BRAND_MASTER_PATH . 'build/admin/admin.asset.php' ) || ! file_exists( BRAND_MASTER_PATH . 'build/public/dashboard.asset.php' ) ) {
+			add_action(
+				'admin_notices',
+				function () {
+					printf(
+						'<div class="notice notice-error"><p>%s</p></div>',
+						esc_html__( 'Brand Master: built assets are missing. Run "npm install && npm run build" in the plugin directory, or reinstall the plugin.', 'brand-master' )
+					);
+				}
+			);
+		}
+
 		/* Add media */
 		wp_enqueue_media();
 
@@ -656,9 +668,8 @@ class Brand_Master_Admin {
 			array(
 				'type'         => 'object',
 				'default'      => $defaults,
-				'show_in_rest' => array(
-					'schema' => $this->get_settings_schema(),
-				),
+				/* The option is exposed and managed exclusively through the custom /brand-master/v1/settings route, which applies dedicated validation. Exposing it on /wp/v2/settings would bypass that validation. */
+				'show_in_rest' => false,
 			)
 		);
 	}
@@ -681,7 +692,7 @@ class Brand_Master_Admin {
 	 *                              'mustuse', 'dropins', and 'search'.
 	 * @return array settings schema for this plugin.
 	 */
-	public function add_plugin_links( $actions, $plugin_file, $plugin_data, $context ) {
+	public function add_plugin_links( $actions, $plugin_file, $plugin_data, $context ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- plugin_action_links filter signature.
 		$actions[] = '<a href="' . esc_url( menu_page_url( $this->menu_info['menu_slug'], false ) ) . '">' . esc_html__( 'Settings', 'brand-master' ) . '</a>';
 		return $actions;
 	}

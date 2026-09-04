@@ -379,7 +379,7 @@ class Brand_Master_Dashboard {
 							'rest_url'         => get_rest_url(),
 						)
 					)
-				),
+				)
 			),
 			'before'
 		);
@@ -416,7 +416,8 @@ class Brand_Master_Dashboard {
 				}
 			}
 			if ( $menu_ids && in_array( absint( get_the_ID() ), $menu_ids, true ) ) {
-				wp_safe_redirect( esc_url( $dashboard_settings['menu']['redirect']['url'] ) );
+				$allowed = brand_master_validate_redirect( $dashboard_settings['menu']['redirect']['url'] );
+				wp_safe_redirect( $allowed );
 				exit;
 			}
 		}

@@ -25,7 +25,7 @@ if ( ! function_exists( 'brand_master_menu' ) ) {
 			<?php
 			if ( $menu_settings['heading'] ) {
 				?>
-				<h6 class="at-m bm-h6 bm-itm-lbl"><?php echo esc_html( $menu_settings['heading'] ); ?></h6>
+				<h6 class="at-m bm-h6 bm-itm-lbl"><?php echo esc_html( brand_master_translate_default_label( $menu_settings['heading'], 'Navigations' ) ); ?></h6>
 				<?php
 			}
 			$menu_items = $menu_settings['items'];
@@ -40,12 +40,12 @@ if ( ! function_exists( 'brand_master_menu' ) ) {
 					if ( $menu_items ) {
 						foreach ( $menu_items as $key => $item ) {
 							$class = 'bm-menu-li';
-							if ( $current_menu['slug'] === $item['slug'] ) {
+							if ( isset( $item['slug'] ) && $current_menu['slug'] === $item['slug'] ) {
 								$class .= ' bm-menu-active';
 							}
 							?>
-							<li class="<?php echo esc_attr( $item['slug'] . ' ' . $class ); ?>">
-								<a href="<?php echo esc_url( add_query_arg( 'action', $item['slug'], get_permalink() ) ); ?>" class="at-flx at-al-itm-ctr at-gap">
+							<li class="<?php echo esc_attr( ( isset( $item['slug'] ) ? $item['slug'] : '' ) . ' ' . $class ); ?>"<?php echo 'bm-menu-li bm-menu-active' === $class ? ' aria-current="page"' : ''; ?>>
+								<a href="<?php echo esc_url( add_query_arg( 'action', isset( $item['slug'] ) ? $item['slug'] : '', get_permalink() ) ); ?>" class="at-flx at-al-itm-ctr at-gap">
 									<?php
 									if ( isset( $item['icon']['svg'] ) && brand_master_is_valid_svg( $item['icon']['svg'] ) ) {
 										/* phpcs:ignore*/

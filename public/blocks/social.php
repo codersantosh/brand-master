@@ -22,7 +22,7 @@ if ( ! function_exists( 'brand_master_social' ) ) {
 			<?php
 			if ( $menu_settings['heading'] ) {
 				?>
-				<h6 class="at-m bm-h6 bm-itm-lbl"><?php echo esc_html( $menu_settings['heading'] ); ?></h6>
+				<h6 class="at-m bm-h6 bm-itm-lbl"><?php echo esc_html( brand_master_translate_default_label( $menu_settings['heading'], 'Social' ) ); ?></h6>
 				<?php
 			}
 			$menu_items = $menu_settings['items'];
@@ -39,16 +39,23 @@ if ( ! function_exists( 'brand_master_social' ) ) {
 				<ul class="at-ls bm-social-ul<?php echo esc_attr( $classes ); ?>">
 					<?php
 					foreach ( $menu_items as $item ) {
-						$target = isset( $item['target'] ) && $item['target'] ? ' target="' . $item['target'] . '"' : ''
+						$target = '';
+						if ( isset( $item['target'] ) && '_blank' === $item['target'] ) {
+							$target = ' target="_blank" rel="noopener noreferrer"';
+						}
 						?>
 						<li class="bm-social-li">
-							<a  class="at-flx at-al-itm-ctr at-gap" href="<?php echo esc_url( $item['url'] ); ?>" <?php echo esc_attr( $target ); ?>>
+							<a  class="at-flx at-al-itm-ctr at-gap" href="<?php echo esc_url( isset( $item['url'] ) ? $item['url'] : '' ); ?>"
+								<?php // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Static string from whitelisted target values.
+								echo $target; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+								?>
+								>
 								<?php
 								if ( isset( $item['icon']['svg'] ) && brand_master_is_valid_svg( $item['icon']['svg'] ) ) {
                                     /* phpcs:ignore*/
                                     echo brand_master_esc_svg( $item['icon']['svg'] );//escaping function.
 								}
-								if ( $item['label'] ) {
+								if ( isset( $item['label'] ) && $item['label'] ) {
 									echo esc_html( $item['label'] );
 								}
 								?>

@@ -1,10 +1,10 @@
 === Brand Master - Customize Login and User Frontend Dashboard ===
 Contributors: patternswp, codersantosh
 Tags: login customization, frontend dashboard, white label, branding
-Requires at least: 5.0
-Tested up to: 6.8
+Requires at least: 5.6
+Tested up to: 7.1
 Requires PHP: 7.0
-Stable tag: 1.0.5
+Stable tag: 1.0.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -95,6 +95,19 @@ No, Brand Master does not alter the WordPress backend dashboard. It facilitates 
 13. Frontend - Login page with own logo
 
 == Changelog ==
+
+= 1.0.6 =
+* Added: Tested up to WordPress 7.1
+* Added: Deep recursive settings sanitization with unfiltered_html gate for custom CSS/JS
+* Added: Login/redirect slug conflict validation (reserved slugs, page collisions)
+* Added: uninstall.php for clean data deletion
+* Added: PHPUnit test suite and GitHub Actions CI
+* Security: Redirect URL validation via wp_validate_redirect (internal-only by default)
+* Security: Closed /wp/v2/settings REST endpoint exposure
+* Fix: Scoped site_url filter to wp-login.php paths only
+* Fix: Social link target/rel attributes use whitelist-built values
+* Accessibility: aria-current on active menu item; heading hierarchy fix
+* i18n: Default labels translated at render time
 
 = 1.0.5 =
 * Added: WordPress latest compatibility

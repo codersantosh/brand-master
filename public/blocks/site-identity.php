@@ -121,7 +121,10 @@ class Brand_Master_Site_Identity {
 				switch ( $element ) {
 					case 'title':
 						if ( $this->settings[ $element ] ) {
-							echo '<h1 class="at-txt bm-site-title at-m">' . esc_html( get_bloginfo( 'name' ) ) . '</h1>';
+							/* Render an h1 only in the header context; the sidebar copy uses h2 to keep a single page heading. */
+							$tag = 'header' === $section ? 'h1' : 'h2';
+							/* $tag is a hardcoded h1/h2 literal; escaped for the sniffer. */
+							echo '<' . esc_html( $tag ) . ' class="at-txt bm-site-title at-m">' . esc_html( get_bloginfo( 'name' ) ) . '</' . esc_html( $tag ) . '>';
 						}
 						break;
 

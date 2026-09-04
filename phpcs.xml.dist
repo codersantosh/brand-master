@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<ruleset name="Brand Master">
+	<description>WordPress coding standard for the Brand Master plugin.</description>
+
+	<file>.</file>
+	<exclude-pattern>build/</exclude-pattern>
+	<exclude-pattern>assets/</exclude-pattern>
+	<exclude-pattern>node_modules/</exclude-pattern>
+	<exclude-pattern>vendor/</exclude-pattern>
+	<exclude-pattern>languages/</exclude-pattern>
+	<exclude-pattern>*\.min\.css</exclude-pattern>
+	<exclude-pattern>*\.min\.js</exclude-pattern>
+
+	<arg name="extensions" value="php"/>
+	<arg name="basepath" value="."/>
+	<arg name="colors"/>
+	<arg value="sp"/>
+
+	<rule ref="WordPress"/>
+
+	<!--
+		Test doubles (functions/classes that mimic WP core) don't follow the
+		plugin's naming/comment conventions, so restrict those specific sniffs
+		to production code only.
+	-->
+	<rule ref="WordPress.Files.FileName">
+		<exclude-pattern>tests/</exclude-pattern>
+	</rule>
+	<rule ref="Squiz.Commenting.FileComment">
+		<exclude-pattern>tests/</exclude-pattern>
+	</rule>
+	<rule ref="Squiz.Commenting.ClassComment">
+		<exclude-pattern>tests/</exclude-pattern>
+	</rule>
+
+	<!--
+		The codebase uses trailing commas in function calls (PHP 7.3+), so the
+		real compatibility floor is 7.3 even though readme.txt historically said
+		7.0. Keep the sniff aligned with the code to avoid noise.
+	-->
+	<rule ref="PHPCompatibilityWP"/>
+	<config name="testVersion" value="7.3-"/>
+
+	<!-- Options-style prefix exceptions used by the plugin. -->
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+		<properties>
+			<property name="prefixes" type="array">
+				<element value="brand_master"/>
+				<element value="Brand_Master"/>
+				<element value="BRAND_MASTER"/>
+			</property>
+		</properties>
+	</rule>
+</ruleset>
