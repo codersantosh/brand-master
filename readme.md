@@ -4,29 +4,24 @@
 
 **Version:** 1.0.6
 **Requires at least:** WordPress 5.6 / PHP 7.0
+**Tested up to:** WordPress 7.1
 **License:** GPLv2 or later
 
 ## Description
 
-Brand Master provides complete control over the appearance of WordPress login pages and adds a personalized frontend dashboard for users. Replace the default `wp-login.php` URL with a custom slug, apply your branding (logo, colors, background, custom CSS/JS), and serve a fully configurable dashboard — all from a React-powered admin interface.
+Brand Master gives you complete control over your WordPress login pages and adds a personalized frontend dashboard for your users. Replace the default `wp-login.php` URL with a custom brandable slug, apply your branding (logo, colors, background, custom CSS/JS), and serve a fully configurable dashboard — all from a React-powered admin interface.
 
-## Table of contents
+Whether you are building a client site, a membership platform, or simply want to white-label the WordPress login experience, Brand Master provides the tools without the bloat.
 
-- [Installation](#installation)
-- [Shortcodes](#shortcodes)
-- [Block Patterns](#block-patterns)
-- [Features](#features)
-- [Developer Reference](#developer-reference)
-  - [Filters](#filters)
-  - [Actions](#actions)
-  - [REST API](#rest-api)
-- [Contributing](#contributing)
-- [Changelog](#changelog)
-- [License](#license)
+## Requirements
+
+- WordPress 5.6 or higher
+- PHP 7.0 or higher
+- Pretty permalinks enabled (recommended for clean login URLs)
 
 ## Installation
 
-1. Upload the plugin zip via **Dashboard → Plugins → Add New → Upload Plugin**, or extract the folder into `/wp-content/plugins/`.
+1. Upload the plugin zip via **Dashboard &rarr; Plugins &rarr; Add New &rarr; Upload Plugin**, or extract the folder into `/wp-content/plugins/`.
 2. Activate the plugin through the **Plugins** menu.
 3. Go to **Brand Master** in the admin menu to configure login branding, the custom login slug, and dashboard blocks.
 
@@ -38,6 +33,25 @@ npm run build      # produces build/admin and build/public
 npm run deploy     # build + i18n pot + copy step
 ```
 
+## Features
+
+- **Login page customization** — logo, colors, background image, custom CSS/JS, title, and body text.
+- **Custom login slug** — replace `wp-login.php` with a brandable URL (e.g. `/sign-in/`), with reserved-slug and page-collision validation.
+- **Redirect control** — independent redirects after login, logout, lost password, and registration.
+- **Frontend dashboard** — user info (avatar, display name, bio), navigation menu, social links, and logout link, all configurable from the admin.
+- **Responsive design** — consistent experience across desktop and mobile.
+- **Accessibility** — semantic heading hierarchy, `aria-current` on the active menu item, `rel="noopener noreferrer"` on external social links.
+- **Block patterns** — pre-built Gutenberg patterns for quick dashboard setup.
+
+## Security
+
+- All settings are recursively sanitized before storage.
+- Custom CSS/JS fields require the `unfiltered_html` capability.
+- Login/redirect slugs are validated against reserved words and existing pages.
+- Redirect URLs are validated through `wp_validate_redirect` (internal-only by default).
+- REST API endpoints require `manage_options` capability and a valid REST nonce.
+- The plugin option is not exposed on the standard `/wp/v2/settings` endpoint.
+
 ## Shortcodes
 
 | Shortcode | Purpose |
@@ -48,15 +62,6 @@ npm run deploy     # build + i18n pot + copy step
 ## Block Patterns
 
 Brand Master ships Gutenberg block patterns for a quick dashboard setup (main page and support page). Find them under the **Dashboard** category in the block inserter's **Patterns** tab.
-
-## Features
-
-- **Login page customization** — logo, colors, background image, custom CSS/JS, title, and body text.
-- **Custom login slug** — replace `wp-login.php` with a brandable URL (e.g. `/sign-in/`), with reserved-slug and page-collision validation.
-- **Redirect control** — independent redirects after login, logout, lost password, and registration.
-- **Frontend dashboard** — user info (avatar, display name, bio), navigation menu, social links, and logout link, all configurable from the admin.
-- **Responsive design** — consistent experience across desktop and mobile.
-- **Accessibility** — semantic heading hierarchy, `aria-current` on the active menu item, `rel="noopener noreferrer"` on external social links.
 
 ## Developer Reference
 
@@ -98,6 +103,32 @@ The request body is the full settings object. Partial updates are merged with ex
 
 The option is **not** exposed on the standard `/wp/v2/settings` endpoint.
 
+## Frequently Asked Questions
+
+**What happens if my login slug conflicts with an existing page?**
+
+The plugin validates slugs on save and rejects conflicts with existing pages, reserved words (`wp-admin`, `wp-login.php`, `wp-json`, etc.), and WordPress routes (`feed`, `cgi-bin`).
+
+**Can I use custom CSS and JavaScript on the login page?**
+
+Yes. The admin provides dedicated CSS and JS fields. Note that saving custom code requires the `unfiltered_html` capability (typically administrators).
+
+**What happens to my settings when I delete the plugin?**
+
+The `uninstall.php` file removes all plugin options from the database on uninstall. Deactivation alone preserves your settings unless the "Remove all plugin settings when deactivating" option is enabled.
+
+**Does this plugin collect or transmit any data?**
+
+No. Brand Master does not collect, transmit, or store any data externally. All settings are stored in your WordPress database.
+
+**Can I translate the plugin into my language?**
+
+Yes. The plugin is fully translation-ready. All strings use the `brand-master` text domain. A `.pot` template is provided in the `languages/` directory for use with tools like Poedit or `wp i18n make-pot`.
+
+## Privacy
+
+Brand Master does not collect, transmit, or store any personal data externally. All plugin settings are stored in your WordPress database. No data is sent to third-party services.
+
 ## Contributing
 
 1. Fork the repository.
@@ -106,22 +137,6 @@ The option is **not** exposed on the standard `/wp/v2/settings` endpoint.
 4. Push and open a Pull Request.
 
 Coding standards: `vendor/bin/phpcs` (WordPress standard). Tests: `vendor/bin/phpunit`.
-
-## Changelog
-
-### 1.0.6
-- **Security:** deep recursive sanitization of all settings; custom CSS/JS gated behind `unfiltered_html`.
-- **Security:** redirect URLs validated through `wp_validate_redirect` (internal-only by default).
-- **Security:** login/redirect slug validation — reserved slugs, page collisions, and self-collisions rejected with descriptive 400 errors.
-- **Security:** option no longer exposed on `/wp/v2/settings`.
-- **Fix:** `site_url` filter scoped to `wp-login.php` paths only.
-- **Fix:** non-permalink login matching now requires the param to be present with an empty value.
-- **Fix:** social links use whitelist-built target/rel attributes.
-- **Fix:** changelog parser handles LF, CRLF, and CR line endings.
-- **Accessibility:** `aria-current="page"` on the active menu item; site title uses `<h2>` in sidebar context.
-- **i18n:** default labels translated at render time instead of baked into stored options.
-- **Performance:** block patterns loaded locally with static caching.
-- **Infrastructure:** `uninstall.php`, missing-build admin notice, `composer.json`, PHPUnit test suite, CI.
 
 ## License
 
