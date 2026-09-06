@@ -68,8 +68,8 @@ class LoginGlobalsTest extends TestCase {
 
 		$this->assertSame(
 			1,
-			has_action( 'login_head', array( $api, 'init_wp_login_globals' ) ),
-			'init_wp_login_globals() must be hooked to login_head with priority 1.'
+			has_action( 'login_init', array( $api, 'init_wp_login_globals' ) ),
+			'init_wp_login_globals() must be hooked to login_init with priority 1.'
 		);
 	}
 }

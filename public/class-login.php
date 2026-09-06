@@ -79,8 +79,9 @@ class Brand_Master_Login {
 		 *
 		 * Prevents "Undefined variable $error / $user_login" warnings when
 		 * wp-login.php is accessed directly (lost-password, registration, etc.).
+		 * login_init fires before wp-login.php body uses these globals.
 		 */
-		add_action( 'login_head', array( $this, 'init_wp_login_globals' ), 1 );
+		add_action( 'login_init', array( $this, 'init_wp_login_globals' ), 1 );
 
 		/*CSS/JS*/
 		add_action( 'login_head', array( $this, 'add_login_css' ), 99 );
