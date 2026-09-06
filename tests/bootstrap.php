@@ -31,7 +31,14 @@ function get_option( $name, $default = false ) {
 	return isset( $GLOBALS['__bm_options'][ $name ] ) ? $GLOBALS['__bm_options'][ $name ] : $default;
 }
 function update_option( $name, $value ) {
+	$old = isset( $GLOBALS['__bm_options'][ $name ] ) ? $GLOBALS['__bm_options'][ $name ] : false;
+	// Emulate WP core: update_option() applies the pre_update_option_{$option}
+	// filter before writing, so the plugin's deep-merge filter is exercised.
+	$value                            = apply_filters( 'pre_update_option_' . $name, $value, $name, $old );
 	$GLOBALS['__bm_options'][ $name ] = $value;
+	if ( function_exists( 'do_action' ) ) {
+		do_action( 'updated_option', $name, $old, $value );
+	}
 	return true;
 }
 function delete_option( $name ) {
@@ -77,6 +84,17 @@ function esc_url_raw( $url ) {
 	$url = trim( (string) $url );
 	return filter_var( $url, FILTER_SANITIZE_URL ) ? $url : '';
 }
+function esc_url( $url ) {
+	return esc_url_raw( $url );
+}
+function wp_strip_all_tags( $string, $remove_breaks = false ) {
+	$string = preg_replace( '@<(script|style)[^>]*?>.*?</\\1>@si', '', (string) $string );
+	$string = strip_tags( $string );
+	if ( $remove_breaks ) {
+		$string = preg_replace( '/[\r\n\t ]+/', ' ', $string );
+	}
+	return trim( $string );
+}
 function sanitize_key( $key ) {
 	return preg_replace( '/[^a-z0-9_\-]/', '', strtolower( (string) $key ) );
 }
@@ -105,6 +123,15 @@ function wp_parse_url( $url, $component = -1 ) {
 function current_user_can( $cap, ...$args ) {
 	return ! empty( $GLOBALS['__bm_caps'][ $cap ] );
 }
+function is_multisite() {
+	return ! empty( $GLOBALS['__bm_ms'] );
+}
+function is_super_admin( $user_id = false ) {
+	return ! empty( $GLOBALS['__bm_super'] );
+}
+function wp_unslash( $value ) {
+	return is_string( $value ) ? stripslashes( $value ) : $value;
+}
 function brand_master_esc_svg( $svg ) {
 	return $svg; // Not under test in the sanitization suite; real kses behavior is covered elsewhere.
 }
@@ -128,8 +155,20 @@ function is_user_logged_in() {
 function wp_get_current_user() {
 	return isset( $GLOBALS['__bm_current_user'] ) ? $GLOBALS['__bm_current_user'] : (object) array( 'roles' => array() );
 }
-function add_action( ...$args ) {
+function add_action( $tag, $callback, $priority = 10, $accepted_args = 1 ) {
+	$GLOBALS['__bm_actions'][ $tag ][ $priority ][] = $callback;
 	return true;
+}
+function do_action( $tag, ...$args ) {
+	if ( empty( $GLOBALS['__bm_actions'][ $tag ] ) ) {
+		return;
+	}
+	ksort( $GLOBALS['__bm_actions'][ $tag ] );
+	foreach ( $GLOBALS['__bm_actions'][ $tag ] as $callbacks ) {
+		foreach ( $callbacks as $cb ) {
+			call_user_func_array( $cb, array_slice( $args, 0, 99 ) );
+		}
+	}
 }
 function rest_api_init() {}
 
@@ -138,6 +177,15 @@ class WP_Error {
 	public $errors = array();
 	public function __construct( $code = '', $message = '' ) {
 		$this->errors[ $code ][] = $message;
+	}
+}
+class WP_REST_Request {
+	private $params = array();
+	public function __construct( $params = array() ) {
+		$this->params = $params;
+	}
+	public function get_params() {
+		return $this->params;
 	}
 }
 class WP_Post {
@@ -179,6 +227,7 @@ class WP_REST_Controller {
 require BRAND_MASTER_PATH . 'includes/functions.php';
 require BRAND_MASTER_PATH . 'includes/api/class-api.php';
 require BRAND_MASTER_PATH . 'includes/api/class-api-settings.php';
+require BRAND_MASTER_PATH . 'admin/class-admin.php';
 
 // Minimal include stub so Brand_Master_Login can be loaded and tested.
 require BRAND_MASTER_PATH . 'public/class-login.php';

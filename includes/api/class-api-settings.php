@@ -79,13 +79,17 @@ if ( ! class_exists( 'Brand_Master_Api_Settings' ) ) {
 		/**
 		 * Checks if a given request has access to read and manage settings.
 		 *
+		 * Network administrators are allowed in addition to per-site admins so
+		 * the settings page and REST endpoint remain reachable on multisite
+		 * network-active installs.
+		 *
 		 * @since 1.0.0
 		 *
 		 * @param WP_REST_Request $request Full details about the request.
 		 * @return bool True if the request has read access for the item, otherwise false.
 		 */
 		public function get_item_permissions_check( $request ) {
-			return current_user_can( 'manage_options' );
+			return brand_master_current_user_can_manage();
 		}
 
 
@@ -305,6 +309,7 @@ if ( ! class_exists( 'Brand_Master_Api_Settings' ) ) {
 				'$schema'    => 'http://json-schema.org/draft-04/schema#',
 				'title'      => $this->type,
 				'type'       => 'object',
+				/* Partial payloads are allowed: the endpoint deep-merges them into the stored row. */
 				'properties' => $this->get_registered_schema()['properties'],
 			);
 

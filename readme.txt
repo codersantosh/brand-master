@@ -78,6 +78,10 @@ Yes, you can upload your brand logo, set brand colors, and customize various ele
 
 No, Brand Master does not alter the WordPress backend dashboard. It facilitates the creation of a customized frontend dashboard for users while keeping the backend dashboard unchanged.
 
+= Does this work on multisite? =
+
+Yes. Settings are stored per site. Network administrators can reach each site's Brand Master settings (the settings page and REST endpoint accept network admins in addition to per-site admins). Uninstalling removes the current site's settings; a network-wide uninstall cleans each site in turn.
+
 == Screenshots ==
 
 1. Dashboard - Getting started
@@ -108,6 +112,11 @@ No, Brand Master does not alter the WordPress backend dashboard. It facilitates 
 * Fix: Social link target/rel attributes use whitelist-built values
 * Accessibility: aria-current on active menu item; heading hierarchy fix
 * i18n: Default labels translated at render time
+* Security: Partial settings updates now deep-merge instead of overwriting the whole options row (no more silent sibling-data loss via the REST API)
+* Security: Login-page CSS/JS render output neutralizes tag breakouts even if a stored value bypasses sanitization
+* Fix: Legacy login globals ($error, $user_login) are only initialized when unset, preserving prior-handler values on lost-password/reset/registration flows
+* Fix: Settings page and REST endpoint accept network admins on network-active multisite installs
+* Fix: dashboard.userInfo.sort schema corrected; siteIdentity/userInfo logo fields constrained to their valid values
 
 = 1.0.5 =
 * Added: WordPress latest compatibility

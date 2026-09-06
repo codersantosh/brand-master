@@ -78,6 +78,25 @@ class Brand_Master_Admin {
 			$this->menu_info['icon_url'],
 			$this->menu_info['position'],
 		);
+
+		/*
+		 * On network-active multisite installs, network admins do not have
+		 * manage_options on individual sites. Surface a parallel menu entry
+		 * (with the same render target) so they can still reach the settings.
+		 * The REST endpoint accepts either capability via
+		 * brand_master_current_user_can_manage().
+		 */
+		if ( is_multisite() && is_super_admin() && ! current_user_can( 'manage_options' ) ) {
+			add_menu_page(
+				$this->menu_info['page_title'],
+				$this->menu_info['menu_title'],
+				'read',
+				$this->menu_info['menu_slug'] . '-network',
+				array( $this, 'add_setting_root_div' ),
+				$this->menu_info['icon_url'],
+				$this->menu_info['position'],
+			);
+		}
 	}
 
 	/**
@@ -385,6 +404,13 @@ class Brand_Master_Admin {
 							'properties' => array(
 								'logo'    => array(
 									'type' => 'string',
+									'enum' => array(
+										'',
+										't',
+										'l',
+										'r',
+										'b',
+									),
 								),
 								'title'   => array(
 									'type' => 'boolean',
@@ -409,6 +435,13 @@ class Brand_Master_Admin {
 							'properties' => array(
 								'logo' => array(
 									'type' => 'string',
+									'enum' => array(
+										'',
+										't',
+										'l',
+										'r',
+										'b',
+									),
 								),
 								'name' => array(
 									'type' => 'boolean',
@@ -419,13 +452,10 @@ class Brand_Master_Admin {
 								'sort' => array(
 									'type'  => 'array',
 									'items' => array(
-										'type'  => 'string',
-										'items' => array(
-											'type' => 'string',
-											'enum' => array(
-												'name',
-												'desc',
-											),
+										'type' => 'string',
+										'enum' => array(
+											'name',
+											'desc',
 										),
 									),
 								),

@@ -182,7 +182,14 @@ if ( ! function_exists( 'brand_master_get_options' ) ) :
 			if ( ! is_array( $options ) ) {
 				$options = array();
 			}
-			return array_merge( $default_options, $options );
+
+			/*
+			 * Deep-merge stored value over defaults so that nested defaults
+			 * (login.url.slug, dashboard.menu.items, etc.) survive even if
+			 * a previous save (e.g. via a partial REST PUT) left a sibling
+			 * key undefined. Shallow array_merge hid the B-1 data loss bug.
+			 */
+			return brand_master_deep_merge( $default_options, $options );
 		}
 	}
 endif;
@@ -196,6 +203,13 @@ if ( ! function_exists( 'brand_master_update_options' ) ) :
 	 * @param string|array $key_or_data array of options or single option key.
 	 * @param string       $val value of option key.
 	 *
+	 * Autoload (H-7): the option row stays autoloaded (WordPress default on
+	 * first add; preserved on later writes). This is intentional — login
+	 * routing (template_redirect / wp_loaded) reads these options on every
+	 * frontend request, so autoload=yes avoids an extra query per page view.
+	 * The row is a few KB serialized (defaults + saved overrides); keep new
+	 * top-level keys small and scalar-ish.
+	 *
 	 * @return mixed All Options Array Or Options Value
 	 *
 	 * @author     codersantosh <codersantosh@gmail.com>
@@ -205,10 +219,119 @@ if ( ! function_exists( 'brand_master_update_options' ) ) :
 			$options                 = brand_master_get_options();
 			$options[ $key_or_data ] = $val;
 		} else {
-			$options = $key_or_data;
+			/*
+			 * Partial update: deep-merge the incoming array into the raw stored
+			 * value (not the defaults-merged view) so sibling keys survive the
+			 * write without persisting defaults into the database. Merging here
+			 * keeps this helper correct even when the pre_update_option filter
+			 * below is unhooked; the filter then re-merges atomically against
+			 * the value WP read, closing the concurrent-write race.
+			 */
+			$stored  = get_option( BRAND_MASTER_OPTION_NAME );
+			$options = brand_master_deep_merge(
+				is_array( $stored ) ? $stored : array(),
+				is_array( $key_or_data ) ? $key_or_data : array()
+			);
 		}
 		update_option( BRAND_MASTER_OPTION_NAME, $options );
 		return brand_master_get_options();
+	}
+endif;
+
+if ( ! function_exists( 'brand_master_pre_update_option_deep_merge' ) ) :
+	/**
+	 * Deep-merge the incoming option value into the stored value before write.
+	 *
+	 * Hooked to pre_update_option for this plugin's option name.
+	 *
+	 * This makes the partial-update write race-free: WP reads the existing
+	 * value, applies this filter, then writes — atomically, with the option
+	 * row locked. brand_master_update_options() and direct update_option()
+	 * callers (e.g. migrations) both benefit.
+	 *
+	 * @since 1.0.6
+	 *
+	 * @param mixed  $value     The new value about to be written.
+	 * @param string $option    The option name.
+	 * @param mixed  $old_value The previous stored value (unserialized).
+	 * @return mixed Filtered value to write.
+	 */
+	function brand_master_pre_update_option_deep_merge( $value, $option, $old_value ) {
+		if ( BRAND_MASTER_OPTION_NAME !== $option ) {
+			return $value;
+		}
+		// Only deep-merge array-shaped options. Non-array values pass through.
+		if ( ! is_array( $value ) || ! is_array( $old_value ) ) {
+			return $value;
+		}
+		// Only deep-merge when both sides are object-shaped. An empty array
+		// or list (e.g. a one-off reset) should not be merged into a stored
+		// object — that would be a delete in disguise.
+		if ( ! $value || ! $old_value ) {
+			return $value;
+		}
+		if ( brand_master_is_list( $value ) || brand_master_is_list( $old_value ) ) {
+			return $value;
+		}
+		return brand_master_deep_merge( $old_value, $value );
+	}
+endif;
+add_filter( 'pre_update_option_' . BRAND_MASTER_OPTION_NAME, 'brand_master_pre_update_option_deep_merge', 10, 3 );
+
+if ( ! function_exists( 'brand_master_deep_merge' ) ) :
+	/**
+	 * Recursively merge two option arrays.
+	 *
+	 * Used by brand_master_get_options() to merge saved values over defaults,
+	 * so nested defaults survive even if a stored row is missing sibling keys.
+	 *
+	 * Associative arrays are merged recursively. Numeric-indexed arrays (e.g.
+	 * menu items, social items) are replaced wholesale — re-indexing an item
+	 * collection is not a partial update.
+	 *
+	 * @since 1.0.6
+	 *
+	 * @param array $base   Existing/stored value.
+	 * @param array $update Incoming value (overrides on conflict).
+	 * @return array Merged array.
+	 */
+	function brand_master_deep_merge( $base, $update ) {
+		foreach ( $update as $key => $value ) {
+			$is_assoc_update = is_array( $value ) && ! brand_master_is_list( $value );
+			$has_assoc_base  = isset( $base[ $key ] ) && is_array( $base[ $key ] ) && ! brand_master_is_list( $base[ $key ] );
+			if ( $is_assoc_update && $has_assoc_base ) {
+				$base[ $key ] = brand_master_deep_merge( $base[ $key ], $value );
+			} else {
+				$base[ $key ] = $value;
+			}
+		}
+		return $base;
+	}
+endif;
+
+if ( ! function_exists( 'brand_master_is_list' ) ) :
+	/**
+	 * Polyfill for array_is_list() (PHP 8.1+) compatible with PHP 7.3+.
+	 *
+	 * @since 1.0.6
+	 *
+	 * @param array $arr Array to test.
+	 * @return bool True if $arr is a list (zero-indexed sequential keys).
+	 */
+	function brand_master_is_list( $arr ) {
+		if ( function_exists( 'array_is_list' ) ) {
+			return array_is_list( $arr );
+		}
+		if ( ! is_array( $arr ) ) {
+			return false;
+		}
+		$i = 0;
+		foreach ( $arr as $k => $v ) {
+			if ( $k !== $i++ ) {
+				return false;
+			}
+		}
+		return true;
 	}
 endif;
 
@@ -560,6 +683,35 @@ if ( ! function_exists( 'brand_master_validate_redirect' ) ) :
 			return $fallback;
 		}
 		return wp_validate_redirect( esc_url_raw( $url ), $fallback );
+	}
+endif;
+
+if ( ! function_exists( 'brand_master_current_user_can_manage' ) ) :
+	/**
+	 * Capability check that allows site admins and (network-activated installs)
+	 * network administrators to access the plugin's settings.
+	 *
+	 * Without this fallback, a network admin who has manage_network_options
+	 * but not manage_options on a given site cannot reach the settings page
+	 * or the REST endpoint.
+	 *
+	 * @since 1.0.6
+	 *
+	 * @return bool True if the current user may manage this plugin.
+	 */
+	function brand_master_current_user_can_manage() {
+		if ( ! function_exists( 'current_user_can' ) || ! function_exists( 'is_super_admin' ) ) {
+			return false;
+		}
+		if ( current_user_can( 'manage_options' ) ) {
+			return true;
+		}
+		// On single-site, is_super_admin() is the same as manage_options for
+		// the admin role, so this is the multisite-only path.
+		if ( is_multisite() && is_super_admin() ) {
+			return true;
+		}
+		return false;
 	}
 endif;
 
