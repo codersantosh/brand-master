@@ -159,6 +159,24 @@ function add_action( $tag, $callback, $priority = 10, $accepted_args = 1 ) {
 	$GLOBALS['__bm_actions'][ $tag ][ $priority ][] = $callback;
 	return true;
 }
+function has_action( $tag, $callback = false ) {
+	if ( empty( $GLOBALS['__bm_actions'][ $tag ] ) ) {
+		return false;
+	}
+	// Check for any callback on this tag.
+	if ( false === $callback ) {
+		return true;
+	}
+	// Check each priority for the specific callback.
+	foreach ( $GLOBALS['__bm_actions'][ $tag ] as $priority => $callbacks ) {
+		foreach ( $callbacks as $cb ) {
+			if ( $cb === $callback ) {
+				return $priority;
+			}
+		}
+	}
+	return false;
+}
 function do_action( $tag, ...$args ) {
 	if ( empty( $GLOBALS['__bm_actions'][ $tag ] ) ) {
 		return;

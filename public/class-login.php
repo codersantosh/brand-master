@@ -74,6 +74,14 @@ class Brand_Master_Login {
 		/* Add body class */
 		add_filter( 'login_body_class', array( $this, 'add_login_body_class' ), 99 );
 
+		/*
+		 * Initialize legacy globals on every login page (not just custom slug).
+		 *
+		 * Prevents "Undefined variable $error / $user_login" warnings when
+		 * wp-login.php is accessed directly (lost-password, registration, etc.).
+		 */
+		add_action( 'login_head', array( $this, 'init_wp_login_globals' ), 1 );
+
 		/*CSS/JS*/
 		add_action( 'login_head', array( $this, 'add_login_css' ), 99 );
 		add_action( 'login_footer', array( $this, 'add_login_js' ), 99 );
@@ -193,6 +201,31 @@ class Brand_Master_Login {
 	}
 
 	/**
+	 * Initialize the legacy WP 7.0 globals that wp-login.php expects.
+	 *
+	 * WP-login.php still reads the $error and $user_login globals. On flows
+	 * where a previous handler has already populated them (lost-password POST,
+	 * reset-password check, registration form, error render, etc.) we must
+	 * not overwrite the value — clobbering $user_login silently breaks those
+	 * flows (B-2 regression).
+	 *
+	 * @since 1.0.6
+	 *
+	 * @return void
+	 */
+	public function init_wp_login_globals() {
+		// phpcs:disable WordPress.WP.GlobalVariablesOverride.Prohibited -- intentional WP 7.0 legacy globals.
+		global $error, $user_login;
+		if ( ! isset( $error ) ) {
+			$error = '';
+		}
+		if ( ! isset( $user_login ) ) {
+			$user_login = '';
+		}
+		// phpcs:enable WordPress.WP.GlobalVariablesOverride.Prohibited
+	}
+
+	/**
 	 * Load login page, if the condition meets.
 	 * Conditions:
 	 *  must have login slug,
@@ -263,6 +296,7 @@ class Brand_Master_Login {
 
 				// Check if the extracted part matches the substring.
 				if ( $is_load_page ) {
+					$this->init_wp_login_globals();
 					require_once ABSPATH . 'wp-login.php';
 					exit;
 				}
@@ -492,23 +526,32 @@ class Brand_Master_Login {
 	 */
 	public function add_login_css() {
 
-		$login_settings = brand_master_include()->get_settings()['login'];
+		$settings       = brand_master_include()->get_settings();
+		$login_settings = isset( $settings['login'] ) && is_array( $settings['login'] ) ? $settings['login'] : array();
 		$custom_css     = '';
 		if ( isset( $login_settings['logo']['on'] ) && $login_settings['logo']['on'] ) {
 			if ( isset( $login_settings['logo']['img']['url'] ) && $login_settings['logo']['img']['url'] ) {
 				$logo_image_url = esc_url( $login_settings['logo']['img']['url'] );
-				$custom_css    .= ".brand-master-login #login h1 a { 
+				$custom_css    .= ".brand-master-login #login h1 a {
 										background-image: url('$logo_image_url');
 									}";
 			}
 		}
 
-		if ( $login_settings['css'] ) {
+		if ( isset( $login_settings['css'] ) && is_string( $login_settings['css'] ) && '' !== $login_settings['css'] ) {
 			$custom_css .= $login_settings['css'];
 		}
-		if ( $custom_css ) {
+		if ( '' !== $custom_css ) {
+			/*
+			 * Defense in depth (H-3): stored CSS is save-gated on unfiltered_html,
+			 * but render must still prevent a </style> breakout if a value ever
+			 * bypasses sanitization (e.g. direct DB write). Strip closing tags
+			 * after wp_strip_all_tags, which alone does not remove them safely
+			 * for the <style> context.
+			 */
+			$safe_css = str_ireplace( array( '</style', '</script' ), '', wp_strip_all_tags( $custom_css ) );
 			/* phpcs:ignore*/
-			echo '<style>' . wp_strip_all_tags( $custom_css ) . '</style>';
+			echo '<style>' . $safe_css . '</style>';
 		}
 	}
 
@@ -522,14 +565,21 @@ class Brand_Master_Login {
 	 */
 	public function add_login_js() {
 
-		$login_settings = brand_master_include()->get_settings()['login'];
+		$settings       = brand_master_include()->get_settings();
+		$login_settings = isset( $settings['login'] ) && is_array( $settings['login'] ) ? $settings['login'] : array();
 		$custom_js      = '';
-		if ( $login_settings['js'] ) {
-			$custom_js .= wp_strip_all_tags( $login_settings['js'] );
+		if ( isset( $login_settings['js'] ) && is_string( $login_settings['js'] ) && '' !== $login_settings['js'] ) {
+			$custom_js .= $login_settings['js'];
 		}
-		if ( $custom_js ) {
+		if ( '' !== $custom_js ) {
+			/*
+			 * Defense in depth (H-3): stored JS is save-gated on unfiltered_html;
+			 * render must still prevent a </script> breakout if a value ever
+			 * bypasses sanitization (e.g. direct DB write).
+			 */
+			$safe_js = str_ireplace( '</script', '', $custom_js );
 			/* phpcs:ignore*/
-			echo '<script>' . wp_strip_all_tags( $custom_js ) . '</script>';
+			echo '<script>' . $safe_js . '</script>';
 		}
 	}
 
