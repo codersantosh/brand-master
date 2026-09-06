@@ -118,7 +118,7 @@ function wp_parse_url( $url, $component = -1 ) {
 		$host = parse_url( $url, PHP_URL_HOST );
 		return $host ? $host : null;
 	}
-	return parse_url( $url );
+	return parse_url( $url, $component );
 }
 function current_user_can( $cap, ...$args ) {
 	return ! empty( $GLOBALS['__bm_caps'][ $cap ] );
@@ -189,6 +189,12 @@ function do_action( $tag, ...$args ) {
 	}
 }
 function rest_api_init() {}
+function __return_false() {
+	return false;
+}
+function __return_true() {
+	return true;
+}
 
 // Minimal WP test doubles.
 class WP_Error {

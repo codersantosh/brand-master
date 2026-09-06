@@ -170,15 +170,25 @@ class Brand_Master_Login {
 			return $url;
 		}
 
-		if ( strpos( $url, 'wp-login.php' ) !== false && strpos( wp_get_referer(), 'wp-login.php' ) === false ) {
-			$args = explode( '?', $url );
+		if ( false !== strpos( $url, 'wp-login.php' ) ) {
+			/*
+			 * Skip rewriting when the visitor is already inside a wp-login.php
+			 * flow. wp_get_referer() returns false when no Referer header was
+			 * sent (first-visit GETs, privacy-stripped referrers); that must
+			 * still rewrite, so the false case is checked explicitly instead
+			 * of passing it into strpos().
+			 */
+			$referer = wp_get_referer();
+			if ( false === $referer || false === strpos( (string) $referer, 'wp-login.php' ) ) {
+				$args = explode( '?', $url );
 
-			/* specially for action param */
-			if ( isset( $args[1] ) ) {
-				parse_str( $args[1], $params );
-				$url = add_query_arg( $params, $this->get_login_url() );
-			} else {
-				$url = $this->get_login_url();
+				/* specially for action param */
+				if ( isset( $args[1] ) ) {
+					parse_str( $args[1], $params );
+					$url = add_query_arg( $params, $this->get_login_url() );
+				} else {
+					$url = $this->get_login_url();
+				}
 			}
 		}
 
@@ -202,21 +212,22 @@ class Brand_Master_Login {
 	}
 
 	/**
-	 * Initialize the legacy WP 7.0 globals that wp-login.php expects.
+	 * Initialize the legacy WP globals that wp-login.php expects.
 	 *
-	 * WP-login.php still reads the $error and $user_login globals. On flows
-	 * where a previous handler has already populated them (lost-password POST,
-	 * reset-password check, registration form, error render, etc.) we must
-	 * not overwrite the value — clobbering $user_login silently breaks those
-	 * flows (B-2 regression).
+	 * Only $error and $user_login are initialized if unset, preventing
+	 * "Undefined variable" warnings on bare reads while preserving values from
+	 * prior handlers (lost-password POST, password reset check, etc. — B-2 regression).
+	 * $action and $interim_login are declared global so core's top-level assignments
+	 * propagate to $GLOBALS for login_header() / login_footer(), but are intentionally
+	 * NOT initialized here to avoid masking $_REQUEST data.
 	 *
 	 * @since 1.0.6
 	 *
 	 * @return void
 	 */
 	public function init_wp_login_globals() {
-		// phpcs:disable WordPress.WP.GlobalVariablesOverride.Prohibited -- intentional WP 7.0 legacy globals.
-		global $error, $user_login;
+		// phpcs:disable WordPress.WP.GlobalVariablesOverride.Prohibited -- intentional WP legacy globals.
+		global $error, $interim_login, $action, $user_login;
 		if ( ! isset( $error ) ) {
 			$error = '';
 		}
@@ -224,6 +235,74 @@ class Brand_Master_Login {
 			$user_login = '';
 		}
 		// phpcs:enable WordPress.WP.GlobalVariablesOverride.Prohibited
+	}
+
+	/**
+	 * Whether a request targets the custom login page.
+	 *
+	 * Extracted from load_login_page() so the matching logic is unit-testable
+	 * (load_login_page() itself ends in require + exit).
+	 *
+	 * @since 1.0.7
+	 * @access public
+	 *
+	 * @param string $login_url   Full custom login URL.
+	 * @param string $request_uri Raw request URI (may include a query string).
+	 * @return bool True when the request should load wp-login.php.
+	 */
+	public function is_login_page_request( $login_url, $request_uri ) {
+		$is_load_page = false;
+
+		// Check if '?' exists in the URL.
+		$args_login = explode( '?', $login_url );
+		if ( isset( $args_login[1] ) ) {
+			parse_str( $args_login[1], $params_login );
+
+			$params_login = array_keys( $params_login );
+
+			$args_uri = explode( '?', $request_uri );
+			if ( isset( $args_uri[1] ) ) {
+				parse_str( $args_uri[1], $params_uri );
+
+				$params_uri_values = $params_uri;
+				$params_uri        = array_keys( $params_uri );
+
+					/* Require the matched login param to be present with an empty value, so unrelated URLs merely reusing the param name do not trigger the login page. */
+				foreach ( $params_login as $param_login ) {
+					if ( in_array( $param_login, $params_uri, true ) && ( ! isset( $params_uri_values[ $param_login ] ) || '' === $params_uri_values[ $param_login ] ) ) {
+						$is_load_page = true;
+						break;
+					}
+				}
+			}
+		} else {
+			// Check if '?' exists in the URL.
+			$has_request_uri_param = strpos( $request_uri, '?' );
+
+			// Get the substring before '?' or use the entire URL if '?' is not found.
+			$request_uri = false !== $has_request_uri_param ? substr( $request_uri, 0, $has_request_uri_param ) : $request_uri;
+
+			/*
+			 * Compare the request path against the login URL path exactly. A
+			 * former suffix comparison also matched mere tails of the slug
+			 * (e.g. "/ogin" matched slug "login"), loading the login page on
+			 * unrelated URLs.
+			 */
+			$login_path = wp_parse_url( $login_url, PHP_URL_PATH );
+			if ( ! is_string( $login_path ) || '' === $login_path ) {
+				$login_path = $login_url;
+			}
+
+			/* replace `/` */
+			$login_path  = preg_replace( '/(^\/+|\/+$)/', '', $login_path );
+			$request_uri = preg_replace( '/(^\/+|\/+$)/', '', $request_uri );
+
+			if ( '' !== $request_uri && $login_path === $request_uri ) {
+				$is_load_page = true;
+			}
+		}
+
+		return $is_load_page;
 	}
 
 	/**
@@ -250,54 +329,26 @@ class Brand_Master_Login {
 
 			if ( $login_url && $request_uri ) {
 
-				$is_load_page = false;
-
-				// Check if '?' exists in the URL.
-				$args_login = explode( '?', $login_url );
-				if ( isset( $args_login[1] ) ) {
-					parse_str( $args_login[1], $params_login );
-
-					$params_login = array_keys( $params_login );
-
-					$args_uri = explode( '?', $request_uri );
-					if ( isset( $args_uri[1] ) ) {
-						parse_str( $args_uri[1], $params_uri );
-
-						$params_uri_values = $params_uri;
-						$params_uri        = array_keys( $params_uri );
-
-							/* Require the matched login param to be present with an empty value, so unrelated URLs merely reusing the param name do not trigger the login page. */
-						foreach ( $params_login as $param_login ) {
-							if ( in_array( $param_login, $params_uri, true ) && ( ! isset( $params_uri_values[ $param_login ] ) || '' === $params_uri_values[ $param_login ] ) ) {
-								$is_load_page = true;
-								break;
-							}
-						}
-					}
-				} else {
-					// Check if '?' exists in the URL.
-					$has_request_uri_param = strpos( $request_uri, '?' );
-
-					// Get the substring before '?' or use the entire URL if '?' is not found.
-					$request_uri = false !== $has_request_uri_param ? substr( $request_uri, 0, $has_request_uri_param ) : $request_uri;
-
-					/* replace `/` */
-					$login_url   = preg_replace( '/(^\/+|\/+$)/', '', $login_url );
-					$request_uri = preg_replace( '/(^\/+|\/+$)/', '', $request_uri );
-
-					// Get the length of the requrest uri.
-					$substring_length = strlen( $request_uri );
-
-					// Extract the end of the full string with the same length as the substring.
-					$end_of_full_string = substr( $login_url, -$substring_length );
-					if ( $end_of_full_string === $request_uri ) {
-						$is_load_page = true;
-					}
-				}
-
 				// Check if the extracted part matches the substring.
-				if ( $is_load_page ) {
+				if ( $this->is_login_page_request( $login_url, $request_uri ) ) {
+					/*
+					 * Bind variables that cross function boundaries in wp-login.php ($action,
+					 * $interim_login, $error) or have bare reads without initialization ($user_login,
+					 * $error). An include inherits the scope of this method, so without this
+					 * aliasing wp-login.php would read undefined method-locals instead of $GLOBALS.
+					 * Other wp-login.php locals ($errors, $redirect_to, etc.) do not cross global
+					 * boundaries and remain safely scoped to this method.
+					 */
+					// phpcs:disable WordPress.WP.GlobalVariablesOverride.Prohibited -- alias method scope to WP login globals.
+					global $error, $interim_login, $action, $user_login;
+					// phpcs:enable WordPress.WP.GlobalVariablesOverride.Prohibited
+
 					$this->init_wp_login_globals();
+
+					/*
+					 * require_once is required because wp-login.php defines functions
+					 * (login_header, wp_shake_js, etc.) that would fatal on duplicate include.
+					 */
 					require_once ABSPATH . 'wp-login.php';
 					exit;
 				}
@@ -400,6 +451,43 @@ class Brand_Master_Login {
 	}
 
 	/**
+	 * Whether a direct wp-login.php request must be redirected to the redirect slug.
+	 *
+	 * Authentication flows that can only complete on wp-login.php itself are
+	 * allowed through: any POST request (a redirect would discard the payload),
+	 * the nonce'd logout handshake, and the password-reset key exchange.
+	 * Bare and login-action GETs stay hidden behind the redirect slug.
+	 *
+	 * Extracted from redirect_login_and_wp_admin() so the decision is
+	 * unit-testable (the caller ends in wp_safe_redirect + exit).
+	 *
+	 * @since 1.0.7
+	 * @access public
+	 *
+	 * @return bool True when the request must be redirected.
+	 */
+	public function should_redirect_wp_login() {
+		$method = isset( $_SERVER['REQUEST_METHOD'] ) ? sanitize_key( wp_unslash( $_SERVER['REQUEST_METHOD'] ) ) : 'get';
+		if ( 'post' === $method ) {
+			return false;
+		}
+
+		$action = '';
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- read-only routing decision; no data processed or persisted.
+		if ( isset( $_REQUEST['action'] ) && is_string( $_REQUEST['action'] ) ) {
+			$action = sanitize_key( wp_unslash( $_REQUEST['action'] ) );
+		}
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
+
+		$passthrough = array( 'logout', 'rp', 'resetpass', 'postpass' );
+		if ( in_array( $action, $passthrough, true ) ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
 	 * Redirect login page or wp-admin dir to redirection url.
 	 * Adjust wp-admin page again
 	 *
@@ -414,6 +502,9 @@ class Brand_Master_Login {
 
 			/* Login page, no user has this page access */
 			if ( 'wp-login.php' === $pagenow ) {
+				if ( ! $this->should_redirect_wp_login() ) {
+					return;
+				}
 				wp_safe_redirect( brand_master_validate_redirect( $this->get_redirect_url() ) );
 				exit;
 			}

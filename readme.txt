@@ -117,6 +117,10 @@ Yes. Settings are stored per site. Network administrators can reach each site's 
 * Fix: Legacy login globals ($error, $user_login) are only initialized when unset, preserving prior-handler values on lost-password/reset/registration flows
 * Fix: Settings page and REST endpoint accept network admins on network-active multisite installs
 * Fix: dashboard.userInfo.sort schema corrected; siteIdentity/userInfo logo fields constrained to their valid values
+* Fix: Custom login slug no longer emits "Undefined variable $user_login / $error" warnings — wp-login.php globals are now bound in the including method scope (version-agnostic across WP 6.6/6.7/7.x)
+* Fix: wp-login.php redirect allowlist — logout, password-reset key exchange (rp/resetpass) and all POST requests pass through instead of bouncing to the redirect slug
+* Fix: Custom login slug matching is now exact-path (tails like /ogin no longer load the login page); referer handling hardened for missing Referer headers
+* Added: Unit coverage for login scope binding, wp-login.php redirect matrix, exact slug matching, and admin-bar / post-action redirect settings
 
 = 1.0.5 =
 * Added: WordPress latest compatibility

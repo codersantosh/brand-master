@@ -1,17 +1,17 @@
-# Copyright (C) 2025 patternswp
+# Copyright (C) 2026 patternswp
 # This file is distributed under the GPL-2.0+.
 msgid ""
 msgstr ""
-"Project-Id-Version: Brand Master - Customize Login and User Frontend Dashboard 1.0.5\n"
+"Project-Id-Version: Brand Master - Customize Login and User Frontend Dashboard 1.0.6\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/brand-master\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-04-18T04:35:48+00:00\n"
+"POT-Creation-Date: 2026-09-06T19:44:40+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: WP-CLI 2.6.0\n"
+"X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: brand-master\n"
 
 #: src/admin/components/atoms/save-settings.js:24
@@ -39,14 +39,16 @@ msgid "Login"
 msgstr ""
 
 #: src/admin/components/organisms/admin-header.js:33
+#: deploy/brand-master/includes/class-patterns.php:76
 #: includes/class-patterns.php:76
 msgid "Dashboard"
 msgstr ""
 
 #: src/admin/components/organisms/admin-header.js:37
 #: src/admin/pages/login/pages/utilities.js:367
-#: src/admin/pages/settings/pages/advanced.js:125
-#: admin/class-admin.php:685
+#: src/admin/pages/settings/pages/advanced.js:141
+#: admin/class-admin.php:726
+#: deploy/brand-master/admin/class-admin.php:726
 msgid "Settings"
 msgstr ""
 
@@ -111,7 +113,8 @@ msgstr ""
 #: src/admin/pages/dashboard/pages/elements.js:254
 #: src/admin/pages/dashboard/pages/header.js:200
 #: src/admin/pages/dashboard/pages/sidebar.js:177
-#: includes/functions.php:99
+#: deploy/brand-master/includes/functions.php:740
+#: includes/functions.php:740
 msgid "Logout"
 msgstr ""
 
@@ -269,7 +272,8 @@ msgstr ""
 
 #: src/admin/pages/dashboard/pages/header.js:192
 #: src/admin/pages/dashboard/pages/sidebar.js:169
-#: includes/functions.php:111
+#: deploy/brand-master/includes/functions.php:744
+#: includes/functions.php:744
 msgid "Social"
 msgstr ""
 
@@ -559,202 +563,281 @@ msgstr ""
 msgid "Title"
 msgstr ""
 
-#: src/admin/pages/settings/pages/advanced.js:42
-msgid "Remove all plugin settings when deactivating."
-msgstr ""
-
-#: src/admin/pages/settings/pages/advanced.js:77
-msgid "What does \"Remove all plugin settings when deactivating\" do?"
-msgstr ""
-
-#: src/admin/pages/settings/pages/advanced.js:85
+#: src/admin/pages/settings/pages/advanced.js:101
 msgid "Enabling this option will erase all settings associated with the plugin from the WordPress options table. However, please note that the selected page will not be deleted from Pages."
 msgstr ""
 
-#: src/admin/pages/settings/pages/advanced.js:92
+#: src/admin/pages/settings/pages/advanced.js:108
 msgid "Do I need to activate this option?"
 msgstr ""
 
-#: src/admin/pages/settings/pages/advanced.js:97
+#: src/admin/pages/settings/pages/advanced.js:113
 msgid "If you anticipate using the `Login feature` in the future, no need to activate it."
 msgstr ""
 
+#: src/admin/pages/settings/pages/advanced.js:42
+msgid "Are you sure? Enabling this will permanently erase all plugin settings when the plugin is deactivated. This action cannot be undone."
+msgstr ""
+
+#: src/admin/pages/settings/pages/advanced.js:58
+msgid "Remove all plugin settings when deactivating."
+msgstr ""
+
+#: src/admin/pages/settings/pages/advanced.js:93
+msgid "What does \"Remove all plugin settings when deactivating\" do?"
+msgstr ""
+
 #. Plugin Name of the plugin
+#: brand-master.php
 msgid "Brand Master - Customize Login and User Frontend Dashboard"
 msgstr ""
 
 #. Plugin URI of the plugin
+#: brand-master.php
 msgid "https://patternswp.com/wp-plugins/brand-master"
 msgstr ""
 
 #. Description of the plugin
+#: brand-master.php
 msgid "Brand Master enhances WordPress site customization by allowing you to personalize login pages and introduce a sleek frontend dashboard for users. Elevate your brand with complete control over the user experience."
 msgstr ""
 
 #. Author of the plugin
+#: brand-master.php
 msgid "patternswp"
 msgstr ""
 
 #. Author URI of the plugin
+#: brand-master.php
 msgid "https://patternswp.com"
 msgstr ""
 
+#: admin/class-admin.php:167
+#: deploy/brand-master/admin/class-admin.php:167
+msgid "Brand Master: built assets are missing. Run \"npm install && npm run build\" in the plugin directory, or reinstall the plugin."
+msgstr ""
+
 #. translators: %s: Property name.
-#: includes/api/class-api-settings.php:163
+#: deploy/brand-master/includes/api/class-api-settings.php:201
+#: includes/api/class-api-settings.php:201
+#, php-format
 msgid "The %s property has an invalid stored value, and cannot be updated to null."
 msgstr ""
 
+#. translators: %s: slug.
+#: deploy/brand-master/includes/api/class-api-settings.php:248
+#: includes/api/class-api-settings.php:248
+#, php-format
+msgid "The slug %s is reserved and cannot be used."
+msgstr ""
+
+#. translators: %s: slug.
+#: deploy/brand-master/includes/api/class-api-settings.php:257
+#: includes/api/class-api-settings.php:257
+#, php-format
+msgid "The slug %s is already in use by an existing page."
+msgstr ""
+
+#: deploy/brand-master/includes/api/class-api-settings.php:266
+#: includes/api/class-api-settings.php:266
+msgid "Login slug and redirect slug cannot be the same."
+msgstr ""
+
+#: deploy/brand-master/includes/api/class-api.php:119
+#: deploy/brand-master/includes/api/class-api.php:131
 #: includes/api/class-api.php:119
 #: includes/api/class-api.php:131
 msgid "Cheatin&#8217; huh?"
 msgstr ""
 
-#: includes/functions.php:102
-msgid "Navigations"
-msgstr ""
-
-#: includes/functions.php:275
-#: includes/functions.php:283
+#: deploy/brand-master/includes/functions.php:411
+#: deploy/brand-master/includes/functions.php:419
+#: includes/functions.php:411
+#: includes/functions.php:419
 msgid "Brand Master"
 msgstr ""
 
-#: includes/functions.php:282
+#: deploy/brand-master/includes/functions.php:418
+#: includes/functions.php:418
 msgid "Brand Master Page"
 msgstr ""
 
 #. translators: %s is the plugin name
-#: includes/functions.php:292
+#: deploy/brand-master/includes/functions.php:428
+#: includes/functions.php:428
+#, php-format
 msgid "Congratulations on choosing the %s for customizing your WordPress login and user frontend dashboard. We recommend taking a few minutes to read the following information on how the plugin works. Please read it carefully to fully understand capabilities of the plugin and how to use them effectively."
 msgstr ""
 
 #. translators: %s is the plugin name
-#: includes/functions.php:304
+#: deploy/brand-master/includes/functions.php:440
+#: includes/functions.php:440
+#, php-format
 msgid "Congratulations! You have successfully installed %s and it is ready for customizing the WordPress login and user frontend dashboard."
 msgstr ""
 
 #. translators: %s is the plugin name
-#: includes/functions.php:312
+#: deploy/brand-master/includes/functions.php:448
+#: includes/functions.php:448
+#, php-format
 msgid "If you have any questions or need assistance, please do not hesitate to contact us for support. The %s plugin caters to WordPress site owners, developers and designers seeking to enhance and personalize the login experience and user frontend dashboard."
 msgstr ""
 
-#: includes/functions.php:321
+#: deploy/brand-master/includes/functions.php:457
+#: includes/functions.php:457
 msgid "Get started"
 msgstr ""
 
-#: includes/functions.php:327
+#: deploy/brand-master/includes/functions.php:463
+#: includes/functions.php:463
 msgid "Docmentation"
 msgstr ""
 
-#: includes/functions.php:333
+#: deploy/brand-master/includes/functions.php:469
+#: includes/functions.php:469
 msgid "Get support"
 msgstr ""
 
-#: includes/functions.php:347
+#: deploy/brand-master/includes/functions.php:483
+#: includes/functions.php:483
 msgid "Visit site"
 msgstr ""
 
-#: includes/functions.php:352
-#: includes/functions.php:364
+#: deploy/brand-master/includes/functions.php:488
+#: deploy/brand-master/includes/functions.php:500
+#: includes/functions.php:488
+#: includes/functions.php:500
 msgid "Get Support"
 msgstr ""
 
-#: includes/functions.php:359
+#: deploy/brand-master/includes/functions.php:495
+#: includes/functions.php:495
 msgid "Contact Information"
 msgstr ""
 
-#: includes/functions.php:363
+#: deploy/brand-master/includes/functions.php:499
+#: includes/functions.php:499
 msgid "Support"
 msgstr ""
 
-#: includes/functions.php:370
+#: deploy/brand-master/includes/functions.php:506
+#: includes/functions.php:506
 msgid "Location"
 msgstr ""
 
-#: includes/functions.php:371
+#: deploy/brand-master/includes/functions.php:507
+#: includes/functions.php:507
 msgid "Kathmandu, Nepal"
 msgstr ""
 
-#: includes/functions.php:395
+#: deploy/brand-master/includes/functions.php:531
+#: includes/functions.php:531
 msgid "Activate Brand Master"
 msgstr ""
 
-#: includes/functions.php:399
-#: includes/functions.php:469
+#: deploy/brand-master/includes/functions.php:535
+#: deploy/brand-master/includes/functions.php:605
+#: includes/functions.php:535
+#: includes/functions.php:605
 msgid "Login settings"
 msgstr ""
 
-#: includes/functions.php:403
-#: includes/functions.php:476
+#: deploy/brand-master/includes/functions.php:539
+#: deploy/brand-master/includes/functions.php:612
+#: includes/functions.php:539
+#: includes/functions.php:612
 msgid "Dashboard settings"
 msgstr ""
 
-#: includes/functions.php:409
+#: deploy/brand-master/includes/functions.php:545
+#: includes/functions.php:545
 msgid "Knowledge base"
 msgstr ""
 
-#: includes/functions.php:410
+#: deploy/brand-master/includes/functions.php:546
+#: includes/functions.php:546
 msgid "The utilization of this plugin can be facilitated by perusing comprehensive and well-documented articles."
 msgstr ""
 
-#: includes/functions.php:414
+#: deploy/brand-master/includes/functions.php:550
+#: includes/functions.php:550
 msgid "Visit knowledge base"
 msgstr ""
 
-#: includes/functions.php:420
+#: deploy/brand-master/includes/functions.php:556
+#: includes/functions.php:556
 msgid "Community"
 msgstr ""
 
 #. translators: %s is the plugin name
-#: includes/functions.php:423
+#: deploy/brand-master/includes/functions.php:559
+#: includes/functions.php:559
 msgid "Our objective is to enhance the customer experience, we invite you to join our community where you can receive immediate support."
 msgstr ""
 
-#: includes/functions.php:429
+#: deploy/brand-master/includes/functions.php:565
+#: includes/functions.php:565
 msgid "Visit community page"
 msgstr ""
 
-#: includes/functions.php:434
+#: deploy/brand-master/includes/functions.php:570
+#: includes/functions.php:570
 msgid "24x7 support"
 msgstr ""
 
 #. translators: %s is the plugin name
-#: includes/functions.php:437
+#: deploy/brand-master/includes/functions.php:573
+#: includes/functions.php:573
 msgid "Our support team is available 24/7 to assist you in the event that you encounter any problems while utilizing this plugin."
 msgstr ""
 
-#: includes/functions.php:443
+#: deploy/brand-master/includes/functions.php:579
+#: includes/functions.php:579
 msgid "Create a support thread"
 msgstr ""
 
-#: includes/functions.php:449
+#: deploy/brand-master/includes/functions.php:585
+#: includes/functions.php:585
 msgid "Video guide"
 msgstr ""
 
 #. translators: %s is the plugin name
-#: includes/functions.php:452
+#: deploy/brand-master/includes/functions.php:588
+#: includes/functions.php:588
 msgid "The plugin is accompanied by comprehensive video tutorials that provide practical demonstrations for most customization."
 msgstr ""
 
-#: includes/functions.php:458
+#: deploy/brand-master/includes/functions.php:594
+#: includes/functions.php:594
 msgid "View video guide"
 msgstr ""
 
-#: includes/functions.php:465
+#: deploy/brand-master/includes/functions.php:601
+#: includes/functions.php:601
 msgid "Quick links to settings"
 msgstr ""
 
-#: includes/functions.php:484
+#: deploy/brand-master/includes/functions.php:620
+#: includes/functions.php:620
 msgid "Utilities settings"
 msgstr ""
 
-#: includes/functions.php:494
+#: deploy/brand-master/includes/functions.php:630
+#: includes/functions.php:630
 msgid "Changelog"
 msgstr ""
 
-#: public/templates/dashboard.php:67
+#: deploy/brand-master/includes/functions.php:742
+#: includes/functions.php:742
+msgid "Navigations"
+msgstr ""
+
+#: deploy/brand-master/public/templates/dashboard.php:69
+#: public/templates/dashboard.php:69
 msgid "Page not found."
 msgstr ""
 
-#: public/templates/dashboard.php:74
+#: deploy/brand-master/public/templates/dashboard.php:76
+#: public/templates/dashboard.php:76
 msgid "Page not selected."
 msgstr ""

@@ -144,6 +144,45 @@ class UrlRewriteTest extends TestCase {
 		unset( $GLOBALS['__bm_referer'] );
 	}
 
+	public function test_updated_login_url_rewrites_when_referer_absent() {
+		$this->set_permalink( '/%postname%/' );
+		$this->set_options(
+			array(
+				'login' => array(
+					'url' => array(
+						'on'   => true,
+						'slug' => 'sign-in',
+					),
+				),
+			)
+		);
+		// No Referer header (first-visit GETs, privacy-stripped referrers):
+		// wp_get_referer() returns false and the rewrite must still happen.
+		unset( $GLOBALS['__bm_referer'] );
+		$login = brand_master_login();
+		$input = 'https://example.com/wp-login.php';
+		$this->assertSame( 'https://example.com/sign-in', $login->get_updated_login_url( $input ) );
+	}
+
+	public function test_updated_login_url_rewrites_with_unrelated_referer() {
+		$this->set_permalink( '/%postname%/' );
+		$this->set_options(
+			array(
+				'login' => array(
+					'url' => array(
+						'on'   => true,
+						'slug' => 'sign-in',
+					),
+				),
+			)
+		);
+		$GLOBALS['__bm_referer'] = 'https://example.com/some-page';
+		$login                   = brand_master_login();
+		$input                   = 'https://example.com/wp-login.php';
+		$this->assertSame( 'https://example.com/sign-in', $login->get_updated_login_url( $input ) );
+		unset( $GLOBALS['__bm_referer'] );
+	}
+
 	public function test_updated_login_url_returns_unchanged_when_disabled() {
 		$this->set_options( array( 'login' => array( 'url' => array( 'on' => false ) ) ) );
 		$login = brand_master_login();

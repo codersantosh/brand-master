@@ -37,21 +37,27 @@ if ( ! function_exists( 'brand_master_menu' ) ) {
 				?>
 				<ul class="at-ls at-flx at-gap bm-menu-ul <?php echo esc_attr( $menu_classes ); ?>">
 					<?php
-					if ( $menu_items ) {
+					if ( is_array( $menu_items ) ) {
 						foreach ( $menu_items as $key => $item ) {
+							if ( ! is_array( $item ) ) {
+								continue;
+							}
 							$class = 'bm-menu-li';
-							if ( isset( $item['slug'] ) && $current_menu['slug'] === $item['slug'] ) {
+							$item_slug = isset( $item['slug'] ) ? (string) $item['slug'] : '';
+							if ( is_array( $current_menu ) && isset( $current_menu['slug'] ) && $current_menu['slug'] === $item_slug && '' !== $item_slug ) {
 								$class .= ' bm-menu-active';
 							}
 							?>
-							<li class="<?php echo esc_attr( ( isset( $item['slug'] ) ? $item['slug'] : '' ) . ' ' . $class ); ?>"<?php echo 'bm-menu-li bm-menu-active' === $class ? ' aria-current="page"' : ''; ?>>
-								<a href="<?php echo esc_url( add_query_arg( 'action', isset( $item['slug'] ) ? $item['slug'] : '', get_permalink() ) ); ?>" class="at-flx at-al-itm-ctr at-gap">
+							<li class="<?php echo esc_attr( $item_slug . ' ' . $class ); ?>"<?php echo 'bm-menu-li bm-menu-active' === $class ? ' aria-current="page"' : ''; ?>>
+								<a href="<?php echo esc_url( add_query_arg( 'action', $item_slug, get_permalink() ) ); ?>" class="at-flx at-al-itm-ctr at-gap">
 									<?php
 									if ( isset( $item['icon']['svg'] ) && brand_master_is_valid_svg( $item['icon']['svg'] ) ) {
 										/* phpcs:ignore*/
                                         echo brand_master_esc_svg( $item['icon']['svg'] );//escaping function.
 									}
-									echo esc_html( $item['label'] );
+									if ( isset( $item['label'] ) && $item['label'] ) {
+										echo esc_html( $item['label'] );
+									}
 									?>
 								</a>
 							</li>

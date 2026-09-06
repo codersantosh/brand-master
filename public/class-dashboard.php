@@ -214,7 +214,7 @@ class Brand_Master_Dashboard {
 	public function get_current_menu() {
 
 		/* phpcs:ignore */
-		$current_slug       = isset( $_GET['action'] ) && ! empty( $_GET['action'] ) ? sanitize_text_field( $_GET['action'] ) : '';
+		$current_slug       = isset( $_GET['action'] ) && ! empty( $_GET['action'] ) && is_string( $_GET['action'] ) ? sanitize_text_field( wp_unslash( $_GET['action'] ) ) : '';
 		$dashboard_settings = brand_master_include()->get_settings()['dashboard'];
 		$menu_settings      = $dashboard_settings['menu'];
 		$menu_items         = $menu_settings['items'];
@@ -410,9 +410,11 @@ class Brand_Master_Dashboard {
 			$menu_items = $dashboard_settings['menu']['items'];
 
 			$menu_ids = array();
-			foreach ( $menu_items as $item ) {
-				if ( $item['typeId'] ) {
-					$menu_ids[] = absint( $item['typeId'] );
+			if ( is_array( $menu_items ) ) {
+				foreach ( $menu_items as $item ) {
+					if ( is_array( $item ) && isset( $item['typeId'] ) && $item['typeId'] ) {
+						$menu_ids[] = absint( $item['typeId'] );
+					}
 				}
 			}
 			if ( $menu_ids && in_array( absint( get_the_ID() ), $menu_ids, true ) ) {
