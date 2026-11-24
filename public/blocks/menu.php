@@ -42,7 +42,7 @@ if ( ! function_exists( 'brand_master_menu' ) ) {
 							if ( ! is_array( $item ) ) {
 								continue;
 							}
-							$class = 'bm-menu-li';
+							$class     = 'bm-menu-li';
 							$item_slug = isset( $item['slug'] ) ? (string) $item['slug'] : '';
 							if ( is_array( $current_menu ) && isset( $current_menu['slug'] ) && $current_menu['slug'] === $item_slug && '' !== $item_slug ) {
 								$class .= ' bm-menu-active';

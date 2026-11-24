@@ -85,7 +85,7 @@ class OptionsTest extends TestCase {
 	public function test_partial_update_preserves_siblings() {
 		brand_master_update_options(
 			array(
-				'login'    => array(
+				'login'     => array(
 					'url'   => array(
 						'on'   => true,
 						'slug' => 'member',

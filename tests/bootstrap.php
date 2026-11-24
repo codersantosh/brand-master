@@ -189,12 +189,14 @@ function do_action( $tag, ...$args ) {
 	}
 }
 function rest_api_init() {}
+// phpcs:disable PHPCompatibility.FunctionNameRestrictions.ReservedFunctionNames.FunctionDoubleUnderscore -- Required WordPress core callback names for test doubles.
 function __return_false() {
 	return false;
 }
 function __return_true() {
 	return true;
 }
+// phpcs:enable PHPCompatibility.FunctionNameRestrictions.ReservedFunctionNames.FunctionDoubleUnderscore
 
 // Minimal WP test doubles.
 class WP_Error {
