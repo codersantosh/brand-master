@@ -7,7 +7,7 @@
 - Workflow: `.github/workflows/deploy.yml`
 - Publication trigger: a published, non-prerelease GitHub Release
 - Publishing environment: `wordpress-org`
-- Manual dispatch: credential-free SVN dry run only
+- Manual dispatch: dry-run checkbox, defaulting to checked
 
 Git remains the development source. WordPress.org SVN is used only as a release
 repository. The workflow never writes to a developer's local SVN checkout.
@@ -33,8 +33,9 @@ recommends PHP 8.3.
 3. It validates plugin metadata, runtime references, package exclusions, the ZIP
    checksum, and byte-for-byte ZIP/runtime equivalence.
 4. It uploads the runtime directory, ZIP, and checksum as one artifact.
-5. A manual dispatch runs a credential-free dry run against a disposable SVN
-   working copy.
+5. A manual dispatch with `dry_run` checked runs a credential-free dry run against
+   a disposable SVN working copy. Clearing the checkbox performs a real deployment
+   through the protected `wordpress-org` environment.
 6. Publishing a stable GitHub Release runs the `deploy` job in the protected
    `wordpress-org` environment.
 7. The deploy job checks out the exact commit recorded by the package job and
@@ -92,9 +93,10 @@ Create an environment named `wordpress-org`:
 | `SVN_USERNAME` | Exact WordPress.org committer username |
 | `SVN_PASSWORD` | Generated WordPress.org SVN password |
 
-The workflow requests only `contents: read`. The dry-run job does not reference
-SVN secrets, does not use the protected environment, and the SVN script refuses
-to run if credentials are present.
+The workflow requests only `contents: read`. The checked dry-run job does not
+reference SVN secrets and does not use the protected environment. The SVN script
+refuses to run if credentials are present during a dry run. Clearing the checkbox
+runs the protected deployment job with environment secrets.
 
 A read-only authentication check is:
 
@@ -180,7 +182,7 @@ approved:
 3. Select the exact reviewed commit for `v1.0.6`.
 4. Create and push the annotated tag.
 5. Create a draft GitHub Release and wait for CI.
-6. Run the manual dry run and review its SVN preview.
+6. Run the manual workflow with `dry_run` checked and review its SVN preview.
 7. Publish the stable GitHub Release.
 8. Approve the `wordpress-org` environment deployment.
 9. Verify the SVN tag and, after WordPress.org processing, the download ZIP and

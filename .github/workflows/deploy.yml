@@ -6,9 +6,14 @@ on:
   workflow_dispatch:
     inputs:
       ref:
-        description: Git ref to build for a dry run (for example 1.0.6)
+        description: Git ref to build (for example v1.0.6)
         required: true
         type: string
+      dry_run:
+        description: Dry run (no SVN commit and no SVN credentials)
+        required: false
+        type: boolean
+        default: true
 
 permissions:
   contents: read
@@ -128,7 +133,7 @@ jobs:
           retention-days: 14
 
   dry-run:
-    if: github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'workflow_dispatch' && inputs.dry_run == true
     needs: package
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -181,7 +186,9 @@ jobs:
           retention-days: 14
 
   deploy:
-    if: github.event_name == 'release' && github.event.release.prerelease == false
+    if: >-
+      (github.event_name == 'release' && github.event.release.prerelease == false) ||
+      (github.event_name == 'workflow_dispatch' && inputs.dry_run == false)
     needs: package
     runs-on: ubuntu-latest
     timeout-minutes: 15
