@@ -1,0 +1,228 @@
+name: Deploy Brand Master to WordPress.org
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Git ref to build for a dry run (for example 1.0.6)
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: brand-master-wordpress-org
+  cancel-in-progress: false
+
+jobs:
+  package:
+    if: github.event_name == 'workflow_dispatch' || github.event.release.prerelease == false
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    outputs:
+      version: ${{ steps.resolve.outputs.version }}
+      commit: ${{ steps.resolve.outputs.commit }}
+      artifact: ${{ steps.resolve.outputs.artifact }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'release' && github.sha || inputs.ref }}
+          fetch-depth: 0
+
+      - name: Resolve immutable release commit
+        id: resolve
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          set -euo pipefail
+
+          commit="$(git rev-parse HEAD)"
+          version="$(node -p "require('./package.json').version")"
+
+          if [[ "${{ github.event_name }}" == 'release' ]]; then
+            if [[ ! "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+(\.[0-9]+)*$ ]]; then
+              echo "Release tag must look like v1.0.6; received '$RELEASE_TAG'." >&2
+              exit 1
+            fi
+
+            tag_commit="$(git rev-parse "refs/tags/${RELEASE_TAG}^{commit}")"
+            tag_version="${RELEASE_TAG#v}"
+
+            if [[ "$tag_commit" != "$commit" ]]; then
+              echo "Release tag $RELEASE_TAG does not resolve to $commit." >&2
+              exit 1
+            fi
+            if [[ "$tag_version" != "$version" ]]; then
+              echo "Release tag version $tag_version does not match package version $version." >&2
+              exit 1
+            fi
+          fi
+
+          {
+            echo "version=$version"
+            echo "commit=$commit"
+            echo "artifact=brand-master-${version}-${commit}"
+          } >> "$GITHUB_OUTPUT"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+          tools: composer:v2
+
+      - name: Install pinned WP-CLI
+        run: bash .github/scripts/install-wp-cli.sh
+
+      - name: Install PHP dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: PHP syntax checks
+        run: composer lint
+
+      - name: PHPUnit
+        run: composer test
+
+      - name: PHPCS
+        run: vendor/bin/phpcs --report=summary --warning-severity=0
+
+      - name: Install npm dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Build release package
+        run: npm run deploy
+
+      - name: Validate release package
+        run: |
+          set -euo pipefail
+          php .github/scripts/validate-release.php \
+            "${{ steps.resolve.outputs.version }}" \
+            deploy/brand-master
+
+          find deploy/brand-master -type f -name '*.php' -print0 \
+            | xargs -0 -n1 php -l
+
+      - name: Generate and verify ZIP checksum
+        run: |
+          set -euo pipefail
+          version="${{ steps.resolve.outputs.version }}"
+          sha256sum "deploy/brand-master-${version}.zip" \
+            > "deploy/brand-master-${version}.zip.sha256"
+          python3 .github/scripts/verify-artifact.py "$version" deploy
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.resolve.outputs.artifact }}
+          path: |
+            deploy/brand-master/
+            deploy/brand-master-${{ steps.resolve.outputs.version }}.zip
+            deploy/brand-master-${{ steps.resolve.outputs.version }}.zip.sha256
+          if-no-files-found: error
+          retention-days: 14
+
+  dry-run:
+    if: github.event_name == 'workflow_dispatch'
+    needs: package
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.package.outputs.commit }}
+          fetch-depth: 1
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.package.outputs.artifact }}
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+
+      - name: Install SVN tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq subversion rsync
+
+      - name: Verify downloaded artifact
+        run: |
+          python3 .github/scripts/verify-artifact.py \
+            "${{ needs.package.outputs.version }}" deploy
+          php .github/scripts/validate-release.php \
+            "${{ needs.package.outputs.version }}" \
+            deploy/brand-master
+
+      - name: Stage disposable SVN dry run
+        env:
+          PLUGIN_SLUG: brand-master
+          VERSION: ${{ needs.package.outputs.version }}
+          BUNDLE: ${{ github.workspace }}/deploy/brand-master
+          DRY_RUN: 'true'
+          RELEASE_COMMIT: ${{ needs.package.outputs.commit }}
+          SVN_WORK_DIR: ${{ runner.temp }}/svn-brand-master-${{ needs.package.outputs.version }}
+          SVN_PREVIEW_DIR: ${{ github.workspace }}/deploy/svn-preview
+        run: bash .github/scripts/svn-release.sh
+
+      - name: Upload SVN dry-run preview
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: svn-preview-${{ needs.package.outputs.version }}-${{ needs.package.outputs.commit }}
+          path: deploy/svn-preview/
+          if-no-files-found: ignore
+          retention-days: 14
+
+  deploy:
+    if: github.event_name == 'release' && github.event.release.prerelease == false
+    needs: package
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: wordpress-org
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.package.outputs.commit }}
+          fetch-depth: 1
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.package.outputs.artifact }}
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+
+      - name: Install SVN tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq subversion rsync
+
+      - name: Verify downloaded artifact
+        run: |
+          python3 .github/scripts/verify-artifact.py \
+            "${{ needs.package.outputs.version }}" deploy
+          php .github/scripts/validate-release.php \
+            "${{ needs.package.outputs.version }}" \
+            deploy/brand-master
+
+      - name: Publish SVN release
+        env:
+          PLUGIN_SLUG: brand-master
+          VERSION: ${{ needs.package.outputs.version }}
+          BUNDLE: ${{ github.workspace }}/deploy/brand-master
+          DRY_RUN: 'false'
+          RELEASE_COMMIT: ${{ needs.package.outputs.commit }}
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SVN_WORK_DIR: ${{ runner.temp }}/svn-brand-master-${{ needs.package.outputs.version }}
+          SVN_PREVIEW_DIR: ${{ github.workspace }}/deploy/svn-preview
+        run: bash .github/scripts/svn-release.sh

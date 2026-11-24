@@ -1,22 +1,23 @@
 {
 	"name": "brand-master",
-	"version": "1.0.0",
+	"version": "1.0.6",
 	"description": "Customize login page and add frontend dashboard.",
 	"author": "PatternsWP",
 	"license": "GPL-2.0-or-later",
 	"scripts": {
-		"build:admin": "wp-scripts build src/admin.js --output-path=build/admin",
+		"build:admin": "wp-scripts build src/admin.js src/admin/styles.js --output-path=build/admin",
 		"build:public": "wp-scripts build src/dashboard.js --output-path=build/public",
 		"build": "npm-run-all build:admin build:public",
-		"start:admin": "wp-scripts start src/admin.js --output-path=build/admin",
+		"start:admin": "wp-scripts start src/admin.js src/admin/styles.js --output-path=build/admin",
 		"start:public": "wp-scripts start src/dashboard.js --output-path=build/public",
 		"start": "npm-run-all --parallel start:admin start:public",
 		"packages-update": "wp-scripts packages-update",
 		"copy": "node .bin/copy.js",
+		"zip": "node .bin/zip.js",
 		"replace": "node .bin/replace-texts.js",
 		"makejsstring": "node .bin/make-string.js",
-		"makepot": "wp i18n make-pot . languages/brand-master.pot --skip-js --exclude=src,vendor,node_modules --merge=languages/js.pot",
-		"deploy": "npm-run-all build replace makepot copy"
+		"makepot": "wp i18n make-pot . languages/brand-master.pot --skip-js --exclude=src,vendor,node_modules,build,deploy,tests --merge=languages/js.pot",
+		"deploy": "npm-run-all build replace makepot copy zip"
 	},
 	"browserslist": [
 		"last 3 versions",
@@ -32,6 +33,7 @@
 		"@wordpress/babel-preset-default": "^8.10.0",
 		"@wordpress/i18n": "^5.10.0",
 		"@wordpress/scripts": "^30.3.0",
+		"archiver": "^8.0.0",
 		"autoprefixer": "^10.4.17",
 		"babel-cli": "^6.26.0",
 		"ncp": "^2.0.0",

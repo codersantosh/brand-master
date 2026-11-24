@@ -74,6 +74,15 @@ class Brand_Master_Login {
 		/* Add body class */
 		add_filter( 'login_body_class', array( $this, 'add_login_body_class' ), 99 );
 
+		/*
+		 * Initialize legacy globals on every login page (not just custom slug).
+		 *
+		 * Prevents "Undefined variable $error / $user_login" warnings when
+		 * wp-login.php is accessed directly (lost-password, registration, etc.).
+		 * login_init fires before wp-login.php body uses these globals.
+		 */
+		add_action( 'login_init', array( $this, 'init_wp_login_globals' ), 1 );
+
 		/*CSS/JS*/
 		add_action( 'login_head', array( $this, 'add_login_css' ), 99 );
 		add_action( 'login_footer', array( $this, 'add_login_js' ), 99 );
@@ -161,15 +170,25 @@ class Brand_Master_Login {
 			return $url;
 		}
 
-		if ( strpos( $url, 'wp-login.php' ) !== false && strpos( wp_get_referer(), 'wp-login.php' ) === false ) {
-			$args = explode( '?', $url );
+		if ( false !== strpos( $url, 'wp-login.php' ) ) {
+			/*
+			 * Skip rewriting when the visitor is already inside a wp-login.php
+			 * flow. wp_get_referer() returns false when no Referer header was
+			 * sent (first-visit GETs, privacy-stripped referrers); that must
+			 * still rewrite, so the false case is checked explicitly instead
+			 * of passing it into strpos().
+			 */
+			$referer = wp_get_referer();
+			if ( false === $referer || false === strpos( (string) $referer, 'wp-login.php' ) ) {
+				$args = explode( '?', $url );
 
-			/* specially for action param */
-			if ( isset( $args[1] ) ) {
-				parse_str( $args[1], $params );
-				$url = add_query_arg( $params, $this->get_login_url() );
-			} else {
-				$url = $this->get_login_url();
+				/* specially for action param */
+				if ( isset( $args[1] ) ) {
+					parse_str( $args[1], $params );
+					$url = add_query_arg( $params, $this->get_login_url() );
+				} else {
+					$url = $this->get_login_url();
+				}
 			}
 		}
 
@@ -188,8 +207,102 @@ class Brand_Master_Login {
 	 *
 	 * @return string updated login URL.
 	 */
-	public function update_login_url( $login_url, $redirect, $force_reauth ) {
+	public function update_login_url( $login_url, $redirect, $force_reauth ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- login_url filter signature.
 		return $this->get_updated_login_url( $login_url );
+	}
+
+	/**
+	 * Initialize the legacy WP globals that wp-login.php expects.
+	 *
+	 * Only $error and $user_login are initialized if unset, preventing
+	 * "Undefined variable" warnings on bare reads while preserving values from
+	 * prior handlers (lost-password POST, password reset check, etc. — B-2 regression).
+	 * $action and $interim_login are declared global so core's top-level assignments
+	 * propagate to $GLOBALS for login_header() / login_footer(), but are intentionally
+	 * NOT initialized here to avoid masking $_REQUEST data.
+	 *
+	 * @since 1.0.6
+	 *
+	 * @return void
+	 */
+	public function init_wp_login_globals() {
+		// phpcs:disable WordPress.WP.GlobalVariablesOverride.Prohibited -- intentional WP legacy globals.
+		global $error, $interim_login, $action, $user_login;
+		if ( ! isset( $error ) ) {
+			$error = '';
+		}
+		if ( ! isset( $user_login ) ) {
+			$user_login = '';
+		}
+		// phpcs:enable WordPress.WP.GlobalVariablesOverride.Prohibited
+	}
+
+	/**
+	 * Whether a request targets the custom login page.
+	 *
+	 * Extracted from load_login_page() so the matching logic is unit-testable
+	 * (load_login_page() itself ends in require + exit).
+	 *
+	 * @since 1.0.7
+	 * @access public
+	 *
+	 * @param string $login_url   Full custom login URL.
+	 * @param string $request_uri Raw request URI (may include a query string).
+	 * @return bool True when the request should load wp-login.php.
+	 */
+	public function is_login_page_request( $login_url, $request_uri ) {
+		$is_load_page = false;
+
+		// Check if '?' exists in the URL.
+		$args_login = explode( '?', $login_url );
+		if ( isset( $args_login[1] ) ) {
+			parse_str( $args_login[1], $params_login );
+
+			$params_login = array_keys( $params_login );
+
+			$args_uri = explode( '?', $request_uri );
+			if ( isset( $args_uri[1] ) ) {
+				parse_str( $args_uri[1], $params_uri );
+
+				$params_uri_values = $params_uri;
+				$params_uri        = array_keys( $params_uri );
+
+					/* Require the matched login param to be present with an empty value, so unrelated URLs merely reusing the param name do not trigger the login page. */
+				foreach ( $params_login as $param_login ) {
+					if ( in_array( $param_login, $params_uri, true ) && ( ! isset( $params_uri_values[ $param_login ] ) || '' === $params_uri_values[ $param_login ] ) ) {
+						$is_load_page = true;
+						break;
+					}
+				}
+			}
+		} else {
+			// Check if '?' exists in the URL.
+			$has_request_uri_param = strpos( $request_uri, '?' );
+
+			// Get the substring before '?' or use the entire URL if '?' is not found.
+			$request_uri = false !== $has_request_uri_param ? substr( $request_uri, 0, $has_request_uri_param ) : $request_uri;
+
+			/*
+			 * Compare the request path against the login URL path exactly. A
+			 * former suffix comparison also matched mere tails of the slug
+			 * (e.g. "/ogin" matched slug "login"), loading the login page on
+			 * unrelated URLs.
+			 */
+			$login_path = wp_parse_url( $login_url, PHP_URL_PATH );
+			if ( ! is_string( $login_path ) || '' === $login_path ) {
+				$login_path = $login_url;
+			}
+
+			/* replace `/` */
+			$login_path  = preg_replace( '/(^\/+|\/+$)/', '', $login_path );
+			$request_uri = preg_replace( '/(^\/+|\/+$)/', '', $request_uri );
+
+			if ( '' !== $request_uri && $login_path === $request_uri ) {
+				$is_load_page = true;
+			}
+		}
+
+		return $is_load_page;
 	}
 
 	/**
@@ -216,48 +329,26 @@ class Brand_Master_Login {
 
 			if ( $login_url && $request_uri ) {
 
-				$is_load_page = false;
-
-				// Check if '?' exists in the URL.
-				$args_login = explode( '?', $login_url );
-				if ( isset( $args_login[1] ) ) {
-					parse_str( $args_login[1], $params_login );
-
-					$params_login = array_keys( $params_login );
-
-					$args_uri = explode( '?', $request_uri );
-					if ( isset( $args_uri[1] ) ) {
-						parse_str( $args_uri[1], $params_uri );
-
-						$params_uri = array_keys( $params_uri );
-
-						if ( array_intersect( $params_login, $params_uri ) ) {
-							$is_load_page = true;
-						}
-					}
-				} else {
-					// Check if '?' exists in the URL.
-					$has_request_uri_param = strpos( $request_uri, '?' );
-
-					// Get the substring before '?' or use the entire URL if '?' is not found.
-					$request_uri = false !== $has_request_uri_param ? substr( $request_uri, 0, $has_request_uri_param ) : $request_uri;
-
-					/* replace `/` */
-					$login_url   = preg_replace( '/(^\/+|\/+$)/', '', $login_url );
-					$request_uri = preg_replace( '/(^\/+|\/+$)/', '', $request_uri );
-
-					// Get the length of the requrest uri.
-					$substring_length = strlen( $request_uri );
-
-					// Extract the end of the full string with the same length as the substring.
-					$end_of_full_string = substr( $login_url, -$substring_length );
-					if ( $end_of_full_string === $request_uri ) {
-						$is_load_page = true;
-					}
-				}
-
 				// Check if the extracted part matches the substring.
-				if ( $is_load_page ) {
+				if ( $this->is_login_page_request( $login_url, $request_uri ) ) {
+					/*
+					 * Bind variables that cross function boundaries in wp-login.php ($action,
+					 * $interim_login, $error) or have bare reads without initialization ($user_login,
+					 * $error). An include inherits the scope of this method, so without this
+					 * aliasing wp-login.php would read undefined method-locals instead of $GLOBALS.
+					 * Other wp-login.php locals ($errors, $redirect_to, etc.) do not cross global
+					 * boundaries and remain safely scoped to this method.
+					 */
+					// phpcs:disable WordPress.WP.GlobalVariablesOverride.Prohibited -- alias method scope to WP login globals.
+					global $error, $interim_login, $action, $user_login;
+					// phpcs:enable WordPress.WP.GlobalVariablesOverride.Prohibited
+
+					$this->init_wp_login_globals();
+
+					/*
+					 * require_once is required because wp-login.php defines functions
+					 * (login_header, wp_shake_js, etc.) that would fatal on duplicate include.
+					 */
 					require_once ABSPATH . 'wp-login.php';
 					exit;
 				}
@@ -277,7 +368,11 @@ class Brand_Master_Login {
 	 * @param int|null    $blog_id Site ID, or null for the current site.
 	 * @return string updated sire url for wp-login.php.
 	 */
-	public function update_site_url( $url, $path, $scheme, $blog_id ) {
+	public function update_site_url( $url, $path, $scheme, $blog_id ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- site_url filter signature.
+		/* Only rewrite direct wp-login.php URLs. Avoids touching every site_url() output that merely contains the string. */
+		if ( 0 !== strpos( (string) $path, 'wp-login.php' ) ) {
+			return $url;
+		}
 		return $this->get_updated_login_url( $url );
 	}
 
@@ -356,6 +451,43 @@ class Brand_Master_Login {
 	}
 
 	/**
+	 * Whether a direct wp-login.php request must be redirected to the redirect slug.
+	 *
+	 * Authentication flows that can only complete on wp-login.php itself are
+	 * allowed through: any POST request (a redirect would discard the payload),
+	 * the nonce'd logout handshake, and the password-reset key exchange.
+	 * Bare and login-action GETs stay hidden behind the redirect slug.
+	 *
+	 * Extracted from redirect_login_and_wp_admin() so the decision is
+	 * unit-testable (the caller ends in wp_safe_redirect + exit).
+	 *
+	 * @since 1.0.7
+	 * @access public
+	 *
+	 * @return bool True when the request must be redirected.
+	 */
+	public function should_redirect_wp_login() {
+		$method = isset( $_SERVER['REQUEST_METHOD'] ) ? sanitize_key( wp_unslash( $_SERVER['REQUEST_METHOD'] ) ) : 'get';
+		if ( 'post' === $method ) {
+			return false;
+		}
+
+		$action = '';
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- read-only routing decision; no data processed or persisted.
+		if ( isset( $_REQUEST['action'] ) && is_string( $_REQUEST['action'] ) ) {
+			$action = sanitize_key( wp_unslash( $_REQUEST['action'] ) );
+		}
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
+
+		$passthrough = array( 'logout', 'rp', 'resetpass', 'postpass' );
+		if ( in_array( $action, $passthrough, true ) ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
 	 * Redirect login page or wp-admin dir to redirection url.
 	 * Adjust wp-admin page again
 	 *
@@ -370,7 +502,10 @@ class Brand_Master_Login {
 
 			/* Login page, no user has this page access */
 			if ( 'wp-login.php' === $pagenow ) {
-				wp_safe_redirect( esc_url( $this->get_redirect_url() ) );
+				if ( ! $this->should_redirect_wp_login() ) {
+					return;
+				}
+				wp_safe_redirect( brand_master_validate_redirect( $this->get_redirect_url() ) );
 				exit;
 			}
 
@@ -390,7 +525,7 @@ class Brand_Master_Login {
 				$request_uri = preg_replace( '/(^\/+|\/+$)/', '', $request_uri );
 
 				if ( strpos( $request_uri, '/wp-admin' ) !== false ) {
-					wp_safe_redirect( esc_url( $this->get_redirect_url() ) );
+					wp_safe_redirect( brand_master_validate_redirect( $this->get_redirect_url() ) );
 					exit;
 				}
 			}
@@ -483,23 +618,32 @@ class Brand_Master_Login {
 	 */
 	public function add_login_css() {
 
-		$login_settings = brand_master_include()->get_settings()['login'];
+		$settings       = brand_master_include()->get_settings();
+		$login_settings = isset( $settings['login'] ) && is_array( $settings['login'] ) ? $settings['login'] : array();
 		$custom_css     = '';
 		if ( isset( $login_settings['logo']['on'] ) && $login_settings['logo']['on'] ) {
 			if ( isset( $login_settings['logo']['img']['url'] ) && $login_settings['logo']['img']['url'] ) {
 				$logo_image_url = esc_url( $login_settings['logo']['img']['url'] );
-				$custom_css    .= ".brand-master-login #login h1 a { 
+				$custom_css    .= ".brand-master-login #login h1 a {
 										background-image: url('$logo_image_url');
 									}";
 			}
 		}
 
-		if ( $login_settings['css'] ) {
+		if ( isset( $login_settings['css'] ) && is_string( $login_settings['css'] ) && '' !== $login_settings['css'] ) {
 			$custom_css .= $login_settings['css'];
 		}
-		if ( $custom_css ) {
+		if ( '' !== $custom_css ) {
+			/*
+			 * Defense in depth (H-3): stored CSS is save-gated on unfiltered_html,
+			 * but render must still prevent a </style> breakout if a value ever
+			 * bypasses sanitization (e.g. direct DB write). Strip closing tags
+			 * after wp_strip_all_tags, which alone does not remove them safely
+			 * for the <style> context.
+			 */
+			$safe_css = str_ireplace( array( '</style', '</script' ), '', wp_strip_all_tags( $custom_css ) );
 			/* phpcs:ignore*/
-			echo '<style>' . wp_strip_all_tags( $custom_css ) . '</style>';
+			echo '<style>' . $safe_css . '</style>';
 		}
 	}
 
@@ -513,14 +657,21 @@ class Brand_Master_Login {
 	 */
 	public function add_login_js() {
 
-		$login_settings = brand_master_include()->get_settings()['login'];
+		$settings       = brand_master_include()->get_settings();
+		$login_settings = isset( $settings['login'] ) && is_array( $settings['login'] ) ? $settings['login'] : array();
 		$custom_js      = '';
-		if ( $login_settings['js'] ) {
-			$custom_js .= wp_strip_all_tags( $login_settings['js'] );
+		if ( isset( $login_settings['js'] ) && is_string( $login_settings['js'] ) && '' !== $login_settings['js'] ) {
+			$custom_js .= $login_settings['js'];
 		}
-		if ( $custom_js ) {
+		if ( '' !== $custom_js ) {
+			/*
+			 * Defense in depth (H-3): stored JS is save-gated on unfiltered_html;
+			 * render must still prevent a </script> breakout if a value ever
+			 * bypasses sanitization (e.g. direct DB write).
+			 */
+			$safe_js = str_ireplace( '</script', '', $custom_js );
 			/* phpcs:ignore*/
-			echo '<script>' . wp_strip_all_tags( $custom_js ) . '</script>';
+			echo '<script>' . $safe_js . '</script>';
 		}
 	}
 
@@ -568,7 +719,8 @@ class Brand_Master_Login {
 			$current_user = wp_get_current_user();
 
 			if ( $disallowed_roles && array_intersect( $disallowed_roles, $current_user->roles ) ) {
-				wp_safe_redirect( esc_url( $redirect_dashboard['url'] ) );
+				$allowed = brand_master_validate_redirect( $redirect_dashboard['url'] );
+				wp_safe_redirect( $allowed );
 				exit;
 			}
 		}
@@ -582,11 +734,11 @@ class Brand_Master_Login {
 	 * @param WP_User|WP_Error $user                  WP_User object if login was successful, WP_Error object otherwise.
 	 * @return string redirect to url.
 	 */
-	public function login_redirect( $redirect_to, $requested_redirect_to, $user ) {
+	public function login_redirect( $redirect_to, $requested_redirect_to, $user ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- login_redirect filter signature.
 
 		$redirect_login = brand_master_include()->get_settings()['redirectLogin'];
 		if ( isset( $redirect_login['on'] ) && $redirect_login['on'] && $redirect_login['url'] ) {
-			$redirect_to = esc_url( $redirect_login['url'] );
+			$redirect_to = brand_master_validate_redirect( $redirect_login['url'], $redirect_to );
 		}
 		return $redirect_to;
 	}
@@ -599,12 +751,12 @@ class Brand_Master_Login {
 	 * @param WP_User|WP_Error $user                  WP_User object if login was successful, WP_Error object otherwise.
 	 * @return string redirect to url.
 	 */
-	public function logout_redirect( $redirect_to, $requested_redirect_to, $user ) {
+	public function logout_redirect( $redirect_to, $requested_redirect_to, $user ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- logout_redirect filter signature.
 
 		$redirect_logout = brand_master_include()->get_settings()['redirectLogout'];
 
 		if ( isset( $redirect_logout['on'] ) && $redirect_logout['on'] && $redirect_logout['url'] ) {
-			$redirect_to = esc_url( $redirect_logout['url'] );
+			$redirect_to = brand_master_validate_redirect( $redirect_logout['url'], $redirect_to );
 		}
 
 		return $redirect_to;
@@ -622,7 +774,7 @@ class Brand_Master_Login {
 		$redirect_lost_password = brand_master_include()->get_settings()['redirectLostPassword'];
 
 		if ( isset( $redirect_lost_password['on'] ) && $redirect_lost_password['on'] && $redirect_lost_password['url'] ) {
-			$redirect_to = esc_url( $redirect_lost_password['url'] );
+			$redirect_to = brand_master_validate_redirect( $redirect_lost_password['url'], $redirect_to );
 		}
 
 		return $redirect_to;
@@ -639,7 +791,7 @@ class Brand_Master_Login {
 		$redirect_registration = brand_master_include()->get_settings()['redirectRegistration'];
 
 		if ( isset( $redirect_registration['on'] ) && $redirect_registration['on'] && $redirect_registration['url'] ) {
-			$redirect_to = esc_url( $redirect_registration['url'] );
+			$redirect_to = brand_master_validate_redirect( $redirect_registration['url'], $redirect_to );
 		}
 
 		return $redirect_to;

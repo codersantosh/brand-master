@@ -73,6 +73,12 @@ class Brand_Master_Include {
 	/**
 	 * Get the settings from the class instance.
 	 *
+	 * Settings are cached per-request because the rendering layer reads them
+	 * many times per page. The cache is invalidated when the option is
+	 * updated via the updated_option hook so a save in the same request
+	 * (e.g. an admin that updates options and then previews) sees the new
+	 * values.
+	 *
 	 * @access public
 	 * @return array|null
 	 */
@@ -81,6 +87,21 @@ class Brand_Master_Include {
 			self::$settings = brand_master_get_options();
 		}
 		return self::$settings;
+	}
+
+	/**
+	 * Drop the request-scoped settings cache. Hooked to updated_option so a
+	 * save followed by a same-request read picks up the new value.
+	 *
+	 * @since 1.0.6
+	 *
+	 * @param string $option Option name.
+	 * @return void
+	 */
+	public function clear_settings_cache( $option = '' ) {
+		if ( '' === $option || BRAND_MASTER_OPTION_NAME === $option ) {
+			self::$settings = null;
+		}
 	}
 
 	/**

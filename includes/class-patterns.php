@@ -85,15 +85,27 @@ class Brand_Master_Patterns {
 	 * @return void
 	 */
 	public function register_patterns() {
-		$pattern_api_url = BRAND_MASTER_URL . 'includes/json/patterns.json';
-		$response        = wp_remote_get( $pattern_api_url );
-		if ( ! is_wp_error( $response ) ) {
-			$patterns = json_decode( wp_remote_retrieve_body( $response ), true );
-			if ( $patterns ) {
-				foreach ( $patterns as $pattern ) {
-					$this->register_block_pattern( $pattern );
+		static $patterns = null;
+
+		if ( null === $patterns ) {
+			/* Read the patterns file locally. A loopback wp_remote_get() breaks on hosts with blocked HTTP requests and adds latency on every admin request. */
+			$patterns      = array();
+			$wp_filesystem = brand_master_file_system();
+			$pattern_file  = BRAND_MASTER_PATH . 'includes/json/patterns.json';
+			if ( $wp_filesystem && $wp_filesystem->is_readable( $pattern_file ) ) {
+				$decoded = json_decode( (string) $wp_filesystem->get_contents( $pattern_file ), true );
+				if ( is_array( $decoded ) ) {
+					$patterns = $decoded;
 				}
 			}
+			$patterns = apply_filters( 'brand_master_patterns', $patterns );
+		}
+
+		foreach ( $patterns as $pattern ) {
+			if ( ! is_array( $pattern ) || empty( $pattern['slug'] ) || empty( $pattern['title']['rendered'] ) || empty( $pattern['pattern_content'] ) ) {
+				continue;
+			}
+			$this->register_block_pattern( $pattern );
 		}
 	}
 

@@ -7,7 +7,9 @@ import { useContext } from '@wordpress/element';
 import classNames from 'classnames';
 
 /*Atrc*/
-import { AtrcButton, AtrcWrap, AtrcHeaderTemplate1 } from 'atrc';
+import AtrcButton from 'atrc/build/atoms/button';
+import AtrcWrap from 'atrc/build/atoms/wrap';
+import AtrcHeaderTemplate1 from 'atrc/build/templates/headers/template-1';
 
 /* Inbuilt */
 import { AtrcReduxContextData } from '../../routes';

@@ -78,6 +78,25 @@ class Brand_Master_Admin {
 			$this->menu_info['icon_url'],
 			$this->menu_info['position'],
 		);
+
+		/*
+		 * On network-active multisite installs, network admins do not have
+		 * manage_options on individual sites. Surface a parallel menu entry
+		 * (with the same render target) so they can still reach the settings.
+		 * The REST endpoint accepts either capability via
+		 * brand_master_current_user_can_manage().
+		 */
+		if ( is_multisite() && is_super_admin() && ! current_user_can( 'manage_options' ) ) {
+			add_menu_page(
+				$this->menu_info['page_title'],
+				$this->menu_info['menu_title'],
+				'read',
+				$this->menu_info['menu_slug'] . '-network',
+				array( $this, 'add_setting_root_div' ),
+				$this->menu_info['icon_url'],
+				$this->menu_info['position'],
+			);
+		}
 	}
 
 	/**
@@ -139,6 +158,18 @@ class Brand_Master_Admin {
 			return;
 		}
 
+		if ( ! file_exists( BRAND_MASTER_PATH . 'build/admin/admin.asset.php' ) || ! file_exists( BRAND_MASTER_PATH . 'build/public/dashboard.asset.php' ) ) {
+			add_action(
+				'admin_notices',
+				function () {
+					printf(
+						'<div class="notice notice-error"><p>%s</p></div>',
+						esc_html__( 'Brand Master: built assets are missing. Run "npm install && npm run build" in the plugin directory, or reinstall the plugin.', 'brand-master' )
+					);
+				}
+			);
+		}
+
 		/* Add media */
 		wp_enqueue_media();
 
@@ -169,7 +200,7 @@ class Brand_Master_Admin {
 		wp_enqueue_script( BRAND_MASTER_PLUGIN_NAME, BRAND_MASTER_URL . 'build/admin/admin.js', $dependency, $version, true );
 
 		wp_enqueue_style( 'google-fonts-open-sans', BRAND_MASTER_URL . 'assets/library/fonts/open-sans.css', '', $version );
-		wp_enqueue_style( BRAND_MASTER_PLUGIN_NAME, BRAND_MASTER_URL . 'build/admin/admin.css', array( 'wp-components' ), $version );
+		wp_enqueue_style( BRAND_MASTER_PLUGIN_NAME, BRAND_MASTER_URL . 'build/admin/styles.css', array( 'wp-components' ), $version );
 		wp_style_add_data( BRAND_MASTER_PLUGIN_NAME, 'rtl', 'replace' );
 
 		global $wp_roles;
@@ -373,6 +404,13 @@ class Brand_Master_Admin {
 							'properties' => array(
 								'logo'    => array(
 									'type' => 'string',
+									'enum' => array(
+										'',
+										't',
+										'l',
+										'r',
+										'b',
+									),
 								),
 								'title'   => array(
 									'type' => 'boolean',
@@ -397,6 +435,13 @@ class Brand_Master_Admin {
 							'properties' => array(
 								'logo' => array(
 									'type' => 'string',
+									'enum' => array(
+										'',
+										't',
+										'l',
+										'r',
+										'b',
+									),
 								),
 								'name' => array(
 									'type' => 'boolean',
@@ -407,13 +452,10 @@ class Brand_Master_Admin {
 								'sort' => array(
 									'type'  => 'array',
 									'items' => array(
-										'type'  => 'string',
-										'items' => array(
-											'type' => 'string',
-											'enum' => array(
-												'name',
-												'desc',
-											),
+										'type' => 'string',
+										'enum' => array(
+											'name',
+											'desc',
 										),
 									),
 								),
@@ -656,9 +698,8 @@ class Brand_Master_Admin {
 			array(
 				'type'         => 'object',
 				'default'      => $defaults,
-				'show_in_rest' => array(
-					'schema' => $this->get_settings_schema(),
-				),
+				/* The option is exposed and managed exclusively through the custom /brand-master/v1/settings route, which applies dedicated validation. Exposing it on /wp/v2/settings would bypass that validation. */
+				'show_in_rest' => false,
 			)
 		);
 	}
@@ -681,7 +722,7 @@ class Brand_Master_Admin {
 	 *                              'mustuse', 'dropins', and 'search'.
 	 * @return array settings schema for this plugin.
 	 */
-	public function add_plugin_links( $actions, $plugin_file, $plugin_data, $context ) {
+	public function add_plugin_links( $actions, $plugin_file, $plugin_data, $context ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- plugin_action_links filter signature.
 		$actions[] = '<a href="' . esc_url( menu_page_url( $this->menu_info['menu_slug'], false ) ) . '">' . esc_html__( 'Settings', 'brand-master' ) . '</a>';
 		return $actions;
 	}

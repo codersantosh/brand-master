@@ -5,7 +5,7 @@ import { useContext } from '@wordpress/element';
 import { cloneDeep } from 'lodash';
 
 /*Atrc*/
-import { AtrcLandingTemplate1 } from 'atrc';
+import AtrcLandingTemplate1 from 'atrc/build/templates/landing/template-1';
 
 /* Inbuilt */
 import { AtrcReduxContextData } from '../../routes';

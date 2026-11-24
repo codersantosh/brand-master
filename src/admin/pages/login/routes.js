@@ -6,13 +6,13 @@ import { useContext } from '@wordpress/element';
 import { isEmpty } from 'lodash';
 
 /*Atrc*/
+import AtrcNav from 'atrc/build/molecules/nav';
+import AtrcWireFrameSidebarContent from 'atrc/build/wireframe/sidebar-content';
 import {
-	AtrcRoute,
-	AtrcRoutes,
-	AtrcNavigate,
-	AtrcNav,
-	AtrcWireFrameSidebarContent,
-} from 'atrc';
+	Route as AtrcRoute,
+	Routes as AtrcRoutes,
+	Navigate as AtrcNavigate,
+} from 'react-router-dom';
 
 /*Inbuilt*/
 import { Slug, Advanced, Logo, Title, Utilities } from './pages';

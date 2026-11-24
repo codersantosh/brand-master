@@ -141,6 +141,10 @@ class Brand_Master {
 
 		/* Register scripts and styles */
 		$this->loader->add_action( 'init', $plugin_include, 'register_scripts_and_styles' );
+
+		/* Drop the request-scoped settings cache on save so a same-request read picks up new values. */
+		$this->loader->add_action( 'updated_option', $plugin_include, 'clear_settings_cache', 10, 1 );
+		$this->loader->add_action( 'added_option', $plugin_include, 'clear_settings_cache', 10, 1 );
 	}
 
 	/**

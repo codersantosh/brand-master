@@ -1,4 +1,4 @@
-@import '../prefix-vars.scss';
+@use '../prefix-vars.scss' as *;
 
 /*Theme variables*/
 $themePrefix: '--bm';

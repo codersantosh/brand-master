@@ -7,17 +7,15 @@ import classNames from 'classnames';
 import { cloneDeep } from 'lodash';
 
 /*Atrc*/
-import {
-	AtrcText,
-	AtrcControlToggle,
-	AtrcWireFrameContentSidebar,
-	AtrcWireFrameHeaderContentFooter,
-	AtrcPrefix,
-	AtrcPanelBody,
-	AtrcPanelRow,
-	AtrcContent,
-	AtrcTitleTemplate1,
-} from 'atrc';
+import AtrcText from 'atrc/build/atoms/text';
+import AtrcControlToggle from 'atrc/build/controls/control-toggle';
+import AtrcPanelBody from 'atrc/build/molecules/panel-body';
+import AtrcPanelRow from 'atrc/build/molecules/panel-row';
+import AtrcContent from 'atrc/build/organisms/content';
+import AtrcPrefix from 'atrc/build/prefix-vars';
+import AtrcTitleTemplate1 from 'atrc/build/templates/components/title/template-1';
+import AtrcWireFrameContentSidebar from 'atrc/build/wireframe/content-sidebar';
+import AtrcWireFrameHeaderContentFooter from 'atrc/build/wireframe/header-content-footer';
 
 /* Inbuilt */
 import { AtrcReduxContextData } from '../../../routes';
@@ -35,6 +33,22 @@ const MainContent = () => {
 		dbUpdateSetting(key, val);
 	};
 
+	const handleDeleteAllToggle = () => {
+		if (!deleteAll) {
+			// Confirm before enabling destructive option.
+			const confirmed = window.confirm(
+				__(
+					'Are you sure? Enabling this will permanently erase all plugin settings when the plugin is deactivated. This action cannot be undone.',
+					'brand-master'
+				)
+			);
+			if (!confirmed) {
+				return;
+			}
+		}
+		updateSettingKey('deleteAll', !deleteAll);
+	};
+
 	return (
 		<AtrcContent>
 			<AtrcPanelRow>
@@ -44,7 +58,7 @@ const MainContent = () => {
 						'brand-master'
 					)}
 					checked={deleteAll}
-					onChange={() => updateSettingKey('deleteAll', !deleteAll)}
+					onChange={handleDeleteAllToggle}
 				/>
 			</AtrcPanelRow>
 		</AtrcContent>

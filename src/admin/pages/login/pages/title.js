@@ -8,18 +8,16 @@ import classNames from 'classnames';
 import { cloneDeep } from 'lodash';
 
 /*Atrc*/
-import {
-	AtrcText,
-	AtrcWireFrameContentSidebar,
-	AtrcWireFrameHeaderContentFooter,
-	AtrcPrefix,
-	AtrcPanelBody,
-	AtrcPanelRow,
-	AtrcContent,
-	AtrcTitleTemplate1,
-	AtrcNestedObjUpdateByKey1,
-	AtrcControlText,
-} from 'atrc';
+import AtrcText from 'atrc/build/atoms/text';
+import AtrcControlText from 'atrc/build/controls/control-text';
+import AtrcPanelBody from 'atrc/build/molecules/panel-body';
+import AtrcPanelRow from 'atrc/build/molecules/panel-row';
+import { AtrcNestedObjUpdateByKey1 } from 'atrc/build/molecules/repeater/utils';
+import AtrcContent from 'atrc/build/organisms/content';
+import AtrcPrefix from 'atrc/build/prefix-vars';
+import AtrcTitleTemplate1 from 'atrc/build/templates/components/title/template-1';
+import AtrcWireFrameContentSidebar from 'atrc/build/wireframe/content-sidebar';
+import AtrcWireFrameHeaderContentFooter from 'atrc/build/wireframe/header-content-footer';
 
 /* Inbuilt */
 import { AtrcReduxContextData } from '../../../routes';

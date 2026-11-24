@@ -7,34 +7,35 @@ import classNames from 'classnames';
 import { cloneDeep, map } from 'lodash';
 
 /*Atrc*/
+import AtrcLabel from 'atrc/build/atoms/label';
+import AtrcText from 'atrc/build/atoms/text';
+import AtrcControlCheckbox from 'atrc/build/controls/control-checkbox';
+import AtrcControlIconPicker from 'atrc/build/controls/control-icon-picker';
+// The complete Font Awesome catalog stays in this lazy-loaded dashboard route.
+import AtrcControlIconPickerDefaultIcons from 'atrc/build/controls/control-icon-picker/default-icons';
+import AtrcControlLink from 'atrc/build/controls/control-link';
+import AtrcControlSelect from 'atrc/build/controls/control-select';
+import AtrcControlSelectButton from 'atrc/build/controls/control-select-button';
+import AtrcControlSelectPost from 'atrc/build/controls/control-select-post';
+import AtrcControlSortable from 'atrc/build/controls/control-sortable';
+import AtrcControlText from 'atrc/build/controls/control-text';
+import AtrcControlToggle from 'atrc/build/controls/control-toggle';
+import AtrcPanelBody from 'atrc/build/molecules/panel-body';
+import AtrcPanelRow from 'atrc/build/molecules/panel-row';
+import AtrcRepeater from 'atrc/build/molecules/repeater';
+import AtrcRepeaterGroup from 'atrc/build/molecules/repeater/repeater-group';
+import AtrcRepeaterGroupAdd from 'atrc/build/molecules/repeater/repeater-group-add';
 import {
-	AtrcText,
-	AtrcWireFrameContentSidebar,
-	AtrcWireFrameHeaderContentFooter,
-	AtrcPrefix,
-	AtrcPanelBody,
-	AtrcPanelRow,
-	AtrcContent,
-	AtrcTitleTemplate1,
-	AtrcControlToggle,
-	AtrcRepeaterGroupAdd,
-	AtrcControlSelect,
-	AtrcControlSelectPost,
-	AtrcControlText,
 	AtrcNestedObjUpdateByKey2,
-	AtrcControlIconPicker,
-	AtrcControlIconPickerDefaultIcons,
-	AtrcControlCheckbox,
-	AtrcControlSelectButton,
 	AtrcNestedObjDeleteByKey3,
 	AtrcNestedObjUpdateByKey4,
 	AtrcNestedObjAddByKey2,
-	AtrcLabel,
-	AtrcControlSortable,
-	AtrcRepeater,
-	AtrcRepeaterGroup,
-	AtrcControlLink,
-} from 'atrc';
+} from 'atrc/build/molecules/repeater/utils';
+import AtrcContent from 'atrc/build/organisms/content';
+import AtrcPrefix from 'atrc/build/prefix-vars';
+import AtrcTitleTemplate1 from 'atrc/build/templates/components/title/template-1';
+import AtrcWireFrameContentSidebar from 'atrc/build/wireframe/content-sidebar';
+import AtrcWireFrameHeaderContentFooter from 'atrc/build/wireframe/header-content-footer';
 
 /* Inbuilt */
 import { AtrcReduxContextData } from '../../../routes';

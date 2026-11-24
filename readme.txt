@@ -1,10 +1,10 @@
 === Brand Master - Customize Login and User Frontend Dashboard ===
 Contributors: patternswp, codersantosh
 Tags: login customization, frontend dashboard, white label, branding
-Requires at least: 5.0
-Tested up to: 6.8
-Requires PHP: 7.0
-Stable tag: 1.0.5
+Requires at least: 7.0
+Tested up to: 7.1
+Requires PHP: 8.3
+Stable tag: 1.0.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -60,6 +60,8 @@ There are two ways to install the plugin:
 
 After installation, activate the plugin through the 'Plugins' menu in WordPress.
 
+Source code and build instructions: https://github.com/codersantosh/brand-master
+
 == Frequently Asked Questions ==
 
 = How can I customize the login pages? =
@@ -78,6 +80,10 @@ Yes, you can upload your brand logo, set brand colors, and customize various ele
 
 No, Brand Master does not alter the WordPress backend dashboard. It facilitates the creation of a customized frontend dashboard for users while keeping the backend dashboard unchanged.
 
+= Does this work on multisite? =
+
+Yes. Settings are stored per site. Network administrators can reach each site's Brand Master settings (the settings page and REST endpoint accept network admins in addition to per-site admins). Uninstalling removes the current site's settings; a network-wide uninstall cleans each site in turn.
+
 == Screenshots ==
 
 1. Dashboard - Getting started
@@ -95,6 +101,33 @@ No, Brand Master does not alter the WordPress backend dashboard. It facilitates 
 13. Frontend - Login page with own logo
 
 == Changelog ==
+
+= 1.0.6 =
+* Added: Tested up to WordPress 7.1
+* Changed: Raised minimum PHP requirement to 8.3
+* Changed: Raised minimum WordPress requirement to 7.0 and confirmed compatibility with WordPress 7.0 and 7.1
+* Changed: Modernized Sass modules and lazy-loaded admin routes to reduce the initial admin bundle
+* Added: Deep recursive settings sanitization with unfiltered_html gate for custom CSS/JS
+* Added: Login/redirect slug conflict validation (reserved slugs, page collisions)
+* Added: uninstall.php for clean data deletion
+* Added: PHPUnit test suite and GitHub Actions CI
+* Security: Redirect URL validation via wp_validate_redirect (internal-only by default)
+* Security: Closed /wp/v2/settings REST endpoint exposure
+* Fix: Scoped site_url filter to wp-login.php paths only
+* Fix: Social link target/rel attributes use whitelist-built values
+* Accessibility: aria-current on active menu item; heading hierarchy fix
+* i18n: Default labels translated at render time
+* Security: Partial settings updates now deep-merge instead of overwriting the whole options row (no more silent sibling-data loss via the REST API)
+* Security: Login-page CSS/JS render output neutralizes tag breakouts even if a stored value bypasses sanitization
+* Fix: Legacy login globals ($error, $user_login) are only initialized when unset, preserving prior-handler values on lost-password/reset/registration flows
+* Fix: Settings page and REST endpoint accept network admins on network-active multisite installs
+* Fix: dashboard.userInfo.sort schema corrected; siteIdentity/userInfo logo fields constrained to their valid values
+* Fix: Custom login slug no longer emits "Undefined variable $user_login / $error" warnings — wp-login.php globals are now bound in the including method scope (version-agnostic across WP 6.6/6.7/7.x)
+* Fix: wp-login.php redirect allowlist — logout, password-reset key exchange (rp/resetpass) and all POST requests pass through instead of bouncing to the redirect slug
+* Fix: Custom login slug matching is now exact-path (tails like /ogin no longer load the login page); referer handling hardened for missing Referer headers
+* Added: Unit coverage for login scope binding, wp-login.php redirect matrix, exact slug matching, and admin-bar / post-action redirect settings
+* Added: Automated WordPress.org deployment from published GitHub Releases
+* Added: Public source code and build documentation
 
 = 1.0.5 =
 * Added: WordPress latest compatibility
