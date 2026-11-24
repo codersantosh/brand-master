@@ -37,8 +37,9 @@ recommends PHP 8.3.
 2. It installs locked Composer dependencies, validates Composer metadata, runs
    PHP syntax checks, PHPUnit, and PHPCS, then builds the release package. The
    reusable WordPress runtime workflow then rebuilds and tests that exact commit
-   on the 7.0/7.1 smoke-test matrix. Deployment compares both the tested commit
-   and ZIP digest with the package artifact before publishing.
+   on the 7.0/7.1 smoke-test matrix. Every matrix job must match the package ZIP
+   digest, and deployment compares both the tested commit and digest before
+   publishing.
 3. The validator checks metadata, current-only readme changelog, full changelog,
    runtime references, residual ATRC placeholders, package exclusions, and
    byte-for-byte ZIP/runtime equivalence.
@@ -172,6 +173,8 @@ and verifies:
 - absence of PHP warnings, notices, deprecations, and fatal errors.
 
 The test server and database contents are disposable GitHub Actions resources.
+WordPress.org update-check APIs are stubbed and other external HTTP requests are
+blocked, so runtime failures reflect the plugin rather than network availability.
 
 ## Package contents
 

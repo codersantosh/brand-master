@@ -54,6 +54,7 @@ else
 fi
 
 mkdir -p "$WORK_DIR"
+WORK_DIR="$(realpath "$WORK_DIR")"
 if [[ -n "$(find "$WORK_DIR" -mindepth 1 -print -quit)" ]]; then
 	fail "SVN working directory is not empty: $WORK_DIR"
 fi
@@ -260,7 +261,7 @@ svn commit \
 	"${auth_args[@]}" \
 	-m "$commit_message"
 
-revision="$(svn info --show-item revision "${SVN_URL}tags/${VERSION}")"
+revision="$(svn info --show-item revision "$WORK_DIR/tags/$VERSION")"
 [[ "$revision" =~ ^[0-9]+$ ]] || fail "Could not determine the committed SVN revision."
 
 verify_remote_package() {

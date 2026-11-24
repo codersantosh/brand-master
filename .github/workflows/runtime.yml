@@ -8,6 +8,11 @@ on:
         required: false
         type: string
         default: ''
+      package_sha256:
+        description: Optional release ZIP digest every matrix job must match
+        required: false
+        type: string
+        default: ''
     outputs:
       commit:
         description: Git commit tested by the runtime workflow
@@ -46,6 +51,7 @@ jobs:
           --health-retries=12
     env:
       WP_VERSION: ${{ matrix.wordpress }}
+      EXPECTED_PACKAGE_SHA256: ${{ inputs.package_sha256 }}
       DB_NAME: brand_master_runtime
       DB_USER: root
       DB_PASSWORD: root
@@ -90,6 +96,10 @@ jobs:
           set -euo pipefail
           version="$(node -p "require('./package.json').version")"
           digest="$(sha256sum "deploy/brand-master-${version}.zip" | cut -d ' ' -f 1)"
+          if [[ -n "$EXPECTED_PACKAGE_SHA256" && "$digest" != "$EXPECTED_PACKAGE_SHA256" ]]; then
+            echo "Runtime ZIP digest $digest does not match release digest $EXPECTED_PACKAGE_SHA256." >&2
+            exit 1
+          fi
           echo "commit=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
           echo "package_sha256=$digest" >> "$GITHUB_OUTPUT"
       - name: Run WordPress runtime smoke test

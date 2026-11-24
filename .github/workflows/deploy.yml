@@ -201,6 +201,7 @@ jobs:
     uses: ./.github/workflows/runtime.yml
     with:
       ref: ${{ needs.package.outputs.commit }}
+      package_sha256: ${{ needs.package.outputs.package_sha256 }}
 
   dry-run:
     name: Review SVN package

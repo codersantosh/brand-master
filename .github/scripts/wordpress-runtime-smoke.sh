@@ -71,6 +71,8 @@ wp config set --path="$WP_DIR" WP_DEBUG true --raw
 wp config set --path="$WP_DIR" WP_DEBUG_DISPLAY false --raw
 wp config set --path="$WP_DIR" WP_DEBUG_LOG "$WP_DIR/debug.log"
 wp config set --path="$WP_DIR" AUTOMATIC_UPDATER_DISABLED true --raw
+wp config set --path="$WP_DIR" DISABLE_WP_CRON true --raw
+wp config set --path="$WP_DIR" WP_HTTP_BLOCK_EXTERNAL true --raw
 wp db create --path="$WP_DIR"
 wp core install \
 	--path="$WP_DIR" \
@@ -90,7 +92,6 @@ wp plugin install \
 	--path="$WP_DIR" \
 	"${PROJECT_ROOT}/deploy/brand-master-${version}.zip" \
 	--activate
-wp config set --path="$WP_DIR" WP_HTTP_BLOCK_EXTERNAL true --raw
 
 review_id="$(wp post create \
 	--path="$WP_DIR" \
