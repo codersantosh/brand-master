@@ -243,7 +243,7 @@ class Brand_Master_Login {
 	 * Extracted from load_login_page() so the matching logic is unit-testable
 	 * (load_login_page() itself ends in require + exit).
 	 *
-	 * @since 1.0.7
+	 * @since 1.0.6
 	 * @access public
 	 *
 	 * @param string $login_url   Full custom login URL.
@@ -344,6 +344,7 @@ class Brand_Master_Login {
 					// phpcs:enable WordPress.WP.GlobalVariablesOverride.Prohibited
 
 					$this->init_wp_login_globals();
+					status_header( 200 );
 
 					/*
 					 * require_once is required because wp-login.php defines functions
@@ -461,7 +462,7 @@ class Brand_Master_Login {
 	 * Extracted from redirect_login_and_wp_admin() so the decision is
 	 * unit-testable (the caller ends in wp_safe_redirect + exit).
 	 *
-	 * @since 1.0.7
+	 * @since 1.0.6
 	 * @access public
 	 *
 	 * @return bool True when the request must be redirected.

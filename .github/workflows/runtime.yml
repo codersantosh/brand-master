@@ -1,0 +1,96 @@
+name: WordPress Runtime
+
+on:
+  workflow_call:
+    inputs:
+      ref:
+        description: Exact Git commit or ref to test
+        required: false
+        type: string
+        default: ''
+    outputs:
+      commit:
+        description: Git commit tested by the runtime workflow
+        value: ${{ jobs.runtime.outputs.commit }}
+      package_sha256:
+        description: ZIP digest tested by the runtime workflow
+        value: ${{ jobs.runtime.outputs.package_sha256 }}
+
+permissions:
+  contents: read
+
+jobs:
+  runtime:
+    name: WordPress ${{ matrix.wordpress }} Runtime
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    outputs:
+      commit: ${{ steps.digest.outputs.commit }}
+      package_sha256: ${{ steps.digest.outputs.package_sha256 }}
+    strategy:
+      fail-fast: false
+      matrix:
+        wordpress: ['7.0', '7.1']
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_ROOT_HOST: '%'
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -proot --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=12
+    env:
+      WP_VERSION: ${{ matrix.wordpress }}
+      DB_NAME: brand_master_runtime
+      DB_USER: root
+      DB_PASSWORD: root
+      ADMIN_USER: brandmasteradmin
+      ADMIN_PASSWORD: BrandMaster-Runtime-2026!
+      ADMIN_EMAIL: admin@example.com
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+          extensions: mysqli, curl, xml, mbstring, zip, intl
+      - name: Install pinned WP-CLI
+        run: bash .github/scripts/install-wp-cli.sh
+      - name: Install npm dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Build release package
+        run: npm run deploy
+      - name: Verify reproducible ZIP
+        run: |
+          set -euo pipefail
+          version="$(node -p "require('./package.json').version")"
+          cp "deploy/brand-master-${version}.zip" "${RUNNER_TEMP}/brand-master-first.zip"
+          npm run deploy
+          cmp "${RUNNER_TEMP}/brand-master-first.zip" "deploy/brand-master-${version}.zip"
+      - name: Validate runtime package
+        run: |
+          version="$(node -p "require('./package.json').version")"
+          python3 .github/scripts/verify-artifact.py "$version" deploy
+          php .github/scripts/validate-release.php "$version" deploy/brand-master
+          unzip -tqq "deploy/brand-master-${version}.zip"
+      - name: Record runtime-tested commit and digest
+        id: digest
+        run: |
+          set -euo pipefail
+          version="$(node -p "require('./package.json').version")"
+          digest="$(sha256sum "deploy/brand-master-${version}.zip" | cut -d ' ' -f 1)"
+          echo "commit=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          echo "package_sha256=$digest" >> "$GITHUB_OUTPUT"
+      - name: Run WordPress runtime smoke test
+        run: bash .github/scripts/wordpress-runtime-smoke.sh

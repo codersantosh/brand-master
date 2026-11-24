@@ -5,9 +5,9 @@
 - Plugin slug: `brand-master`
 - Publication target: `https://plugins.svn.wordpress.org/brand-master/`
 - Workflow: `.github/workflows/deploy.yml`
-- Publication trigger: a published, non-prerelease GitHub Release
+- Publication triggers: a stable published GitHub Release, or an approved manual dispatch using an exact `vX.Y.Z` tag
 - Publishing environment: `wordpress-org`
-- Manual dispatch: dry-run checkbox, defaulting to checked
+- Manual dispatch: `dry_run` defaults to checked
 
 Git remains the development source. WordPress.org SVN is used only as a release
 repository. The workflow never writes to a developer's local SVN checkout.
@@ -21,6 +21,9 @@ repository. The workflow never writes to a developer's local SVN checkout.
 | Minimum WordPress | `7.0` |
 | Tested WordPress | `7.1` |
 
+`Tested up to` is declared only in `readme.txt`. WordPress Plugin Check rejects
+that field in the main plugin PHP header.
+
 PHP 8.3 is the minimum because PHP 8.1 is end-of-life, PHP 8.2 security support
 ends on December 31, 2026, and PHP 8.3 receives security fixes through December
 31, 2027. WordPress 7.0 and 7.1 support PHP 8.3, and WordPress developer guidance
@@ -28,41 +31,71 @@ recommends PHP 8.3.
 
 ## Release flow
 
-1. The `package` job checks out one immutable Git commit.
-2. It runs PHP syntax checks, PHPUnit, PHPCS, and the JavaScript release build.
-3. It validates plugin metadata, runtime references, package exclusions, the ZIP
-   checksum, and byte-for-byte ZIP/runtime equivalence.
-4. It uploads the runtime directory, ZIP, and checksum as one artifact.
-5. A manual dispatch with `dry_run` checked runs a credential-free dry run against
-   a disposable SVN working copy. Clearing the checkbox performs a real deployment
-   through the protected `wordpress-org` environment.
-6. Publishing a stable GitHub Release runs the `deploy` job in the protected
-   `wordpress-org` environment.
-7. The deploy job checks out the exact commit recorded by the package job and
-   downloads that job's artifact.
+1. The `package` job resolves one immutable Git commit. Real publishing requires
+   an exact versioned tag whose version matches `package.json` and whose commit
+   is the checked-out commit.
+2. It installs locked Composer dependencies, validates Composer metadata, runs
+   PHP syntax checks, PHPUnit, and PHPCS, then builds the release package. The
+   reusable WordPress runtime workflow then rebuilds and tests that exact commit
+   on the 7.0/7.1 smoke-test matrix. Deployment compares both the tested commit
+   and ZIP digest with the package artifact before publishing.
+3. The validator checks metadata, current-only readme changelog, full changelog,
+   runtime references, residual ATRC placeholders, package exclusions, and
+   byte-for-byte ZIP/runtime equivalence.
+4. The ZIP has fixed entry timestamps, normalized permissions, sorted paths, and
+   a checksum. The translation-template timestamp is normalized from the Git
+   commit timestamp, so identical source commits produce identical ZIPs.
+5. The artifact name includes the version, commit, and ZIP digest prefix. A
+   provenance manifest records the full ZIP SHA-256, runtime file count, commit,
+   tag, workflow run, and release URL.
+6. The `dry-run` job always runs before deployment. It downloads the package
+   artifact, verifies its manifest and digest, stages `trunk/` and a new SVN tag
+   in a disposable working copy, and uploads the SVN status, diff, file manifest,
+   and release provenance for review. It receives no SVN credentials.
+7. The protected `deploy` job starts only after the dry run and WordPress runtime
+   matrix succeed. Required environment reviewers can inspect the preview before
+   approving it. It downloads the same artifact and verifies its digest against
+   the dry-run output, so the package committed to SVN is the package that was
+   staged for review.
 8. The SVN script updates `trunk/`, stages additions and deletions, creates
-   `tags/<version>/` with `svn copy`, and commits once.
+   `tags/<version>/` with `svn copy`, and commits once. The commit message records
+   the Git commit, artifact SHA-256, Actions run URL/attempt, and release URL.
+9. Immediately after commit, the script exports remote `trunk/` and the release
+   tag, checks both revisions, compares every file with the reviewed bundle, and
+   reruns release validation on both exports.
 
 The leading `v` in a Git tag such as `v1.0.6` is removed for WordPress.org. The
 plugin version remains `1.0.6`.
 
 ## First manual dry run
 
-GitHub only exposes `workflow_dispatch` for a workflow when that workflow file
-exists on the repository's default branch. The selected ref must also contain
-the workflow file.
+GitHub only exposes `workflow_dispatch` when the workflow exists on the default
+branch. The selected ref must also contain the workflow file.
 
-This implementation does not merge or push anything. Therefore, the first
-manual dry run cannot be enabled from the local `1.0.6` branch alone. After
-separate approval to update the default branch:
+1. Open **Actions → Deploy Brand Master to WordPress.org → Run workflow**.
+2. Select the reviewed ref. A dry run may use a branch, commit, or tag.
+3. Leave `dry_run` checked.
+4. Review the uploaded package artifact and `svn-preview-*` artifact.
 
-1. Merge or otherwise place the reviewed workflow on `master`.
-2. Ensure the ref selected for dispatch also contains the workflow.
-3. Open **Actions → Deploy Brand Master to WordPress.org → Run workflow**.
-4. Select the reviewed ref and run it.
+A dry run never requests SVN secrets and the SVN script refuses credentials in
+dry-run mode.
 
-Until then, use the local validation and disposable SVN simulation commands in
-this document. Do not merge or push solely to enable a dry run without approval.
+## Manual real deployment
+
+1. Create and push the exact annotated `vX.Y.Z` tag only after release approval.
+2. Confirm the tag version and all plugin version fields agree.
+3. Dispatch the workflow with that exact tag as `ref` and `dry_run` unchecked.
+4. Review the automatically generated SVN preview.
+5. Approve the protected `wordpress-org` environment deployment.
+
+The workflow rejects branch names, arbitrary refs, missing tags, tags that do not
+resolve to the checked-out commit, and version mismatches before building a real
+deployment. Manual publishing does not require a GitHub Release, but its
+tag/release URL is recorded in provenance.
+
+A stable, published GitHub Release follows the same package, dry-run, approval,
+and verification path. The release tag must already exist and match the package
+version.
 
 ## One-time WordPress.org setup
 
@@ -81,6 +114,9 @@ password invalidates the previous one.
 
 ## GitHub setup
 
+These repository settings require separate maintainer approval; the workflow
+cannot create or modify them.
+
 Create an environment named `wordpress-org`:
 
 1. Open **Settings → Environments → New environment**.
@@ -93,10 +129,16 @@ Create an environment named `wordpress-org`:
 | `SVN_USERNAME` | Exact WordPress.org committer username |
 | `SVN_PASSWORD` | Generated WordPress.org SVN password |
 
-The workflow requests only `contents: read`. The checked dry-run job does not
-reference SVN secrets and does not use the protected environment. The SVN script
-refuses to run if credentials are present during a dry run. Clearing the checkbox
-runs the protected deployment job with environment secrets.
+Protect release tags with a repository ruleset:
+
+1. Target `v*` tags.
+2. Restrict tag creation and deletion to authorized maintainers.
+3. Require pull requests for changes where supported.
+4. Prevent force updates and tag deletion.
+
+The workflow requests only `contents: read`. The dry-run job does not reference
+the protected environment or SVN secrets. The deploy job alone receives the
+environment secrets and starts after the dry run and environment approval.
 
 A read-only authentication check is:
 
@@ -113,6 +155,24 @@ unset SVN_PASSWORD
 This verifies authentication but not commit permission. The Advanced View page
 must also list the account as a Committer.
 
+## Runtime smoke tests
+
+CI runs `.github/scripts/wordpress-runtime-smoke.sh` against disposable
+WordPress 7.0 and 7.1 installations on PHP 8.3. Each run installs the built ZIP
+and verifies:
+
+- plugin activation, version, defaults, and full changelog access;
+- dashboard/login shortcode rendering;
+- the Brand Master admin page and compiled admin assets;
+- anonymous REST denial and authenticated settings read/update;
+- partial-update preservation and absence from the core settings endpoint;
+- exact custom-login slug matching, HTTP 200 login responses, and `wp-login.php`
+  redirect to the configured redirect slug;
+- settings persistence across deactivation/reactivation;
+- absence of PHP warnings, notices, deprecations, and fatal errors.
+
+The test server and database contents are disposable GitHub Actions resources.
+
 ## Package contents
 
 Included:
@@ -121,19 +181,23 @@ Included:
 - Compiled `build/` assets
 - Runtime `assets/`
 - Translation template
-- `readme.txt`, `LICENSE`, and `uninstall.php`
+- `readme.txt`, full `changelog.txt`, `LICENSE`, and `uninstall.php`
 
 Excluded:
 
 - Git and GitHub files
-- Node and Composer dependencies
+- Node and Composer dependencies, including `composer.lock`
 - JavaScript/SCSS source
 - Tests and CI scripts
 - Development configuration
 - Source maps, Markdown files, archives, hidden files, and symlinks
 
+`readme.txt` contains only the current release changelog for WordPress.org. The
+admin “What's New” reader and `changelog.txt` retain the complete history.
+
 The validator checks literal `BRAND_MASTER_PATH` and `BRAND_MASTER_URL`
-references and relative CSS `url()` references against the packaged files.
+references, relative CSS `url()` references, and unreplaced ATRC placeholders
+against the packaged files.
 
 ## SVN layout
 
@@ -143,6 +207,7 @@ SVN root/
 ├── trunk/           # Verified runtime package, directly inside trunk
 │   ├── brand-master.php
 │   ├── readme.txt
+│   ├── changelog.txt
 │   ├── assets/      # Runtime assets shipped with the plugin
 │   └── ...
 └── tags/
@@ -157,38 +222,61 @@ tags. ZIP files are never uploaded to SVN.
 ## Local validation
 
 ```bash
+composer install --no-interaction --prefer-dist
+composer validate --strict --no-check-publish
 npm ci --no-audit --no-fund
 npm run deploy
 php .github/scripts/validate-release.php 1.0.6 deploy/brand-master
-sha256sum deploy/brand-master-1.0.6.zip \
-  > deploy/brand-master-1.0.6.zip.sha256
 python3 .github/scripts/verify-artifact.py 1.0.6 deploy
 composer lint
 composer test
 vendor/bin/phpcs --report=summary --warning-severity=0
 ```
 
+`npm run deploy` creates the ZIP checksum automatically. Set `SOURCE_DATE_EPOCH`
+to a Unix timestamp to reproduce a package for another source date; otherwise
+the current Git commit timestamp is used. Rebuilding the same commit without
+source changes should produce the same ZIP SHA-256.
+
 The SVN script accepts `SVN_URL=file:///path/to/disposable/repository` and
 `SVN_WORK_DIR=/path/to/disposable/working-copy` for local simulation. Dry runs
-require `DRY_RUN=true` and no SVN credentials.
+require `DRY_RUN=true`, no SVN credentials, a full `RELEASE_COMMIT`, and a
+`PACKAGE_SHA256`. The script supports disposable local real commits as well,
+including remote export verification.
 
 ## Release procedure
 
-Only after the implementation is reviewed and release publication is separately
-approved:
+Only after implementation review and separate publication approval:
 
 1. Confirm all version fields are `1.0.6`.
-2. Confirm PHP 8.3 runtime checks and WordPress 7.0/7.1 smoke tests have passed.
-3. Select the exact reviewed commit for `v1.0.6`.
-4. Create and push the annotated tag.
-5. Create a draft GitHub Release and wait for CI.
-6. Run the manual workflow with `dry_run` checked and review its SVN preview.
-7. Publish the stable GitHub Release.
-8. Approve the `wordpress-org` environment deployment.
-9. Verify the SVN tag and, after WordPress.org processing, the download ZIP and
-   Plugin Directory API.
+2. Confirm PHP 8.3 checks and WordPress 7.0/7.1 runtime smoke tests passed.
+3. Commit the reviewed `composer.lock` if dependencies changed.
+4. Select the exact reviewed commit for `v1.0.6`.
+5. Create and push the annotated tag.
+6. Run the manual workflow with `dry_run` checked and review both artifacts.
+7. Either dispatch the exact tag with `dry_run` unchecked, or publish a stable
+   GitHub Release.
+8. Approve the `wordpress-org` environment deployment after reviewing the
+   preview generated by that same run.
+9. Confirm the workflow's immediate remote SVN verification passed.
+10. After WordPress.org processing, verify the Plugin Directory API and download
+    ZIP manually. Processing can take several hours.
 
-WordPress.org can take several hours to rebuild download ZIPs.
+## Delayed WordPress.org verification
+
+Immediate SVN verification does not imply that WordPress.org has rebuilt its
+public download ZIP. After processing, check:
+
+```bash
+curl --fail --silent --show-error \
+  https://api.wordpress.org/plugins/info/1.2/?action=plugin_information\&request%5Bslug%5D=brand-master
+curl --fail --silent --show-error --location --output /tmp/brand-master.zip \
+  https://downloads.wordpress.org/plugin/brand-master.1.0.6.zip
+unzip -tqq /tmp/brand-master.zip
+```
+
+Confirm the API reports `1.0.6` and inspect the downloaded package before
+announcing the release.
 
 ## Rollback
 

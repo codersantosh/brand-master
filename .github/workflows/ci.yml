@@ -16,6 +16,7 @@ jobs:
           php-version: '8.3'
       - name: Syntax check
         run: |
+          python3 -m py_compile .github/scripts/verify-artifact.py .github/scripts/artifact-manifest.py
           find . -type f -name '*.php' -not -path './build/*' -not -path './node_modules/*' -print0 | xargs -0 -n1 php -l > /dev/null
 
   tests:
@@ -44,3 +45,7 @@ jobs:
         run: composer install --no-interaction --prefer-dist
       - name: Run phpcs
         run: vendor/bin/phpcs --report=summary
+
+  runtime:
+    name: WordPress Runtime
+    uses: ./.github/workflows/runtime.yml

@@ -367,7 +367,7 @@ if ( ! function_exists( 'brand_master_parse_changelog' ) ) {
 
 		$wp_filesystem = brand_master_file_system();
 
-		$changelog_file = apply_filters( 'brand_master_changelog_file', BRAND_MASTER_PATH . 'readme.txt' );
+		$changelog_file = apply_filters( 'brand_master_changelog_file', BRAND_MASTER_PATH . 'changelog.txt' );
 
 		/*Check if the changelog file exists and is readable.*/
 		if ( ! $changelog_file || ! is_readable( $changelog_file ) ) {

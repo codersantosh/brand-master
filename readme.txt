@@ -61,6 +61,7 @@ There are two ways to install the plugin:
 After installation, activate the plugin through the 'Plugins' menu in WordPress.
 
 Source code and build instructions: https://github.com/codersantosh/brand-master
+Full changelog: changelog.txt
 
 == Frequently Asked Questions ==
 
@@ -112,6 +113,8 @@ Yes. Settings are stored per site. Network administrators can reach each site's 
 * Added: Login/redirect slug conflict validation (reserved slugs, page collisions)
 * Added: uninstall.php for clean data deletion
 * Added: PHPUnit test suite and GitHub Actions CI
+* Added: WordPress 7.0/7.1 runtime smoke tests and reproducible release artifacts
+* Security: SVN publishing requires a validated release tag and the exact digest-reviewed package
 * Security: Redirect URL validation via wp_validate_redirect (internal-only by default)
 * Security: Closed /wp/v2/settings REST endpoint exposure
 * Fix: Scoped site_url filter to wp-login.php paths only
@@ -124,35 +127,9 @@ Yes. Settings are stored per site. Network administrators can reach each site's 
 * Fix: Settings page and REST endpoint accept network admins on network-active multisite installs
 * Fix: dashboard.userInfo.sort schema corrected; siteIdentity/userInfo logo fields constrained to their valid values
 * Fix: Custom login slug no longer emits "Undefined variable $user_login / $error" warnings — wp-login.php globals are now bound in the including method scope (version-agnostic across WP 6.6/6.7/7.x)
+* Fix: Custom login slug responses now return HTTP 200 instead of retaining a 404 status
 * Fix: wp-login.php redirect allowlist — logout, password-reset key exchange (rp/resetpass) and all POST requests pass through instead of bouncing to the redirect slug
 * Fix: Custom login slug matching is now exact-path (tails like /ogin no longer load the login page); referer handling hardened for missing Referer headers
 * Added: Unit coverage for login scope binding, wp-login.php redirect matrix, exact slug matching, and admin-bar / post-action redirect settings
 * Added: Automated WordPress.org deployment from published GitHub Releases
 * Added: Public source code and build documentation
-
-= 1.0.5 =
-* Added: WordPress latest compatibility
-* Fixed: Resolved issue with translation function preload
-
-= 1.0.4 =
-* Added: Tested with the latest WordPress
-* Added: RTL support
-* Updated: [Atomic CSS](https://github.com/codersantosh/atomic-css)
-* Updated: npm packages
-* Fixed: Admin Notices Hidden by Sticky Header on Plugin Settings Page #14
-
-= 1.0.3 =
-* Updated: Plugin URL
-* Updated: Author links
-* Updated: Contributors links
-
-= 1.0.2 =
-* Updated: Author
-* Updated: Contributors
-
-= 1.0.1 =
-* Added: Tested with the latest WordPress
-* Added: Plugin link to Settings.
-
-= 1.0.0 =
-* Initial release

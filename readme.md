@@ -28,18 +28,25 @@ Whether you are building a client site, a membership platform, or simply want to
 ### Build from source
 
 ```sh
+composer install --no-interaction --prefer-dist
 npm ci
 npm run build      # produces build/admin and build/public
-npm run deploy     # build + i18n pot + copy step
+npm run deploy     # build + i18n pot + normalized package and ZIP checksum
 ```
 
 ## WordPress.org releases
 
 Brand Master is packaged and validated by `.github/workflows/deploy.yml`.
-Manual workflow dispatch defaults to a credential-free SVN dry run. Clearing the
-`dry_run` checkbox performs a real deployment through the protected
-`wordpress-org` environment. A stable, published GitHub Release also runs the
-protected deployment job.
+Every deployment first produces a credential-free SVN preview. Manual dispatch
+defaults to that dry run. Clearing `dry_run` requires an exact versioned Git tag,
+then runs the preview again and waits for approval in the protected
+`wordpress-org` environment before committing the same digest-bound artifact to
+SVN. A stable, published GitHub Release follows the same path. Remote trunk and
+tag contents are verified immediately after commit.
+
+CI also installs the built ZIP on disposable WordPress 7.0 and 7.1 instances
+and exercises the admin page, shortcodes, REST API, custom login routing, and
+settings persistence.
 
 Before publishing, confirm that the plugin header, `BRAND_MASTER_VERSION`,
 `package.json`, and `readme.txt` stable tag all contain the same version. See
@@ -150,6 +157,8 @@ Brand Master does not collect, transmit, or store any personal data externally. 
 4. Push and open a Pull Request.
 
 Coding standards: `vendor/bin/phpcs` (WordPress standard). Tests: `vendor/bin/phpunit`.
+Composer dependencies are pinned in `composer.lock`; commit the updated lock
+whenever development dependencies change.
 
 ## License
 

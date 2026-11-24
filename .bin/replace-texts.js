@@ -43,6 +43,7 @@ async function main() {
 		console.log('Replacement results:', results);
 	} catch (error) {
 		console.error('Error occurred:', error);
+		process.exitCode = 1;
 	}
 }
 main();

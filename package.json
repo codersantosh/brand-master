@@ -12,12 +12,13 @@
 		"start:public": "wp-scripts start src/dashboard.js --output-path=build/public",
 		"start": "npm-run-all --parallel start:admin start:public",
 		"packages-update": "wp-scripts packages-update",
+		"normalize-pot": "node .bin/normalize-pot.js",
 		"copy": "node .bin/copy.js",
 		"zip": "node .bin/zip.js",
 		"replace": "node .bin/replace-texts.js",
 		"makejsstring": "node .bin/make-string.js",
 		"makepot": "wp i18n make-pot . languages/brand-master.pot --skip-js --exclude=src,vendor,node_modules,build,deploy,tests --merge=languages/js.pot",
-		"deploy": "npm-run-all build replace makepot copy zip"
+		"deploy": "npm-run-all build replace makepot normalize-pot copy zip"
 	},
 	"browserslist": [
 		"last 3 versions",

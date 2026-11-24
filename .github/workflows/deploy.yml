@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       ref:
-        description: Git ref to build (for example v1.0.6)
+        description: Git ref to build (dry runs may use any ref; publishing requires a vX.Y.Z tag)
         required: true
         type: string
       dry_run:
@@ -30,7 +30,10 @@ jobs:
     outputs:
       version: ${{ steps.resolve.outputs.version }}
       commit: ${{ steps.resolve.outputs.commit }}
-      artifact: ${{ steps.resolve.outputs.artifact }}
+      release_tag: ${{ steps.resolve.outputs.release_tag }}
+      release_url: ${{ steps.resolve.outputs.release_url }}
+      artifact: ${{ steps.artifact.outputs.artifact }}
+      package_sha256: ${{ steps.artifact.outputs.package_sha256 }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -40,24 +43,44 @@ jobs:
       - name: Resolve immutable release commit
         id: resolve
         env:
+          EVENT_NAME: ${{ github.event_name }}
           RELEASE_TAG: ${{ github.event.release.tag_name }}
+          RELEASE_PAGE_URL: ${{ github.event.release.html_url }}
+          INPUT_REF: ${{ inputs.ref }}
+          INPUT_DRY_RUN: ${{ inputs.dry_run }}
         run: |
           set -euo pipefail
 
           commit="$(git rev-parse HEAD)"
           version="$(node -p "require('./package.json').version")"
+          release_tag=''
+          release_url=''
 
-          if [[ "${{ github.event_name }}" == 'release' ]]; then
+          if [[ "$EVENT_NAME" == 'release' ]]; then
             if [[ ! "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+(\.[0-9]+)*$ ]]; then
               echo "Release tag must look like v1.0.6; received '$RELEASE_TAG'." >&2
               exit 1
             fi
+            release_tag="$RELEASE_TAG"
+            release_url="$RELEASE_PAGE_URL"
+          elif [[ "$INPUT_DRY_RUN" == 'false' ]]; then
+            if [[ ! "$INPUT_REF" =~ ^v[0-9]+\.[0-9]+(\.[0-9]+)*$ ]]; then
+              echo "Manual publishing requires a versioned vX.Y.Z tag; received '$INPUT_REF'." >&2
+              exit 1
+            fi
+            if ! git show-ref --verify --quiet "refs/tags/${INPUT_REF}"; then
+              echo "The exact release tag refs/tags/${INPUT_REF} must exist." >&2
+              exit 1
+            fi
+            release_tag="$INPUT_REF"
+            release_url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/releases/tag/${release_tag}"
+          fi
 
-            tag_commit="$(git rev-parse "refs/tags/${RELEASE_TAG}^{commit}")"
-            tag_version="${RELEASE_TAG#v}"
-
+          if [[ -n "$release_tag" ]]; then
+            tag_commit="$(git rev-parse "refs/tags/${release_tag}^{commit}")"
+            tag_version="${release_tag#v}"
             if [[ "$tag_commit" != "$commit" ]]; then
-              echo "Release tag $RELEASE_TAG does not resolve to $commit." >&2
+              echo "Release tag $release_tag does not resolve to the checked-out commit $commit." >&2
               exit 1
             fi
             if [[ "$tag_version" != "$version" ]]; then
@@ -69,7 +92,8 @@ jobs:
           {
             echo "version=$version"
             echo "commit=$commit"
-            echo "artifact=brand-master-${version}-${commit}"
+            echo "release_tag=$release_tag"
+            echo "release_url=$release_url"
           } >> "$GITHUB_OUTPUT"
 
       - uses: actions/setup-node@v4
@@ -86,8 +110,11 @@ jobs:
       - name: Install pinned WP-CLI
         run: bash .github/scripts/install-wp-cli.sh
 
-      - name: Install PHP dependencies
-        run: composer install --no-interaction --prefer-dist
+      - name: Install locked PHP dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Validate Composer metadata and lock
+        run: composer validate --strict --no-check-publish
 
       - name: PHP syntax checks
         run: composer lint
@@ -104,6 +131,14 @@ jobs:
       - name: Build release package
         run: npm run deploy
 
+      - name: Verify reproducible ZIP
+        run: |
+          set -euo pipefail
+          version="$(node -p "require('./package.json').version")"
+          cp "deploy/brand-master-${version}.zip" "${RUNNER_TEMP}/brand-master-first.zip"
+          npm run deploy
+          cmp "${RUNNER_TEMP}/brand-master-first.zip" "deploy/brand-master-${version}.zip"
+
       - name: Validate release package
         run: |
           set -euo pipefail
@@ -114,29 +149,66 @@ jobs:
           find deploy/brand-master -type f -name '*.php' -print0 \
             | xargs -0 -n1 php -l
 
-      - name: Generate and verify ZIP checksum
+      - name: Verify ZIP and bind immutable artifact identity
+        id: artifact
         run: |
           set -euo pipefail
           version="${{ steps.resolve.outputs.version }}"
-          sha256sum "deploy/brand-master-${version}.zip" \
-            > "deploy/brand-master-${version}.zip.sha256"
+          commit="${{ steps.resolve.outputs.commit }}"
           python3 .github/scripts/verify-artifact.py "$version" deploy
+          digest="$(sha256sum "deploy/brand-master-${version}.zip" | cut -d ' ' -f 1)"
+          artifact="brand-master-${version}-${commit}-${digest:0:12}"
+          echo "artifact=$artifact" >> "$GITHUB_OUTPUT"
+          echo "package_sha256=$digest" >> "$GITHUB_OUTPUT"
+
+      - name: Create artifact provenance manifest
+        env:
+          RELEASE_COMMIT: ${{ steps.resolve.outputs.commit }}
+          RELEASE_TAG: ${{ steps.resolve.outputs.release_tag }}
+          RELEASE_URL: ${{ steps.resolve.outputs.release_url }}
+          ARTIFACT_NAME: ${{ steps.artifact.outputs.artifact }}
+          GITHUB_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          python3 .github/scripts/artifact-manifest.py create \
+            "${{ steps.resolve.outputs.version }}" deploy
+
+      - name: Verify artifact provenance manifest
+        env:
+          RELEASE_COMMIT: ${{ steps.resolve.outputs.commit }}
+          RELEASE_TAG: ${{ steps.resolve.outputs.release_tag }}
+          RELEASE_URL: ${{ steps.resolve.outputs.release_url }}
+          ARTIFACT_NAME: ${{ steps.artifact.outputs.artifact }}
+          GITHUB_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          python3 .github/scripts/artifact-manifest.py verify \
+            "${{ steps.resolve.outputs.version }}" deploy \
+            "${{ steps.artifact.outputs.package_sha256 }}"
 
       - uses: actions/upload-artifact@v4
         with:
-          name: ${{ steps.resolve.outputs.artifact }}
+          name: ${{ steps.artifact.outputs.artifact }}
           path: |
             deploy/brand-master/
             deploy/brand-master-${{ steps.resolve.outputs.version }}.zip
             deploy/brand-master-${{ steps.resolve.outputs.version }}.zip.sha256
+            deploy/artifact-manifest.json
           if-no-files-found: error
           retention-days: 14
 
+  runtime:
+    name: WordPress Runtime
+    needs: package
+    uses: ./.github/workflows/runtime.yml
+    with:
+      ref: ${{ needs.package.outputs.commit }}
+
   dry-run:
-    if: github.event_name == 'workflow_dispatch' && inputs.dry_run == true
+    name: Review SVN package
     needs: package
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    outputs:
+      package_sha256: ${{ steps.verify.outputs.package_sha256 }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -158,13 +230,24 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y -qq subversion rsync
 
-      - name: Verify downloaded artifact
+      - name: Verify reviewed artifact
+        id: verify
+        env:
+          RELEASE_COMMIT: ${{ needs.package.outputs.commit }}
+          RELEASE_TAG: ${{ needs.package.outputs.release_tag }}
+          RELEASE_URL: ${{ needs.package.outputs.release_url }}
+          ARTIFACT_NAME: ${{ needs.package.outputs.artifact }}
+          GITHUB_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
+          set -euo pipefail
           python3 .github/scripts/verify-artifact.py \
             "${{ needs.package.outputs.version }}" deploy
           php .github/scripts/validate-release.php \
             "${{ needs.package.outputs.version }}" \
             deploy/brand-master
+          python3 .github/scripts/artifact-manifest.py verify \
+            "${{ needs.package.outputs.version }}" deploy \
+            "${{ needs.package.outputs.package_sha256 }}"
 
       - name: Stage disposable SVN dry run
         env:
@@ -173,11 +256,14 @@ jobs:
           BUNDLE: ${{ github.workspace }}/deploy/brand-master
           DRY_RUN: 'true'
           RELEASE_COMMIT: ${{ needs.package.outputs.commit }}
+          PACKAGE_SHA256: ${{ needs.package.outputs.package_sha256 }}
+          WORKFLOW_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          RELEASE_URL: ${{ needs.package.outputs.release_url }}
           SVN_WORK_DIR: ${{ runner.temp }}/svn-brand-master-${{ needs.package.outputs.version }}
           SVN_PREVIEW_DIR: ${{ github.workspace }}/deploy/svn-preview
         run: bash .github/scripts/svn-release.sh
 
-      - name: Upload SVN dry-run preview
+      - name: Upload SVN review preview
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -190,11 +276,29 @@ jobs:
     if: >-
       (github.event_name == 'release' && github.event.release.prerelease == false) ||
       (github.event_name == 'workflow_dispatch' && inputs.dry_run == false)
-    needs: package
+    needs: [package, dry-run, runtime]
     runs-on: ubuntu-latest
     timeout-minutes: 15
     environment: wordpress-org
     steps:
+      - name: Verify runtime-tested commit and artifact
+        env:
+          RELEASE_COMMIT: ${{ needs.package.outputs.commit }}
+          RUNTIME_COMMIT: ${{ needs.runtime.outputs.commit }}
+          PACKAGE_SHA256: ${{ needs.package.outputs.package_sha256 }}
+          RUNTIME_PACKAGE_SHA256: ${{ needs.runtime.outputs.package_sha256 }}
+        run: |
+          set -euo pipefail
+          if [[ "$RELEASE_COMMIT" != "$RUNTIME_COMMIT" ]]; then
+            echo "Runtime tests used $RUNTIME_COMMIT instead of $RELEASE_COMMIT." >&2
+            exit 1
+          fi
+          if [[ "$PACKAGE_SHA256" != "$RUNTIME_PACKAGE_SHA256" ]]; then
+            echo "Runtime tests used ZIP $RUNTIME_PACKAGE_SHA256 instead of $PACKAGE_SHA256." >&2
+            exit 1
+          fi
+          echo "Runtime tests match the release commit and ZIP digest."
+
       - uses: actions/checkout@v4
         with:
           ref: ${{ needs.package.outputs.commit }}
@@ -215,23 +319,45 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y -qq subversion rsync
 
-      - name: Verify downloaded artifact
+      - name: Verify artifact reviewed by dry run
+        env:
+          RELEASE_COMMIT: ${{ needs.package.outputs.commit }}
+          RELEASE_TAG: ${{ needs.package.outputs.release_tag }}
+          RELEASE_URL: ${{ needs.package.outputs.release_url }}
+          ARTIFACT_NAME: ${{ needs.package.outputs.artifact }}
+          GITHUB_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
+          set -euo pipefail
           python3 .github/scripts/verify-artifact.py \
             "${{ needs.package.outputs.version }}" deploy
           php .github/scripts/validate-release.php \
             "${{ needs.package.outputs.version }}" \
             deploy/brand-master
+          python3 .github/scripts/artifact-manifest.py verify \
+            "${{ needs.package.outputs.version }}" deploy \
+            "${{ needs.dry-run.outputs.package_sha256 }}"
 
-      - name: Publish SVN release
+      - name: Publish and verify SVN release
+        id: publish
         env:
           PLUGIN_SLUG: brand-master
           VERSION: ${{ needs.package.outputs.version }}
           BUNDLE: ${{ github.workspace }}/deploy/brand-master
           DRY_RUN: 'false'
           RELEASE_COMMIT: ${{ needs.package.outputs.commit }}
+          PACKAGE_SHA256: ${{ needs.dry-run.outputs.package_sha256 }}
+          WORKFLOW_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          RELEASE_URL: ${{ needs.package.outputs.release_url }}
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
           SVN_WORK_DIR: ${{ runner.temp }}/svn-brand-master-${{ needs.package.outputs.version }}
           SVN_PREVIEW_DIR: ${{ github.workspace }}/deploy/svn-preview
         run: bash .github/scripts/svn-release.sh
+
+      - name: Deployment summary
+        run: |
+          echo "### Brand Master ${{ needs.package.outputs.version }} deployed"
+          echo "- SVN revision: ${{ steps.publish.outputs.revision }}"
+          echo "- Git commit: ${{ steps.publish.outputs.commit }}"
+          echo "- Artifact SHA-256: ${{ steps.publish.outputs.package_sha256 }}"
+          echo "- Workflow: ${{ steps.publish.outputs.workflow_run_url }}"

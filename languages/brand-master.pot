@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-24T12:29:47+00:00\n"
+"POT-Creation-Date: 2026-11-24T14:44:41+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: brand-master\n"
@@ -351,7 +351,7 @@ msgid "Enhance login page functionality with custom JavaScript. Implement custom
 msgstr ""
 
 #: src/admin/pages/login/pages/advanced.js:141
-#: src/admin/pages/login/pages/logo.js:231
+#: src/admin/pages/login/pages/logo.js:230
 #: src/admin/pages/login/pages/slug.js:194
 #: src/admin/pages/login/pages/title.js:113
 msgid "WordPress login page settings"
@@ -369,39 +369,39 @@ msgstr ""
 msgid "Custom CSS:"
 msgstr ""
 
-#: src/admin/pages/login/pages/logo.js:112
+#: src/admin/pages/login/pages/logo.js:111
 msgid "Image source"
 msgstr ""
 
-#: src/admin/pages/login/pages/logo.js:115
+#: src/admin/pages/login/pages/logo.js:114
 msgid "Add logo"
 msgstr ""
 
-#: src/admin/pages/login/pages/logo.js:118
+#: src/admin/pages/login/pages/logo.js:117
 msgid "Remove logo"
 msgstr ""
 
-#: src/admin/pages/login/pages/logo.js:121
+#: src/admin/pages/login/pages/logo.js:120
 msgid "Select logo from images"
 msgstr ""
 
-#: src/admin/pages/login/pages/logo.js:123
+#: src/admin/pages/login/pages/logo.js:122
 msgid "Select logo"
 msgstr ""
 
-#: src/admin/pages/login/pages/logo.js:134
+#: src/admin/pages/login/pages/logo.js:133
 msgid "Logo text"
 msgstr ""
 
-#: src/admin/pages/login/pages/logo.js:149
+#: src/admin/pages/login/pages/logo.js:148
 msgid "Logo link"
 msgstr ""
 
-#: src/admin/pages/login/pages/logo.js:194
+#: src/admin/pages/login/pages/logo.js:193
 msgid "How can I customize the appearance of my WordPress login page's logo?"
 msgstr ""
 
-#: src/admin/pages/login/pages/logo.js:202
+#: src/admin/pages/login/pages/logo.js:201
 msgid "The logo settings feature allows you to modify the logo image, logo text, and the link associated with the logo displayed on your WordPress login page."
 msgstr ""
 

@@ -8,4 +8,5 @@ git-source
 build
 deploy
 .phpunit.result.cache
-composer.lock
+__pycache__/
+*.py[cod]

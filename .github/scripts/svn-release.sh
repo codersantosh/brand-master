@@ -11,15 +11,28 @@ fail() {
 : "${BUNDLE:?BUNDLE is required}"
 : "${DRY_RUN:?DRY_RUN must be true or false}"
 
-PROJECT_ROOT="${GITHUB_WORKSPACE:-$(pwd)}"
+PROJECT_ROOT="$(realpath "${GITHUB_WORKSPACE:-$(pwd)}")"
+BUNDLE="$(realpath "$BUNDLE")"
 SVN_URL="${SVN_URL:-https://plugins.svn.wordpress.org/${PLUGIN_SLUG}/}"
 SVN_URL="${SVN_URL%/}/"
 PREVIEW_DIR="${SVN_PREVIEW_DIR:-${PROJECT_ROOT}/deploy/svn-preview}"
+RELEASE_COMMIT="${RELEASE_COMMIT:-${GITHUB_SHA:-}}"
+PACKAGE_SHA256="${PACKAGE_SHA256:-}"
+WORKFLOW_RUN_URL="${WORKFLOW_RUN_URL:-${GITHUB_RUN_URL:-}}"
+RELEASE_URL="${RELEASE_URL:-}"
 
 [[ "$PLUGIN_SLUG" =~ ^[a-z0-9-]+$ ]] || fail "Invalid plugin slug: $PLUGIN_SLUG"
 [[ "$VERSION" =~ ^[0-9]+\.[0-9]+(\.[0-9]+)*$ ]] || fail "Invalid release version: $VERSION"
 [[ "$DRY_RUN" == 'true' || "$DRY_RUN" == 'false' ]] || fail "DRY_RUN must be true or false"
 [[ -f "$BUNDLE/brand-master.php" ]] || fail "Plugin bundle not found: $BUNDLE"
+[[ "$RELEASE_COMMIT" =~ ^[0-9a-f]{40}$ ]] || fail "RELEASE_COMMIT must be a full Git commit SHA."
+[[ "$PACKAGE_SHA256" =~ ^[0-9a-f]{64}$ ]] || fail "PACKAGE_SHA256 must be a SHA-256 digest."
+if [[ -n "$WORKFLOW_RUN_URL" && "$WORKFLOW_RUN_URL" != https://github.com/* ]]; then
+	fail "WORKFLOW_RUN_URL must be an HTTPS GitHub Actions URL."
+fi
+if [[ -n "$RELEASE_URL" && "$RELEASE_URL" != https://github.com/* ]]; then
+	fail "RELEASE_URL must be an HTTPS GitHub URL."
+fi
 
 if [[ "$DRY_RUN" == 'true' && ( -n "${SVN_USERNAME:-}" || -n "${SVN_PASSWORD:-}" ) ]]; then
 	fail "Dry runs must not receive SVN credentials."
@@ -202,6 +215,24 @@ svn diff > "$PREVIEW_DIR/svn-diff.txt" || true
 		| xargs -0 sha256sum
 ) > "$PREVIEW_DIR/trunk-manifest.sha256"
 
+python3 - <<'PY' > "$PREVIEW_DIR/release-provenance.json"
+import json
+import os
+
+keys = (
+    "PLUGIN_SLUG",
+    "VERSION",
+    "DRY_RUN",
+    "RELEASE_COMMIT",
+    "PACKAGE_SHA256",
+    "WORKFLOW_RUN_URL",
+    "GITHUB_RUN_ATTEMPT",
+    "RELEASE_URL",
+    "SVN_URL",
+)
+print(json.dumps({key.lower(): os.environ.get(key, "") for key in keys}, indent=2, sort_keys=True))
+PY
+
 echo "Staged SVN changes:"
 svn status
 
@@ -211,9 +242,16 @@ if [[ "$DRY_RUN" == 'true' ]]; then
 fi
 
 commit_message="Brand Master: Release ${VERSION} from GitHub"
-release_commit="${RELEASE_COMMIT:-${GITHUB_SHA:-}}"
-if [[ -n "$release_commit" ]]; then
-	commit_message="${commit_message} (${release_commit})"
+commit_message+=$'\n'"Commit: ${RELEASE_COMMIT}"
+commit_message+=$'\n'"Artifact SHA-256: ${PACKAGE_SHA256}"
+if [[ -n "$WORKFLOW_RUN_URL" ]]; then
+	commit_message+=$'\n'"Workflow: ${WORKFLOW_RUN_URL}"
+	if [[ -n "${GITHUB_RUN_ATTEMPT:-}" ]]; then
+		commit_message+=" (attempt ${GITHUB_RUN_ATTEMPT})"
+	fi
+fi
+if [[ -n "$RELEASE_URL" ]]; then
+	commit_message+=$'\n'"Release/tag: ${RELEASE_URL}"
 fi
 
 svn commit \
@@ -223,8 +261,64 @@ svn commit \
 	-m "$commit_message"
 
 revision="$(svn info --show-item revision "${SVN_URL}tags/${VERSION}")"
+[[ "$revision" =~ ^[0-9]+$ ]] || fail "Could not determine the committed SVN revision."
+
+verify_remote_package() {
+	local remote_path="$1"
+	local label="$2"
+	local remote_revision
+	local export_root
+	local export_dir
+
+	remote_revision="$(svn info --show-item revision "${SVN_URL}${remote_path}@${revision}")"
+	[[ "$remote_revision" == "$revision" ]] \
+		|| fail "Remote ${label} is at revision ${remote_revision}, expected ${revision}."
+
+	export_root="$(mktemp -d "${RUNNER_TEMP:-${TMPDIR:-/tmp}}/brand-master-verify-${label}.XXXXXX")"
+	export_dir="${export_root}/package"
+	if ! svn export \
+		--quiet \
+		--revision "$revision" \
+		--non-interactive \
+		--no-auth-cache \
+		"${auth_args[@]}" \
+		"${SVN_URL}${remote_path}@${revision}" \
+		"$export_dir"; then
+		rm -rf "$export_root"
+		fail "Could not export remote ${label} for verification."
+	fi
+
+	if ! diff -qr --exclude='.svn' "$BUNDLE" "$export_dir"; then
+		rm -rf "$export_root"
+		fail "Remote ${label} differs from the verified package."
+	fi
+	if ! php "${PROJECT_ROOT}/.github/scripts/validate-release.php" \
+		"$VERSION" \
+		"$export_dir" \
+		"$PROJECT_ROOT"; then
+		rm -rf "$export_root"
+		fail "Remote ${label} failed release validation."
+	fi
+
+	rm -rf "$export_root"
+	echo "Verified remote ${label} at SVN revision ${revision}."
+}
+
+verify_remote_package trunk trunk
+verify_remote_package "tags/${VERSION}" "tag ${VERSION}"
+
 if [[ -n "${GITHUB_OUTPUT:-}" ]]; then
-	echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-	echo "revision=$revision" >> "$GITHUB_OUTPUT"
+	{
+		echo "version=$VERSION"
+		echo "revision=$revision"
+		echo "commit=$RELEASE_COMMIT"
+		echo "package_sha256=$PACKAGE_SHA256"
+		if [[ -n "$WORKFLOW_RUN_URL" ]]; then
+			echo "workflow_run_url=$WORKFLOW_RUN_URL"
+		fi
+		if [[ -n "$RELEASE_URL" ]]; then
+			echo "release_url=$RELEASE_URL"
+		fi
+	} >> "$GITHUB_OUTPUT"
 fi
-echo "Deployed Brand Master $VERSION at SVN revision $revision."
+echo "Deployed and verified Brand Master $VERSION at SVN revision $revision."

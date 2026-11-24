@@ -3,8 +3,8 @@
  * PHPUnit bootstrap.
  *
  * Loads minimal WordPress function/class stubs so the plugin's pure logic can
- * be unit-tested without a full WordPress install. Integration behavior is
- * covered by the CI workflow's full WordPress test suite step.
+ * be unit-tested without a full WordPress install. Runtime integration is
+ * covered separately by the WordPress runtime smoke-test workflow.
  *
  * @package Brand_Master
  * @since   1.0.6

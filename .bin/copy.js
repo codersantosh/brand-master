@@ -6,7 +6,7 @@ const pkg = JSON.parse( fs.readFileSync( path.join( root, 'package.json' ), 'utf
 const destination = path.join( root, 'deploy' );
 const packageDestination = path.join( destination, pkg.name );
 
-const files = [ 'brand-master.php', 'readme.txt', 'LICENSE', 'uninstall.php' ];
+const files = [ 'brand-master.php', 'readme.txt', 'changelog.txt', 'LICENSE', 'uninstall.php' ];
 const directories = [ 'admin', 'assets', 'build', 'includes', 'languages', 'public' ];
 
 for ( const file of files ) {

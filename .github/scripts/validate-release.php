@@ -22,9 +22,9 @@ $expected_php       = '8.3';
 $expected_wordpress = '7.0';
 $expected_tested    = '7.1';
 $bundle             = rtrim( $argv[2], '/\\' );
-$project_root     = rtrim( $argv[3] ?? getcwd(), '/\\' );
-$errors           = array();
-$checks           = 0;
+$project_root       = rtrim( $argv[3] ?? getcwd(), '/\\' );
+$errors             = array();
+$checks             = 0;
 
 /**
  * Record a validation check.
@@ -65,6 +65,18 @@ function bm_release_field( $contents, $field ) {
 	return '';
 }
 
+/**
+ * Extract one version entry from a WordPress-style changelog.
+ *
+ * @param string $contents File contents.
+ * @param string $version  Release version.
+ * @return string
+ */
+function bm_release_changelog_entry( $contents, $version ) {
+	$pattern = '/^=\h*' . preg_quote( $version, '/' ) . '\h*=\h*\R(.*?)(?=^=\h*[0-9]+\.[0-9]+(?:\.[0-9]+)*\h*=\h*$|\z)/ms';
+	return preg_match( $pattern, $contents, $matches ) ? trim( $matches[1] ) : '';
+}
+
 bm_release_check(
 	(bool) preg_match( '/^[0-9]+\.[0-9]+(?:\.[0-9]+)*$/', $expected_version ),
 	"Invalid release version '$expected_version'.",
@@ -84,6 +96,7 @@ if ( ! is_dir( $bundle ) || ! is_dir( $project_root ) ) {
 $required_files = array(
 	'brand-master.php',
 	'readme.txt',
+	'changelog.txt',
 	'LICENSE',
 	'uninstall.php',
 	'includes/json/patterns.json',
@@ -105,11 +118,12 @@ foreach ( $required_files as $file ) {
 	bm_release_check( is_file( "$bundle/$file" ), "Missing required runtime file: $file", $errors, $checks );
 }
 
-$main   = bm_release_read( "$bundle/brand-master.php" );
-$readme = bm_release_read( "$bundle/readme.txt" );
+$main     = bm_release_read( "$bundle/brand-master.php" );
+$readme   = bm_release_read( "$bundle/readme.txt" );
+$changelog = bm_release_read( "$bundle/changelog.txt" );
 
-if ( false === $main || false === $readme ) {
-	$errors[] = 'Could not read brand-master.php or readme.txt.';
+if ( false === $main || false === $readme || false === $changelog ) {
+	$errors[] = 'Could not read brand-master.php, readme.txt, or changelog.txt.';
 } else {
 	$required_headers = array(
 		'Plugin Name',
@@ -125,6 +139,13 @@ if ( false === $main || false === $readme ) {
 	foreach ( $required_headers as $header ) {
 		bm_release_check( '' !== bm_release_field( $main, $header ), "Missing plugin header: $header", $errors, $checks );
 	}
+
+	bm_release_check(
+		'' === bm_release_field( $main, 'Tested up to' ),
+		'Tested up to must not be declared in the plugin header; keep it in readme.txt only.',
+		$errors,
+		$checks
+	);
 
 	bm_release_check(
 		$expected_version === bm_release_field( $main, 'Version' ),
@@ -240,6 +261,33 @@ if ( false === $main || false === $readme ) {
 		$checks
 	);
 	bm_release_check(
+		1 === preg_match_all( '/^=\h*[0-9]+\.[0-9]+(?:\.[0-9]+)*\h*=\h*$/m', $readme ),
+		'readme.txt must contain only the current release changelog; move older entries to changelog.txt.',
+		$errors,
+		$checks
+	);
+	bm_release_check(
+		(bool) preg_match( '/^==\h*Changelog\h*==\h*$/mi', $changelog )
+		&& (bool) preg_match( '/^=\h*' . preg_quote( $expected_version, '/' ) . '\h*=\h*$/m', $changelog ),
+		"changelog.txt must contain the Changelog section and '= $expected_version =' heading.",
+		$errors,
+		$checks
+	);
+	bm_release_check(
+		strpos( $readme, 'Full changelog: changelog.txt' ) !== false,
+		'readme.txt must link to changelog.txt.',
+		$errors,
+		$checks
+	);
+	$readme_entry    = bm_release_changelog_entry( $readme, $expected_version );
+	$changelog_entry = bm_release_changelog_entry( $changelog, $expected_version );
+	bm_release_check(
+		'' !== $readme_entry && $readme_entry === $changelog_entry,
+		"The $expected_version changelog entry in readme.txt and changelog.txt must match.",
+		$errors,
+		$checks
+	);
+	bm_release_check(
 		stripos( bm_release_field( $readme, 'License' ), 'GPL' ) !== false,
 		'readme.txt must declare a GPL-compatible license.',
 		$errors,
@@ -252,7 +300,7 @@ if ( false === $main || false === $readme ) {
 		$checks
 	);
 
-	foreach ( array( 'brand-master.php', 'readme.txt', 'LICENSE', 'uninstall.php' ) as $file ) {
+	foreach ( array( 'brand-master.php', 'readme.txt', 'changelog.txt', 'LICENSE', 'uninstall.php' ) as $file ) {
 		$source_file = "$project_root/$file";
 		$same        = is_file( $source_file )
 			&& is_file( "$bundle/$file" )
@@ -294,6 +342,14 @@ bm_release_check(
 	$checks
 );
 
+$composer_lock = json_decode( (string) bm_release_read( "$project_root/composer.lock" ), true );
+bm_release_check(
+	is_array( $composer_lock ) && ! empty( $composer_lock['packages-dev'] ) && isset( $composer_lock['content-hash'] ),
+	'composer.lock must be present and contain locked development dependencies.',
+	$errors,
+	$checks
+);
+
 $forbidden_directories = array( '.git', '.svn', '.github', '.wordpress-org', '.bin', 'node_modules', 'vendor', 'src', 'tests', 'deploy' );
 $forbidden_files       = array(
 	'.gitignore',
@@ -319,7 +375,7 @@ $iterator              = new RecursiveIteratorIterator(
 );
 
 foreach ( $iterator as $file ) {
-	/** @var SplFileInfo $file */
+	// @var SplFileInfo $file
 	$relative  = str_replace( '\\', '/', substr( $file->getPathname(), strlen( $bundle ) + 1 ) );
 	$segments  = explode( '/', $relative );
 	$basename  = $file->getBasename();
@@ -331,6 +387,18 @@ foreach ( $iterator as $file ) {
 
 	foreach ( $segments as $segment ) {
 		bm_release_check( ! in_array( $segment, $forbidden_directories, true ), "Development directory found in package: $relative", $errors, $checks );
+	}
+
+	if ( in_array( $extension, array( 'js', 'css', 'php' ), true ) ) {
+		$contents = (string) file_get_contents( $file->getPathname() );
+		foreach ( array( 'atrc-text-domain-atrc', 'atrc_prefix_atrc', 'atrc-prefix-atrc', 'ATRC_PREFIX_ATRC', 'ATRC-PREFIX-ATRC', 'Atrc-Prefix-Atrc', 'Atrc_Prefix_Atrc' ) as $placeholder ) {
+			bm_release_check(
+				false === stripos( $contents, $placeholder ),
+				"Unreplaced ATRC placeholder '$placeholder' in $relative.",
+				$errors,
+				$checks
+			);
+		}
 	}
 
 	if ( 'php' === $extension ) {
@@ -375,4 +443,4 @@ if ( $errors ) {
 	exit( 1 );
 }
 
-echo sprintf( "Release validation passed for Brand Master %s (%d checks).\n", $expected_version, $checks );
+printf( "Release validation passed for Brand Master %s (%d checks).\n", $expected_version, $checks );

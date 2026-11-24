@@ -89,7 +89,6 @@ const MainContent = () => {
 										if (newVal.frm) {
 											requiredVal.frm = newVal.frm;
 										}
-										console.log(newVal);
 										if (newVal.data && newVal.data[0]) {
 											const newImg = newVal.data[0];
 											requiredVal.id = newImg.id;
