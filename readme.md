@@ -36,9 +36,10 @@ npm run deploy     # build + i18n pot + copy step
 ## WordPress.org releases
 
 Brand Master is packaged and validated by `.github/workflows/deploy.yml`.
-Manual workflow dispatch performs a credential-free SVN dry run only. A stable,
-published GitHub Release is the only publication trigger, and the publishing job
-uses the protected `wordpress-org` environment.
+Manual workflow dispatch defaults to a credential-free SVN dry run. Clearing the
+`dry_run` checkbox performs a real deployment through the protected
+`wordpress-org` environment. A stable, published GitHub Release also runs the
+protected deployment job.
 
 Before publishing, confirm that the plugin header, `BRAND_MASTER_VERSION`,
 `package.json`, and `readme.txt` stable tag all contain the same version. See
