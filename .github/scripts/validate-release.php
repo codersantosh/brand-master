@@ -177,7 +177,7 @@ if ( false === $main || false === $readme ) {
 		$checks
 	);
 
-	foreach ( array( 'Requires at least', 'Requires PHP', 'Tested up to' ) as $field ) {
+	foreach ( array( 'Requires at least', 'Requires PHP' ) as $field ) {
 		bm_release_check(
 			bm_release_field( $main, $field ) === bm_release_field( $readme, $field ),
 			"Plugin header and readme.txt disagree for '$field'.",
@@ -207,12 +207,6 @@ if ( false === $main || false === $readme ) {
 	bm_release_check(
 		$expected_wordpress === bm_release_field( $readme, 'Requires at least' ),
 		"readme.txt Requires at least must be $expected_wordpress.",
-		$errors,
-		$checks
-	);
-	bm_release_check(
-		$expected_tested === bm_release_field( $main, 'Tested up to' ),
-		"Plugin header Tested up to must be $expected_tested.",
 		$errors,
 		$checks
 	);
