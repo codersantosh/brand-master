@@ -3,7 +3,7 @@
 > Elevate your brand by customizing WordPress login pages and introducing a sleek frontend dashboard for users with Brand Master.
 
 **Version:** 1.0.6
-**Requires at least:** WordPress 5.6 / PHP 7.0
+**Requires at least:** WordPress 7.0 / PHP 8.3
 **Tested up to:** WordPress 7.1
 **License:** GPLv2 or later
 
@@ -15,8 +15,8 @@ Whether you are building a client site, a membership platform, or simply want to
 
 ## Requirements
 
-- WordPress 5.6 or higher
-- PHP 7.0 or higher
+- WordPress 7.0 or higher
+- PHP 8.3 or higher
 - Pretty permalinks enabled (recommended for clean login URLs)
 
 ## Installation
@@ -28,10 +28,22 @@ Whether you are building a client site, a membership platform, or simply want to
 ### Build from source
 
 ```sh
-npm install
+npm ci
 npm run build      # produces build/admin and build/public
 npm run deploy     # build + i18n pot + copy step
 ```
+
+## WordPress.org releases
+
+Brand Master is packaged and validated by `.github/workflows/deploy.yml`.
+Manual workflow dispatch performs a credential-free SVN dry run only. A stable,
+published GitHub Release is the only publication trigger, and the publishing job
+uses the protected `wordpress-org` environment.
+
+Before publishing, confirm that the plugin header, `BRAND_MASTER_VERSION`,
+`package.json`, and `readme.txt` stable tag all contain the same version. See
+[WordPress.org deployment](docs/wordpress-org-deployment.md) for setup, dry-run,
+and release procedures.
 
 ## Features
 

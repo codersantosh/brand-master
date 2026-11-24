@@ -5,7 +5,8 @@ import { useContext } from '@wordpress/element';
 /* Library */
 
 /*Atrc*/
-import { AtrcButtonSaveTemplate1, AtrcFooterTemplate1 } from 'atrc';
+import AtrcButtonSaveTemplate1 from 'atrc/build/templates/components/button-save/template-1';
+import AtrcFooterTemplate1 from 'atrc/build/templates/footers/template-1';
 
 /* Inbuilt */
 import { AtrcReduxContextData } from '../../routes';

@@ -4,7 +4,7 @@ import { __ } from '@wordpress/i18n';
 /* Library */
 
 /*Atrc*/
-import { AtrcTitleTemplate2 } from 'atrc';
+import AtrcTitleTemplate2 from 'atrc/build/templates/components/title/template-2';
 
 /* Inbuilt */
 

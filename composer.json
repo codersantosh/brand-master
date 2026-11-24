@@ -12,6 +12,9 @@
 	"config": {
 		"allow-plugins": {
 			"dealerdirect/phpcodesniffer-composer-installer": true
+		},
+		"platform": {
+			"php": "8.3.0"
 		}
 	},
 	"scripts": {
@@ -19,6 +22,9 @@
 		"phpcs": "phpcs",
 		"phpcbf": "phpcbf",
 		"test": "phpunit"
+	},
+	"require": {
+		"php": "^8.3"
 	},
 	"require-dev": {
 		"phpunit/phpunit": "^9.6",

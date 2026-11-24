@@ -200,7 +200,7 @@ class Brand_Master_Admin {
 		wp_enqueue_script( BRAND_MASTER_PLUGIN_NAME, BRAND_MASTER_URL . 'build/admin/admin.js', $dependency, $version, true );
 
 		wp_enqueue_style( 'google-fonts-open-sans', BRAND_MASTER_URL . 'assets/library/fonts/open-sans.css', '', $version );
-		wp_enqueue_style( BRAND_MASTER_PLUGIN_NAME, BRAND_MASTER_URL . 'build/admin/admin.css', array( 'wp-components' ), $version );
+		wp_enqueue_style( BRAND_MASTER_PLUGIN_NAME, BRAND_MASTER_URL . 'build/admin/styles.css', array( 'wp-components' ), $version );
 		wp_style_add_data( BRAND_MASTER_PLUGIN_NAME, 'rtl', 'replace' );
 
 		global $wp_roles;

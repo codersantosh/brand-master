@@ -63,6 +63,13 @@ if ( ! class_exists( 'Brand_Master_Api' ) ) {
 		public $type;
 
 		/**
+		 * REST route base.
+		 *
+		 * @var string
+		 */
+		public $rest_base;
+
+		/**
 		 * Constructor
 		 *
 		 * @since    1.0.0

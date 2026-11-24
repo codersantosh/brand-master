@@ -1,4 +1,7 @@
-@import '../prefix-vars.scss';
-@import '../mixins';
-@import '../../node_modules/atrc/build/index.css';
-@import '../../node_modules/atrc/build/wp-admin.css';
+@use '../prefix-vars.scss' as *;
+@use '../mixins' as *;
+
+.bm-loading {
+	padding: 40px 20px;
+	text-align: center;
+}

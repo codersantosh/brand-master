@@ -7,20 +7,18 @@ import classNames from 'classnames';
 import { map, filter, cloneDeep, forEach, isArray } from 'lodash';
 
 /*Atrc*/
-import {
-	AtrcText,
-	AtrcControlToggle,
-	AtrcWireFrameContentSidebar,
-	AtrcWireFrameHeaderContentFooter,
-	AtrcPrefix,
-	AtrcPanelBody,
-	AtrcPanelRow,
-	AtrcContent,
-	AtrcTitleTemplate1,
-	AtrcControlLink,
-	AtrcControlSelect,
-	AtrcNestedObjUpdateByKey1,
-} from 'atrc';
+import AtrcText from 'atrc/build/atoms/text';
+import AtrcControlLink from 'atrc/build/controls/control-link';
+import AtrcControlSelect from 'atrc/build/controls/control-select';
+import AtrcControlToggle from 'atrc/build/controls/control-toggle';
+import AtrcPanelBody from 'atrc/build/molecules/panel-body';
+import AtrcPanelRow from 'atrc/build/molecules/panel-row';
+import { AtrcNestedObjUpdateByKey1 } from 'atrc/build/molecules/repeater/utils';
+import AtrcContent from 'atrc/build/organisms/content';
+import AtrcPrefix from 'atrc/build/prefix-vars';
+import AtrcTitleTemplate1 from 'atrc/build/templates/components/title/template-1';
+import AtrcWireFrameContentSidebar from 'atrc/build/wireframe/content-sidebar';
+import AtrcWireFrameHeaderContentFooter from 'atrc/build/wireframe/header-content-footer';
 
 /* Inbuilt */
 import { AtrcReduxContextData } from '../../../routes';

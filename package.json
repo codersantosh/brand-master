@@ -5,10 +5,10 @@
 	"author": "PatternsWP",
 	"license": "GPL-2.0-or-later",
 	"scripts": {
-		"build:admin": "wp-scripts build src/admin.js --output-path=build/admin",
+		"build:admin": "wp-scripts build src/admin.js src/admin/styles.js --output-path=build/admin",
 		"build:public": "wp-scripts build src/dashboard.js --output-path=build/public",
 		"build": "npm-run-all build:admin build:public",
-		"start:admin": "wp-scripts start src/admin.js --output-path=build/admin",
+		"start:admin": "wp-scripts start src/admin.js src/admin/styles.js --output-path=build/admin",
 		"start:public": "wp-scripts start src/dashboard.js --output-path=build/public",
 		"start": "npm-run-all --parallel start:admin start:public",
 		"packages-update": "wp-scripts packages-update",
@@ -16,7 +16,7 @@
 		"zip": "node .bin/zip.js",
 		"replace": "node .bin/replace-texts.js",
 		"makejsstring": "node .bin/make-string.js",
-		"makepot": "wp i18n make-pot . languages/brand-master.pot --skip-js --exclude=src,vendor,node_modules --merge=languages/js.pot",
+		"makepot": "wp i18n make-pot . languages/brand-master.pot --skip-js --exclude=src,vendor,node_modules,build,deploy,tests --merge=languages/js.pot",
 		"deploy": "npm-run-all build replace makepot copy zip"
 	},
 	"browserslist": [

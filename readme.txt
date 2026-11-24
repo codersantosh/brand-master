@@ -1,9 +1,9 @@
 === Brand Master - Customize Login and User Frontend Dashboard ===
 Contributors: patternswp, codersantosh
 Tags: login customization, frontend dashboard, white label, branding
-Requires at least: 5.6
+Requires at least: 7.0
 Tested up to: 7.1
-Requires PHP: 7.0
+Requires PHP: 8.3
 Stable tag: 1.0.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -60,6 +60,8 @@ There are two ways to install the plugin:
 
 After installation, activate the plugin through the 'Plugins' menu in WordPress.
 
+Source code and build instructions: https://github.com/codersantosh/brand-master
+
 == Frequently Asked Questions ==
 
 = How can I customize the login pages? =
@@ -102,6 +104,9 @@ Yes. Settings are stored per site. Network administrators can reach each site's 
 
 = 1.0.6 =
 * Added: Tested up to WordPress 7.1
+* Changed: Raised minimum PHP requirement to 8.3
+* Changed: Raised minimum WordPress requirement to 7.0 and confirmed compatibility with WordPress 7.0 and 7.1
+* Changed: Modernized Sass modules and lazy-loaded admin routes to reduce the initial admin bundle
 * Added: Deep recursive settings sanitization with unfiltered_html gate for custom CSS/JS
 * Added: Login/redirect slug conflict validation (reserved slugs, page collisions)
 * Added: uninstall.php for clean data deletion
@@ -121,6 +126,8 @@ Yes. Settings are stored per site. Network administrators can reach each site's 
 * Fix: wp-login.php redirect allowlist — logout, password-reset key exchange (rp/resetpass) and all POST requests pass through instead of bouncing to the redirect slug
 * Fix: Custom login slug matching is now exact-path (tails like /ogin no longer load the login page); referer handling hardened for missing Referer headers
 * Added: Unit coverage for login scope binding, wp-login.php redirect matrix, exact slug matching, and admin-bar / post-action redirect settings
+* Added: Automated WordPress.org deployment from published GitHub Releases
+* Added: Public source code and build documentation
 
 = 1.0.5 =
 * Added: WordPress latest compatibility

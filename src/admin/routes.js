@@ -1,31 +1,37 @@
-/*CSS*/
-import './admin.scss';
-
 /* WordPress */
-import { render, createContext, useContext } from '@wordpress/element';
+import { render, createContext, useContext, lazy, Suspense } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 
 /* Library */
 import { map, isEmpty } from 'lodash';
 
 /*Atrc*/
+import AtrcWrap from 'atrc/build/atoms/wrap';
+import AtrcNotice from 'atrc/build/molecules/notice';
+import AtrcWrapFloating from 'atrc/build/molecules/wrap-floating';
+import AtrcMain from 'atrc/build/organisms/main';
 import {
-	AtrcHashRouter,
-	AtrcRoute,
-	AtrcRoutes,
-	AtrcWrap,
-	AtrcNotice,
-	AtrcWrapFloating,
-	AtrcMain
-} from 'atrc';
+	HashRouter as AtrcHashRouter,
+	Route as AtrcRoute,
+	Routes as AtrcRoutes,
+} from 'react-router-dom';
 
 import { AtrcApplyWithSettings } from 'atrc/build/data';
 
 /*Inbuilt*/
 import AdminHeader from './components/organisms/admin-header';
-import Initlanding from './pages/landing';
-import Login from './pages/login/routes';
-import Dashboard from './pages/dashboard/routes';
-import Settings from './pages/settings/routes';
+const Initlanding = lazy( () =>
+	import( /* webpackChunkName: "brand-master-landing" */ './pages/landing' )
+);
+const Login = lazy( () =>
+	import( /* webpackChunkName: "brand-master-login" */ './pages/login/routes' )
+);
+const Dashboard = lazy( () =>
+	import( /* webpackChunkName: "brand-master-dashboard" */ './pages/dashboard/routes' )
+);
+const Settings = lazy( () =>
+	import( /* webpackChunkName: "brand-master-settings" */ './pages/settings/routes' )
+);
 
 /* Local */
 
@@ -41,7 +47,13 @@ const AdminRoutes = () => {
 		<>
 			<AdminHeader />
 			<AtrcMain>
-				<AtrcRoutes>
+				<Suspense
+					fallback={
+						<div className='bm-loading' role='status'>
+							{ __( 'Loading…', 'brand-master' ) }
+						</div>
+					}>
+					<AtrcRoutes>
 					<AtrcRoute
 						index
 						element={<Initlanding />}
@@ -62,6 +74,7 @@ const AdminRoutes = () => {
 						element={<Settings />}
 					/>
 				</AtrcRoutes>
+				</Suspense>
 				{/*Notice is common for settings*/}
 				{!isEmpty(dbNotices) ? (
 					<AtrcWrapFloating>

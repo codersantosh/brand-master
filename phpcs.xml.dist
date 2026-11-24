@@ -4,9 +4,11 @@
 
 	<file>.</file>
 	<exclude-pattern>build/</exclude-pattern>
+	<exclude-pattern>deploy/</exclude-pattern>
 	<exclude-pattern>assets/</exclude-pattern>
 	<exclude-pattern>node_modules/</exclude-pattern>
 	<exclude-pattern>vendor/</exclude-pattern>
+	<exclude-pattern>.github/</exclude-pattern>
 	<exclude-pattern>languages/</exclude-pattern>
 	<exclude-pattern>*\.min\.css</exclude-pattern>
 	<exclude-pattern>*\.min\.js</exclude-pattern>
@@ -33,13 +35,8 @@
 		<exclude-pattern>tests/</exclude-pattern>
 	</rule>
 
-	<!--
-		The codebase uses trailing commas in function calls (PHP 7.3+), so the
-		real compatibility floor is 7.3 even though readme.txt historically said
-		7.0. Keep the sniff aligned with the code to avoid noise.
-	-->
 	<rule ref="PHPCompatibilityWP"/>
-	<config name="testVersion" value="7.3-"/>
+	<config name="testVersion" value="8.3-"/>
 
 	<!-- Options-style prefix exceptions used by the plugin. -->
 	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
