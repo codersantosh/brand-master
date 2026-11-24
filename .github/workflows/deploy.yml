@@ -35,7 +35,7 @@ jobs:
       artifact: ${{ steps.artifact.outputs.artifact }}
       package_sha256: ${{ steps.artifact.outputs.package_sha256 }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: ${{ github.event_name == 'release' && github.sha || inputs.ref }}
           fetch-depth: 0
@@ -96,7 +96,7 @@ jobs:
             echo "release_url=$release_url"
           } >> "$GITHUB_OUTPUT"
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: '22'
           cache: npm
@@ -184,7 +184,7 @@ jobs:
             "${{ steps.resolve.outputs.version }}" deploy \
             "${{ steps.artifact.outputs.package_sha256 }}"
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: ${{ steps.artifact.outputs.artifact }}
           path: |
@@ -210,12 +210,12 @@ jobs:
     outputs:
       package_sha256: ${{ steps.verify.outputs.package_sha256 }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: ${{ needs.package.outputs.commit }}
           fetch-depth: 1
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: ${{ needs.package.outputs.artifact }}
           path: deploy
@@ -265,7 +265,7 @@ jobs:
 
       - name: Upload SVN review preview
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: svn-preview-${{ needs.package.outputs.version }}-${{ needs.package.outputs.commit }}
           path: deploy/svn-preview/
@@ -299,12 +299,12 @@ jobs:
           fi
           echo "Runtime tests match the release commit and ZIP digest."
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: ${{ needs.package.outputs.commit }}
           fetch-depth: 1
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: ${{ needs.package.outputs.artifact }}
           path: deploy
