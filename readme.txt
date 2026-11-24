@@ -104,6 +104,7 @@ Yes. Settings are stored per site. Network administrators can reach each site's 
 
 = 1.0.6 =
 * Added: Tested up to WordPress 7.1
+* Fixed: Removed the duplicate Tested up to plugin header for WordPress.org compatibility
 * Changed: Raised minimum PHP requirement to 8.3
 * Changed: Raised minimum WordPress requirement to 7.0 and confirmed compatibility with WordPress 7.0 and 7.1
 * Changed: Modernized Sass modules and lazy-loaded admin routes to reduce the initial admin bundle
