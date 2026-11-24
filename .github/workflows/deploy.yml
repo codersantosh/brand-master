@@ -146,6 +146,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: ${{ needs.package.outputs.artifact }}
+          path: deploy
 
       - uses: shivammathur/setup-php@v2
         with:
@@ -202,6 +203,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: ${{ needs.package.outputs.artifact }}
+          path: deploy
 
       - uses: shivammathur/setup-php@v2
         with:
